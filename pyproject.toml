@@ -49,8 +49,8 @@ dev = [
 ]
 
 [project.urls]
-Documentation = "https://github.com/azulcoder/reservoir-engineering-workbench/tree/main/docs"
-Source = "https://github.com/azulcoder/reservoir-engineering-workbench"
+Documentation = "https://github.com/azulcoder/reservoir-engineering-workbench-public/tree/main/docs"
+Source = "https://github.com/azulcoder/reservoir-engineering-workbench-public"
 
 [tool.hatch.build.targets.wheel]
 # The wheel is the library and nothing else: no data, no cases, no docs. Keeping it that

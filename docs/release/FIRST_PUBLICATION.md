@@ -431,14 +431,12 @@ Carried forward and still true:
 - **Zero usability participants.** `USABILITY.md` is a script nobody has sat through.
 - **The Python lock was resolved on macOS/arm64** and carries no hashes. The first Linux
   run may find a missing platform wheel. The fix is to regenerate the lock on Linux.
-- **`pyproject.toml` names a repository that does not exist.** `[project.urls]` points
-  `Documentation` and `Source` at `github.com/azulcoder/reservoir-engineering-workbench` --
-  no `-public` suffix, and read-only discovery confirms no repository of either name exists
-  under that account. It is aspirational metadata carrying the *private* baseline's name,
-  and it is currently published in the wheel and the sdist. It is corrected once the real
-  repository exists and its URL is known, which is the only point at which the correct
-  value is a fact rather than another guess. Every other `github.com` URL in the tree is a
-  citation of a third-party project or a pinned action, and those stay as they are.
+- **`pyproject.toml` named a repository that does not exist. [RESOLVED]** `[project.urls]`
+  pointed `Documentation` and `Source` at the *private* baseline's name, with no `-public`
+  suffix, and that metadata shipped in the wheel and the sdist. The owner has since fixed
+  the publication destination, so the correct value is now a decision rather than a guess,
+  and both keys name it. Every other `github.com` URL in the tree is a citation of a
+  third-party project or a pinned action, and those stay as they are.
 - **`actionlint` ran without `shellcheck`** (absent on this machine), so the workflow and
   expression checks ran but the embedded shell was not statically linted. The hosted run
   executes that shell for real.

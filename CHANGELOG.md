@@ -139,10 +139,11 @@ not tagged, not deployed, and still never run by any continuous-integration serv
 
 ### Known issues carried forward
 
-- `pyproject.toml` names `github.com/azulcoder/reservoir-engineering-workbench` as Source
-  and Documentation. No repository of that name exists, and it is the private baseline's
-  name rather than this candidate's. It is corrected when the real repository exists and
-  its URL is a fact.
+- ~~`pyproject.toml` names the private baseline's repository as Source and
+  Documentation.~~ **Resolved.** `[project.urls]` now names the approved publication
+  destination, which the owner fixed as part of authorising the first publication, so the
+  URL is a decision rather than a guess. The wheel and the sdist carry the corrected
+  metadata.
 - `requirements-dev.lock` was resolved on macOS/arm64 and carries no hashes. The first
   Linux run may find a missing platform wheel; the fix is to regenerate the lock on Linux.
 
