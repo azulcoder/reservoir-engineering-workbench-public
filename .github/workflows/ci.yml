@@ -352,7 +352,9 @@ jobs:
           {
             echo "image:  python@sha256:4165118ed569aff9dbd11d5518199e5379d93bf5bf1cdda62eb13593cf66fb68"
             echo "tag:    python:3.13.2-bookworm"
-            ldd --version | head -1
+            # sed, not head: head closes the pipe after one line, ldd then takes SIGPIPE,
+            # and pipefail turns that into exit 141. It is a race, so it fails intermittently.
+            ldd --version | sed -n "1p"
             grep -E "^PRETTY_NAME=" /etc/os-release
             echo "arch:   $(uname -m)"
             python3 -VV
