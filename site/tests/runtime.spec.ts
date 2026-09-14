@@ -52,20 +52,41 @@ test.describe("runtime", () => {
     expect(hits, "credential-shaped or machine-local strings in the output").toEqual([]);
   });
 
-  test("the only external host string in the output is the SVG namespace", async ({ request }) => {
+  test("the only external host strings in the output are the SVG namespace and the site's own origin", async ({
+    request,
+  }) => {
     const found = new Map<string, string[]>();
+    const declaredOrigins = new Set<string>();
     for (const route of ROUTES) {
       const body = await (await request.get(url(route))).text();
+      /* The host the page declares as its own, read from the page rather than supplied to
+         the test. When the build is given a site URL it emits a canonical link and an
+         Open Graph block containing that origin, and those are self-references, not
+         third-party dependencies. Learning the origin from the canonical link keeps the
+         allowance exactly one host wide and keeps it honest: a page cannot smuggle an
+         analytics host past this by being configured differently, because the only host
+         it may name is the one it claims to be served from. */
+      for (const m of body.matchAll(
+        /<link[^>]+rel=["']canonical["'][^>]+href=["']https?:\/\/([a-z0-9.-]+)/gi,
+      )) {
+        declaredOrigins.add(m[1].toLowerCase());
+      }
       for (const m of body.matchAll(/https?:\/\/([a-z0-9.-]+)/gi)) {
         const host = m[1].toLowerCase();
         if (!found.has(host)) found.set(host, []);
         if (!found.get(host)!.includes(route)) found.get(host)!.push(route);
       }
     }
-    const hosts = [...found.keys()].sort();
+    expect(
+      declaredOrigins.size,
+      "the pages must agree on one canonical origin, or none when no site URL is configured",
+    ).toBeLessThanOrEqual(1);
     /* www.w3.org appears as xmlns="http://www.w3.org/2000/svg", which is an identifier
-       and not a request. Anything else would be a third-party dependency. */
-    expect(hosts).toEqual(["www.w3.org"]);
+       and not a request. Anything beyond it and the site's own origin would be a
+       third-party dependency. */
+    const allowed = ["www.w3.org", ...declaredOrigins].sort();
+    const hosts = [...found.keys()].sort();
+    expect(hosts, `hosts found: ${JSON.stringify([...found])}`).toEqual(allowed);
   });
 
   test("no page ships an external script, a remote font or a stylesheet from elsewhere", async ({
