@@ -26,7 +26,7 @@ invisible.
 
 __version__ = "0.2.0"
 
-from . import errors, gas, gas_properties, numerics, provenance, units, validation
+from . import errors, gas, gas_properties, numerics, provenance, transient, units, validation
 
 __all__ = [
     "__version__",
@@ -35,6 +35,7 @@ __all__ = [
     "gas_properties",
     "numerics",
     "provenance",
+    "transient",
     "units",
     "validation",
 ]
