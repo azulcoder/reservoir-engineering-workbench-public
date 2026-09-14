@@ -412,6 +412,14 @@ function headline(s: (typeof cases)[number]) {
     letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
     color: var(--c-ink-2);
+    /* A legend is sized to its content and does not shrink to its fieldset, so a long
+       one pushes the page wider instead of wrapping. This one is uppercase with extra
+       tracking, which makes it wide enough to matter: at a 320px viewport with the
+       reader's text at 200 percent it measured 325px on the Linux font stack and gave
+       the page a horizontal scrollbar. macOS metrics are narrower, which is why it
+       passed locally and failed on the runner the first time that job got to run. */
+    max-width: 100%;
+    overflow-wrap: break-word;
   }
 
   .explorer__options {
