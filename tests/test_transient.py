@@ -120,7 +120,7 @@ class DerivedConstantTests(unittest.TestCase):
     """Every published field constant must be reproducible, not transcribed."""
 
     def test_line_source_constant(self) -> None:
-        """ln 4 - gamma = 0.8090787..., which the literature prints as 0.80907.
+        """The constant ln 4 - gamma is 0.8090787..., which the literature prints as 0.80907.
 
         That published form is a truncation, not a rounding: to five decimal places the
         true value rounds to 0.80908. The difference is 8.7e-06 and is invisible in any
@@ -204,7 +204,7 @@ class MpmathCrossCheckTests(unittest.TestCase):
 
     def test_against_mpmath_if_available(self) -> None:
         try:
-            import mpmath  # noqa: PLC0415
+            import mpmath
         except ImportError:
             self.skipTest("mpmath is not installed; it is not a dependency of this project")
         mpmath.mp.dps = 40
@@ -610,7 +610,7 @@ class DerivativeAgainstTheExistingAlgorithmTests(unittest.TestCase):
     """
 
     def test_bourdet_matches_the_closed_form_over_the_b1_window(self) -> None:
-        from reservoir_lab.diagnostics import bourdet_derivative  # noqa: PLC0415
+        from reservoir_lab.diagnostics import bourdet_derivative
 
         scale = PRESSURE_FIELD_FACTOR * Q * B * MU / (K * H)
         for per_decade, smoothing in ((50, 0.0), (50, 0.1), (20, 0.1), (10, 0.1)):
@@ -629,7 +629,7 @@ class DerivativeAgainstTheExistingAlgorithmTests(unittest.TestCase):
                 self.assertLessEqual(worst, 1e-6)
 
     def test_the_plateau_sits_below_the_ideal_half_by_the_known_deficit(self) -> None:
-        from reservoir_lab.diagnostics import bourdet_derivative  # noqa: PLC0415
+        from reservoir_lab.diagnostics import bourdet_derivative
 
         scale = PRESSURE_FIELD_FACTOR * Q * B * MU / (K * H)
         decades = math.log10(48.0)
