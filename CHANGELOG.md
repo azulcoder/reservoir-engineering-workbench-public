@@ -43,6 +43,10 @@ in a changelog would republish exactly what the clearance withdrew:
 | Aggregate error statistics summarising the withheld comparison | `docs/evidence/viscosity.md`, `tests/test_gas_properties.py` |
 | An exemption granted on non-invertibility grounds, which contradicted the register's own rule | `docs/release/payload_exemptions.json` |
 
+The full record, including what was kept and why a new history was started rather than
+the old one rewritten, is in
+[docs/release/REFERENCE_DATA_CLEARANCE.md](docs/release/REFERENCE_DATA_CLEARANCE.md).
+
 No acceptance threshold was changed to make the clearance pass. Every gate, tolerance and
 assertion bound stands at the value it had before, including the ones whose observed
 margins are no longer published; a criterion relaxed to accommodate a removal would make
