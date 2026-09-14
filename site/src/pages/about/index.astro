@@ -1,0 +1,184 @@
+---
+/**
+ * About.
+ *
+ * What the project is, and what the work in this repository actually consists of. No
+ * affiliation, job title, employer, education, years of experience or claimed proficiency
+ * with any commercial package is stated, because the repository establishes none of them.
+ * That is a constraint on what may be written here, not a subject for the page itself:
+ * the reader is told what the project is, and the list of things it does not claim stays
+ * in its own section below.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Callout from "../../components/Callout.astro";
+import { NAV, NOT_RUN, VERIFICATION } from "../../scripts/site";
+import { href } from "../../lib/urls";
+
+const contents = [
+  { id: "work", label: "What was done here" },
+  { id: "method", label: "How the work is run" },
+  { id: "notclaimed", label: "What is not claimed" },
+  { id: "licence", label: "Licence and citation" },
+];
+
+const description =
+  "A personal project on gas-reservoir analysis and interpretation: reproducible calculations, synthetic case studies, how the work is run, and an explicit list of the things this site does not claim.";
+---
+
+<BaseLayout
+  title="About"
+  description={description}
+  canonicalPath="/about/"
+  nav={NAV}
+  contents={contents}
+>
+  <h1>About this project</h1>
+
+  <p class="lede">
+    Gas Reservoir Performance Lab is a personal project focused on gas-reservoir analysis
+    and interpretation. It brings together reproducible calculations, synthetic case
+    studies, and visual explanations of modelling assumptions and uncertainty. The studies
+    do not represent an operator's field assessment or reserves certification.
+  </p>
+
+  <section id="work" aria-labelledby="work-h">
+    <h2 id="work-h">What was done here</h2>
+
+    <p>The author, writing as <strong>azul</strong>, built the following in this repository.</p>
+
+    <ul>
+      <li>
+        <strong>A dependency-free gas material-balance library.</strong> Pure Python, standard
+        library only at runtime, covering gas properties and deviation-factor correlations,
+        pseudopressure, depletion generators for the volumetric and water-drive cases, a
+        Fetkovich aquifer, material-balance estimators, regression including
+        errors-in-variables treatments, diagnostics, numerics, unit handling and a provenance
+        record type.
+      </li>
+      <li>
+        <strong>Four pre-registered studies</strong>, each with a protocol written before the
+        run and acceptance criteria fixed before the first execution: a volumetric baseline, a
+        PVT check against reference equations of state, a measurement error budget, and the
+        flagship counterexample. Three ship committed results; the fourth cannot, and the
+        {" "}<a href={href("/studies/a2/")}>reason is on its own page</a>.
+      </li>
+      <li>
+        <strong>A verification runner with two profiles</strong>, so that "the code agrees with
+        itself" and "the code agrees with something it did not produce" are different reported
+        outcomes rather than one aggregate. It counts what it skipped and fails on a skip its
+        own policy does not explain.
+      </li>
+      <li>
+        <strong>A presentation export that reconciles before it writes.</strong> It re-runs the
+        study's own functions and checks {VERIFICATION.reconciliationChecks} quantities against
+        the audited run summary at {VERIFICATION.reconcileTolerance} before producing a single
+        figure data file, and it records the digest of the summary, of the study source and of
+        itself.
+      </li>
+      <li>
+        <strong>This site.</strong> No framework, no CDN, no analytics, no cookies, no remote
+        fonts and no client-side charting. Every figure is rendered to static SVG before the
+        build and inlined; the build fails rather than shipping a page whose exhibit is
+        missing or stale.
+      </li>
+      <li>
+        <strong>The corrections.</strong> A repository-wide claims audit re-read every sentence
+        against the run output and found arithmetic errors, mislabelled quantities and claims
+        that exceeded their evidence. Those are marked in place across the studies rather than
+        quietly rewritten, and several of them run against the author's own earlier
+        conclusions.
+      </li>
+    </ul>
+  </section>
+
+  <section id="method" aria-labelledby="method-h">
+    <h2 id="method-h">How the work is run</h2>
+
+    <p>
+      The working agreement in the repository is short and it is enforced by the scripts
+      rather than by good intentions. Every numerical method declares units, datum,
+      assumptions, validity domain, source and failure behaviour. Calculations live in the
+      library, not in hidden notebook cells. Synthetic data stays labelled synthetic. A
+      benchmark is not a field history match, and a shared input format is not evidence of
+      experience with a different simulator.
+    </p>
+
+    <p>
+      Three rules do most of the work. Do not claim runs that were not executed. Do not report
+      author-written tests as independent validation. Do not rewrite a trusted reference result
+      or widen its tolerance in the same unreviewed change as the code that failed it. An
+      unevaluated command is a proposed command, not a successful run.
+    </p>
+
+    <Callout kind="note" title="Roles are not reviewers">
+      <p>
+        The repository defines separate roles — implementer, verification reviewer,
+        interpretation reviewer, maintainer — and the author works through them in sequence.
+        <strong> Different role names do not create independent expertise or independent
+        evidence</strong>, and the repository says so in its own working agreement. Every
+        review pass here was the same person under a different heading. Where earlier drafts
+        described such a pass as "independent" or "external", both words have been withdrawn.
+      </p>
+    </Callout>
+  </section>
+
+  <section id="notclaimed" aria-labelledby="notclaimed-h">
+    <h2 id="notclaimed-h">What is not claimed</h2>
+
+    <p>
+      Listed rather than omitted, so that a reader can see the absence is deliberate.
+    </p>
+
+    <ul class="disclaimers">
+      <li><strong>No field validation.</strong> {NOT_RUN.fieldData}</li>
+      <li><strong>No external validation.</strong> {NOT_RUN.externalValidation}</li>
+      <li><strong>No peer review.</strong> {NOT_RUN.peerReview}</li>
+      <li><strong>No hosted continuous integration.</strong> {NOT_RUN.hostedCi}</li>
+      <li><strong>No deployment.</strong> {NOT_RUN.deployment}</li>
+      <li>
+        <strong>No employer, client, institution or project is named anywhere</strong>, and no
+        endorsement by any data provider, software vendor or employer is implied.
+      </li>
+      <li>
+        <strong>No experience with any commercial reservoir simulator is claimed.</strong> The
+        library reads and writes its own formats; a shared input format would not be evidence
+        of such experience and none is offered.
+      </li>
+      <li>
+        <strong>No priority claim.</strong> The flagship study's effect is documented in the
+        literature and the study positions itself against that work rather than presenting
+        itself as new.
+      </li>
+      <li>
+        <strong>No third-party dataset, simulator deck, book, paper or binary is
+        redistributed.</strong> Where a study would use one, the repository stores retrieval
+        instructions and checksums, and the third party's licence governs the material.
+      </li>
+    </ul>
+  </section>
+
+  <section id="licence" aria-labelledby="licence-h">
+    <h2 id="licence-h">Licence and citation</h2>
+
+    <p>
+      The repository's own code and text are MIT licensed, copyright 2026 azul. That licence
+      covers original repository material only. Referenced books, papers, software, datasets
+      and trademarks retain their own licences and notices, and the repository's licence is
+      not applied to imported material.
+    </p>
+
+    <p>
+      Where a result depends on reference fluid properties from the NIST Chemistry WebBook,
+      cite the WebBook and the per-species reference equation recorded in the repository's
+      reference manifest. Those values are not published here; see the
+      {" "}<a href={href("/studies/a2/")}>A2 availability page</a>.
+    </p>
+
+  </section>
+
+  <style>
+    .disclaimers li + li {
+      margin-block-start: var(--space-3);
+    }
+  </style>
+</BaseLayout>

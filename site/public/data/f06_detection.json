@@ -1,0 +1,91 @@
+{
+  "original": {
+    "source_pointer": "/residuals_and_detectability/noise_sweep",
+    "rows": [
+      {
+        "pressure_sigma_psi": 1,
+        "detection_rate_water_drive": 1,
+        "detection_rate_volumetric_null": 0.0675
+      },
+      {
+        "pressure_sigma_psi": 2,
+        "detection_rate_water_drive": 1,
+        "detection_rate_volumetric_null": 0.0675
+      },
+      {
+        "pressure_sigma_psi": 5,
+        "detection_rate_water_drive": 0.9775,
+        "detection_rate_volumetric_null": 0.0675
+      },
+      {
+        "pressure_sigma_psi": 10,
+        "detection_rate_water_drive": 0.555,
+        "detection_rate_volumetric_null": 0.0675
+      },
+      {
+        "pressure_sigma_psi": 20,
+        "detection_rate_water_drive": 0.21,
+        "detection_rate_volumetric_null": 0.0675
+      },
+      {
+        "pressure_sigma_psi": 40,
+        "detection_rate_water_drive": 0.085,
+        "detection_rate_volumetric_null": 0.0675
+      },
+      {
+        "pressure_sigma_psi": 80,
+        "detection_rate_water_drive": 0.0725,
+        "detection_rate_volumetric_null": 0.0675
+      }
+    ],
+    "replicates": 400,
+    "seed_note": "One seed, reset identically at every sigma."
+  },
+  "post_review_power_curve": {
+    "source_pointer": "/post_review_sensitivities/power_curve",
+    "rows": [
+      {
+        "pressure_sigma_psi": 8,
+        "detection_rate": 0.75375
+      },
+      {
+        "pressure_sigma_psi": 9,
+        "detection_rate": 0.66375
+      },
+      {
+        "pressure_sigma_psi": 10,
+        "detection_rate": 0.58975
+      },
+      {
+        "pressure_sigma_psi": 11,
+        "detection_rate": 0.51625
+      },
+      {
+        "pressure_sigma_psi": 11.5,
+        "detection_rate": 0.48075
+      },
+      {
+        "pressure_sigma_psi": 12,
+        "detection_rate": 0.4555
+      },
+      {
+        "pressure_sigma_psi": 12.5,
+        "detection_rate": 0.43175
+      },
+      {
+        "pressure_sigma_psi": 13,
+        "detection_rate": 0.4055
+      },
+      {
+        "pressure_sigma_psi": 14,
+        "detection_rate": 0.36125
+      },
+      {
+        "pressure_sigma_psi": 16,
+        "detection_rate": 0.297
+      }
+    ],
+    "replicates": 4000,
+    "note": "A separate post-review experiment with its own replicate count and seed. It is not spliced into the original sweep."
+  }
+}

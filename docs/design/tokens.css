@@ -1,0 +1,276 @@
+/* Design tokens for the case site.
+ *
+ * Every colour pair in this file was measured with a WCAG 2.x relative-luminance
+ * contrast calculator before being written down; the measured ratios are in the comments
+ * and the full measurement table is in docs/design/decisions.md. The calculator was
+ * checked against published reference values first (#767676 on white = 4.54:1,
+ * #777777 on white = 4.48:1, #0000FF on white = 8.59:1, black on white = 21:1), so the
+ * numbers below are measurements and not assertions.
+ *
+ * Targets: 4.5:1 normal text, 3:1 large text, 3:1 non-text marks and focus rings.
+ * No value here was relaxed to make a target pass. Where a candidate failed, the colour
+ * was changed; decisions.md records which ones and why.
+ *
+ * Light canvas only. There is deliberately no dark palette: a dark set would need its own
+ * full measurement pass, and shipping untested dark values would defeat the point of
+ * measuring the light ones.
+ */
+
+:root {
+  /* ---------------------------------------------------------------------
+   * Grounds
+   * ------------------------------------------------------------------ */
+
+  /* Page ground. Warm off-white, not pure white, so that white cards and the
+   * plot area read as raised without needing a shadow. */
+  --c-canvas: #fbfaf8;
+
+  /* Cards, figure frames and the plot area itself. Plots always sit on this,
+   * never on --c-sunken; the series greys are measured against white. */
+  --c-surface: #ffffff;
+  --c-plot-bg: var(--c-surface);
+
+  /* Recessed panels: code blocks, data tables, the provenance block.
+   * Never used as a plot ground. */
+  --c-sunken: #f2f1ed;
+
+  /* ---------------------------------------------------------------------
+   * Ink
+   * ------------------------------------------------------------------ */
+
+  --c-ink: #14181c; /* 17.10:1 on canvas, 17.84:1 on surface, 15.78:1 on sunken */
+  --c-ink-2: #434c55; /* 8.38:1 on canvas, 8.74:1 on surface -- secondary prose, table body, axis ticks */
+  --c-ink-3: #5b646d; /* 5.77:1 on canvas, 6.02:1 on surface, 5.33:1 on sunken -- captions, caveat lines, axis titles */
+
+  /* ---------------------------------------------------------------------
+   * Rules and borders
+   * ------------------------------------------------------------------ */
+
+  /* Hairline between sections and table rows. Decorative; carries no information. */
+  --c-rule: #e1dfda;
+
+  /* Chart gridlines. 1.25:1 on the plot ground -- deliberately below the 3:1
+   * non-text threshold, and therefore declared non-information-bearing:
+   * every value a gridline would convey is also on a tick label, in the caption
+   * and in the data table. Mark these aria-hidden. */
+  --c-gridline: #e4e6e8;
+
+  /* Control outlines, input borders, axis lines, zero rules. These do carry
+   * information or delimit a control, so they meet 3:1.
+   * 3.51:1 on surface, 3.37:1 on canvas, 3.11:1 on sunken. */
+  --c-border-strong: #8a8981;
+
+  /* ---------------------------------------------------------------------
+   * Blue emphasis -- the observed data, links, and the primary control state
+   * ------------------------------------------------------------------ */
+
+  --c-blue: #17518f; /* text 7.71:1 on canvas, 8.05:1 on surface; as a mark 8.05:1 on plot ground */
+  --c-blue-strong: #0e3a6b; /* 10.96:1 on canvas -- hover, active, visited */
+  --c-blue-tint: #e8eef6; /* band fill; ink-2 on it 7.49:1, blue on it 6.89:1 */
+
+  /* ---------------------------------------------------------------------
+   * The one contrasting colour: the mismatched / structurally wrong model
+   *
+   * Reserved meaning. It marks the volumetric straight-line fit and anything
+   * derived from it, and nothing else. It is never used for emphasis, for a
+   * call to action, or to mean "bad" in a UI sense.
+   * ------------------------------------------------------------------ */
+
+  --c-contrast: #a8400f; /* text 5.91:1 on canvas, 6.17:1 on surface */
+  --c-contrast-mark: #c04e13; /* mark 4.84:1 on plot ground, 4.64:1 on canvas */
+  --c-contrast-tint: #fbede5; /* band fill; ink-2 on it 7.63:1, contrast text on it 5.39:1 */
+
+  /* ---------------------------------------------------------------------
+   * Neutral context
+   * ------------------------------------------------------------------ */
+
+  /* Non-emphasised series: the seven scenarios that are not in focus, the
+   * volumetric null control, the coarse refinement levels.
+   * 3.69:1 on the plot ground, 3.54:1 on canvas, 3.26:1 on sunken, 3.18:1 on a band. */
+  --c-series-context: #7f868c;
+
+  /* Neutral band fill for a highlighted x-range (calibration window, refinement span).
+   * 1.16:1 against the plot ground -- decorative; the range it marks is also stated
+   * in the caption and delimited by a labelled --c-border-strong rule. */
+  --c-band-neutral: #efeeea;
+
+  /* ---------------------------------------------------------------------
+   * Focus
+   * ------------------------------------------------------------------ */
+
+  --c-focus: #0b4fa8; /* 7.46:1 on canvas, 7.78:1 on surface, 6.67:1 on blue tint */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  --focus-ring: var(--focus-ring-width) solid var(--c-focus);
+
+  /* ---------------------------------------------------------------------
+   * Chart series roles
+   *
+   * Four roles, in a monotonic relative-luminance ladder so the figures survive
+   * greyscale printing and screenshotting:
+   *   truth   0.0089  ->  observed 0.0805  ->  wrong model 0.1670  ->  context 0.2346
+   * Colour is never the only channel: each role also carries a fixed dash pattern
+   * and a fixed marker shape, both declared below, plus a direct label.
+   * ------------------------------------------------------------------ */
+
+  --c-series-truth: var(--c-ink); /* the known answer; 17.84:1 on the plot ground */
+  --c-series-observed: var(--c-blue); /* the synthetic history the analyst would see */
+  --c-series-model: var(--c-contrast-mark); /* the volumetric fit and its extrapolation */
+  --c-series-neutral: var(--c-series-context);
+
+  --dash-truth: 2 3; /* fine dotted */
+  --dash-observed: none; /* solid */
+  --dash-model: 7 4; /* long dash */
+  --dash-neutral: 1 4; /* sparse dotted */
+
+  --marker-truth: diamond;
+  --marker-observed: circle;
+  --marker-model: none; /* a fitted line carries no observations, so it gets no marker */
+  --marker-neutral: square;
+
+  --stroke-emphasis: 2px;
+  --stroke-default: 1.5px;
+  --stroke-context: 1px;
+  --marker-size: 5px; /* radius; 10px diameter, well above the 2px hairline minimum */
+
+  /* ---------------------------------------------------------------------
+   * Typography
+   *
+   * System stack only. No web font is loaded: a case page whose argument is
+   * reproducibility should not depend on a third-party font server, and the
+   * first paint should not wait on one.
+   * ------------------------------------------------------------------ */
+
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --font-mono:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono",
+    monospace;
+
+  /* Rem-based so that browser text zoom and user font-size settings both work
+   * (WCAG 2.2 SC 1.4.4). Nothing in the scale is expressed in px. */
+  --text-xs: 0.8125rem; /* 13px -- chart tick labels, table footnotes. Floor: nothing renders below this. */
+  --text-sm: 0.9375rem; /* 15px -- captions, caveat lines, data table body */
+  --text-base: 1.0625rem; /* 17px -- body prose */
+  --text-md: 1.1875rem; /* 19px -- lede paragraph, figure finding line */
+  --text-lg: 1.375rem; /* 22px -- h3 */
+  --text-xl: 1.75rem; /* 28px -- h2 */
+  --text-2xl: 2.25rem; /* 36px -- h1 */
+
+  --leading-tight: 1.2; /* headings */
+  --leading-snug: 1.35; /* figure finding lines, table cells */
+  --leading-body: 1.6; /* body prose */
+  --leading-loose: 1.65; /* captions and caveats, which are set smaller */
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+
+  --tracking-tight: -0.011em; /* large headings only */
+  --tracking-normal: 0;
+  --tracking-caps: 0.06em; /* the one small-caps label style: figure numbers, section eyebrows */
+
+  /* Tabular figures everywhere a number sits in a column or is compared to
+   * another number. Applied to tables, chart labels and inline statistics. */
+  --numeric: tabular-nums;
+
+  /* ---------------------------------------------------------------------
+   * Measure and layout
+   * ------------------------------------------------------------------ */
+
+  --shell-max: 1200px; /* content shell, within the 1180-1240 band */
+  --prose-max: 68ch; /* lands at roughly 65-75 characters at --text-base */
+  --figure-max: var(--shell-max); /* figures may use the full shell width */
+  --table-max: var(--shell-max);
+  --gutter: 1.5rem; /* 24px minimum side gutter */
+  --gutter-wide: 2.5rem;
+
+  --plot-aspect: 16 / 9; /* default; F02 and F07 override, see figure_spec.md */
+  --plot-aspect-wide: 21 / 9;
+  --plot-aspect-square: 4 / 3;
+
+  /* ---------------------------------------------------------------------
+   * Spacing scale -- 4px base, generous at the section level
+   * ------------------------------------------------------------------ */
+
+  --space-1: 0.25rem; /* 4px */
+  --space-2: 0.5rem; /* 8px */
+  --space-3: 0.75rem; /* 12px */
+  --space-4: 1rem; /* 16px */
+  --space-5: 1.5rem; /* 24px */
+  --space-6: 2rem; /* 32px */
+  --space-7: 3rem; /* 48px */
+  --space-8: 4rem; /* 64px */
+  --space-9: 6rem; /* 96px -- between top-level sections */
+
+  --figure-gap: var(--space-7); /* figure to its caption block */
+  --section-gap: var(--space-9);
+  --plot-padding: var(--space-5); /* inside the plot frame, so marks never touch the rule */
+
+  /* ---------------------------------------------------------------------
+   * Rules, radii and elevation
+   * ------------------------------------------------------------------ */
+
+  --rule-hairline: 1px solid var(--c-rule);
+  --rule-strong: 1px solid var(--c-border-strong);
+  --rule-axis: 1px solid var(--c-border-strong);
+  --rule-grid: 1px solid var(--c-gridline);
+
+  /* A single hairline top rule is the section divider. There is no other divider style. */
+  --rule-section: 1px solid var(--c-rule);
+
+  /* Near-square corners only. No pill shapes, no heavy rounded tiles. */
+  --radius-sm: 2px;
+  --radius-md: 3px;
+
+  /* No shadow token is defined. Elevation is expressed by the surface/canvas
+   * difference and by a hairline rule, not by a drop shadow or a glass blur. */
+
+  /* ---------------------------------------------------------------------
+   * Controls
+   * ------------------------------------------------------------------ */
+
+  /* 44px. This is stricter than WCAG 2.2 SC 2.5.8 Target Size (Minimum),
+   * whose retrieved normative text is 24 by 24 CSS pixels at level AA.
+   * It is applied here as a project rule, not quoted as a WCAG figure.
+   * --target-min-aa is the measured conformance floor for the cases where 44px
+   * is not practical (inline links in running prose, which SC 2.5.8 exempts). */
+  --target-min: 44px;
+  --target-min-aa: 24px;
+
+  --control-height: var(--target-min);
+  --control-padding-x: var(--space-4);
+  --control-gap: var(--space-2);
+
+  /* ---------------------------------------------------------------------
+   * Motion
+   *
+   * The only permitted transitions are state feedback on controls, under 150ms.
+   * No entrance animation, no scroll-triggered reveal, no animated counters,
+   * no parallax, no scroll hijacking.
+   * ------------------------------------------------------------------ */
+
+  --motion-fast: 120ms;
+  --motion-ease: cubic-bezier(0.2, 0, 0.38, 1);
+  --motion-state: color var(--motion-fast) var(--motion-ease),
+    background-color var(--motion-fast) var(--motion-ease),
+    border-color var(--motion-fast) var(--motion-ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0ms;
+    --motion-state: none;
+  }
+}
+
+/* Forced-colours mode discards the palette. Keep the non-colour channels, which
+ * is the whole reason every series has a dash pattern, a marker and a label. */
+@media (forced-colors: active) {
+  :root {
+    --c-gridline: CanvasText;
+    --c-border-strong: CanvasText;
+    --c-focus: Highlight;
+  }
+}

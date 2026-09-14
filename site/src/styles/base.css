@@ -1,0 +1,1145 @@
+/* Base typography and layout for the case site.
+ *
+ * Everything here reads from tokens.css. No literal colour, type size, spacing step or
+ * measure appears below except where a value is a structural constant with no design
+ * meaning (a 1px hairline offset, a 100% width, a media-query breakpoint).
+ *
+ * Design constraints this file implements, from docs/design/decisions.md:
+ *   D22  system font stack only, no web font, no font server
+ *   D23  17px body, 1.6 line height, 68ch measure, 1200px shell
+ *   D25  tabular figures wherever numbers are compared
+ *   D26  44px targets except inline links in running prose
+ *   D27  no gradient, blur, heavy rounding, animated counter, gauge or parallax
+ *   D28  light canvas only; no dark palette ships in this pass
+ *
+ * There is no horizontal page overflow at any width. A table or a figure that is
+ * intrinsically wider than the viewport scrolls inside its own labelled region, never
+ * by moving the page.
+ */
+
+/* ---------------------------------------------------------------------------
+ * 1. Reset
+ * ------------------------------------------------------------------------ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  /* No font-size override. The rem scale in tokens.css is relative to the reader's
+     own browser setting, which is the whole reason the scale is in rem (SC 1.4.4). */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  /* The skip link and the in-page contents rail both jump to headings. Without this,
+     a heading lands flush against the top edge of the viewport. */
+  scroll-padding-top: var(--space-5);
+  /* No overflow-x:hidden here. It was doing the opposite of what it looks like: instead of
+     preventing overflow it made overflow UNREACHABLE, so a table wider than a 375px viewport
+     was clipped with no way to scroll to its values. WCAG 2.2 SC 1.4.10 asks for content that
+     reflows without a two-dimensional scroll; where a table or a chart is intrinsically wide,
+     the answer is a labelled scroll region around THAT element, which is what
+     .table-region and .figure__frame provide. Hiding the symptom hides the evidence. */
+}
+
+body {
+  margin: 0;
+  background: var(--c-canvas);
+  color: var(--c-ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  font-weight: var(--weight-regular);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  overflow-wrap: break-word;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ---------------------------------------------------------------------------
+ * 2. Headings and prose
+ * ------------------------------------------------------------------------ */
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  color: var(--c-ink);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--text-2xl);
+  letter-spacing: var(--tracking-tight);
+  max-width: var(--prose-max);
+}
+
+h2 {
+  font-size: var(--text-xl);
+  letter-spacing: var(--tracking-tight);
+  margin-block-start: var(--space-8);
+  margin-block-end: var(--space-4);
+  max-width: var(--prose-max);
+}
+
+h3 {
+  font-size: var(--text-lg);
+  margin-block-start: var(--space-6);
+  margin-block-end: var(--space-3);
+  max-width: var(--prose-max);
+}
+
+h4 {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  margin-block-start: var(--space-5);
+  margin-block-end: var(--space-2);
+  max-width: var(--prose-max);
+}
+
+p,
+ul,
+ol,
+dl,
+blockquote {
+  margin-block: 0 var(--space-4);
+  max-width: var(--prose-max);
+}
+
+ul,
+ol {
+  padding-inline-start: var(--space-5);
+}
+
+li {
+  margin-block-end: var(--space-2);
+}
+
+li > ul,
+li > ol {
+  margin-block: var(--space-2) 0;
+}
+
+strong,
+b {
+  font-weight: var(--weight-semibold);
+}
+
+small {
+  font-size: var(--text-sm);
+}
+
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  font-variant-numeric: var(--numeric);
+}
+
+code {
+  background: var(--c-sunken);
+  padding: 0.1em 0.3em;
+  border-radius: var(--radius-sm);
+}
+
+pre {
+  background: var(--c-sunken);
+  border: var(--rule-hairline);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-block: 0 var(--space-5);
+  overflow-x: auto;
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+}
+
+pre code {
+  background: none;
+  padding: 0;
+}
+
+/* An eyebrow: the one small-caps label style in the system. */
+.eyebrow {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--c-ink-3);
+  margin-block-end: var(--space-2);
+}
+
+.lede {
+  font-size: var(--text-md);
+  color: var(--c-ink-2);
+  line-height: var(--leading-body);
+}
+
+/* Every number compared with another number is tabular (D25). */
+.num,
+table,
+figcaption,
+.stat {
+  font-variant-numeric: var(--numeric);
+}
+
+/* ---------------------------------------------------------------------------
+ * 3. Links and focus
+ * ------------------------------------------------------------------------ */
+
+a {
+  color: var(--c-blue);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  transition: var(--motion-state);
+}
+
+a:hover,
+a:active {
+  color: var(--c-blue-strong);
+}
+
+a:visited {
+  color: var(--c-blue-strong);
+}
+
+/* The focus ring is the token ring, on every focusable thing, always visible.
+   :focus-visible for pointer users, :focus as the fallback for older engines. */
+:focus {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.skip-link {
+  position: absolute;
+  inset-inline-start: var(--space-4);
+  inset-block-start: var(--space-4);
+  z-index: 10;
+  transform: translateY(-200%);
+  background: var(--c-surface);
+  color: var(--c-blue);
+  border: var(--rule-strong);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  min-height: var(--target-min);
+  display: inline-flex;
+  align-items: center;
+  font-weight: var(--weight-medium);
+  text-decoration: none;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+/* ---------------------------------------------------------------------------
+ * 4. Shell and page frame
+ * ------------------------------------------------------------------------ */
+
+.shell {
+  width: 100%;
+  max-width: var(--shell-max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+@media (min-width: 60rem) {
+  .shell {
+    padding-inline: var(--gutter-wide);
+  }
+}
+
+.site-header {
+  border-block-end: var(--rule-section);
+  background: var(--c-canvas);
+}
+
+.site-header__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-3) var(--space-5);
+  padding-block: var(--space-4);
+}
+
+.site-header__mark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: var(--weight-semibold);
+  color: var(--c-ink);
+  text-decoration: none;
+  min-height: var(--target-min);
+}
+
+.site-header__mark:hover {
+  color: var(--c-blue-strong);
+  text-decoration: underline;
+}
+
+.site-nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: none;
+}
+
+.site-nav li {
+  margin: 0;
+}
+
+.site-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min);
+  text-decoration: none;
+}
+
+.site-nav a:hover,
+.site-nav a[aria-current="page"] {
+  text-decoration: underline;
+}
+
+.site-nav a[aria-current="page"] {
+  color: var(--c-ink);
+  font-weight: var(--weight-semibold);
+}
+
+.site-footer {
+  border-block-start: var(--rule-section);
+  margin-block-start: var(--section-gap);
+  padding-block: var(--space-6) var(--space-8);
+  color: var(--c-ink-3);
+  font-size: var(--text-sm);
+  line-height: var(--leading-loose);
+}
+
+.site-footer a {
+  color: var(--c-blue);
+}
+
+.page {
+  padding-block: var(--space-7) 0;
+}
+
+/* Two-column layout: the contents rail beside the article. Single column below
+   64rem, where the rail becomes the disclosure in section 5. */
+.page--with-rail {
+  display: block;
+}
+
+@media (min-width: 64rem) {
+  .page--with-rail {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 15rem;
+    gap: var(--space-8);
+    align-items: start;
+  }
+
+  .page--with-rail > .contents {
+    grid-column: 2;
+    grid-row: 1;
+    position: sticky;
+    top: var(--space-5);
+  }
+
+  .page--with-rail > .page__body {
+    grid-column: 1;
+    grid-row: 1;
+    min-width: 0; /* lets a wide table's scroll region shrink instead of pushing the grid */
+  }
+}
+
+.page__body > * {
+  /* Every direct child is either prose (already capped at --prose-max) or a
+     full-width exhibit that caps itself. */
+  max-width: 100%;
+}
+
+section {
+  margin-block-end: var(--section-gap);
+}
+
+section > :last-child {
+  margin-block-end: 0;
+}
+
+hr {
+  border: 0;
+  border-block-start: var(--rule-section);
+  margin-block: var(--space-7);
+}
+
+/* ---------------------------------------------------------------------------
+ * 5. Contents rail / disclosure
+ *
+ * One element, two presentations, no JavaScript. Below 64rem it is a real <details>
+ * disclosure, closed by default, with a 44px summary target. At 64rem and above the
+ * summary is removed from the layout and the list is forced visible, so the rail is
+ * simply a navigation landmark and the open/closed state stops mattering.
+ * ------------------------------------------------------------------------ */
+
+.contents {
+  margin-block-end: var(--space-6);
+}
+
+.contents__disclosure {
+  border: var(--rule-hairline);
+  border-radius: var(--radius-md);
+  background: var(--c-surface);
+}
+
+.contents__summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--target-min);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--c-ink-2);
+  cursor: pointer;
+  list-style: none;
+}
+
+.contents__summary::-webkit-details-marker {
+  display: none;
+}
+
+/* A rotating caret is state feedback on a control, which is the one motion the
+   tokens permit, and it collapses to nothing under prefers-reduced-motion. */
+.contents__summary::before {
+  content: "";
+  width: 0.5em;
+  height: 0.5em;
+  border-inline-end: 2px solid currentColor;
+  border-block-end: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform var(--motion-fast) var(--motion-ease);
+}
+
+.contents__disclosure[open] > .contents__summary::before {
+  transform: rotate(45deg);
+}
+
+.contents__list {
+  list-style: none;
+  margin: 0;
+  padding: 0 var(--space-4) var(--space-4);
+  max-width: none;
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+}
+
+.contents__list li {
+  margin-block-end: 0;
+  border-block-start: var(--rule-hairline);
+}
+
+.contents__list li:first-child {
+  border-block-start: 0;
+}
+
+.contents__list a {
+  display: block;
+  padding-block: var(--space-3);
+  min-height: var(--target-min);
+  text-decoration: none;
+  color: var(--c-ink-2);
+}
+
+.contents__list a:hover {
+  color: var(--c-blue-strong);
+  text-decoration: underline;
+}
+
+@media (min-width: 64rem) {
+  .contents__disclosure {
+    border: 0;
+    border-inline-start: var(--rule-hairline);
+    border-radius: 0;
+    background: none;
+  }
+
+  .contents__summary {
+    display: none;
+  }
+
+  /* Force the list visible regardless of the details element's open state: the UA
+     rule is `details:not([open]) > *:not(summary) { display: none }`, and this
+     overrides it. With the summary gone there is no control to operate, so no state
+     is being contradicted. */
+  .contents__disclosure > .contents__list,
+  .contents__disclosure:not([open]) > .contents__list {
+    display: block;
+    padding: 0 0 0 var(--space-4);
+  }
+
+  /* And the same override on the wrapper the engines actually hide with. Chromium,
+     Firefox and WebKit no longer apply `display: none` to a closed disclosure's
+     children: they put them inside the ::details-content pseudo-element and set
+     `content-visibility: hidden` on it, which the rule above cannot reach. Without this
+     the rail had a 240px grid column, eight list items, a layout box 361px tall -- and
+     painted nothing at all: measured at 1440 in all three engines, `checkVisibility()`
+     false in each. The same mechanism is overridden for print in section 12. */
+  .contents__disclosure::details-content {
+    content-visibility: visible;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * 6. Tables and labelled scroll regions
+ * ------------------------------------------------------------------------ */
+
+.scroll-region {
+  overflow-x: auto;
+  max-width: 100%;
+  border: var(--rule-hairline);
+  border-radius: var(--radius-md);
+  background: var(--c-surface);
+  /* The region is focusable so a keyboard-only reader can scroll it. It is labelled,
+     so it is announced as a region rather than as an unnamed focusable div. */
+}
+
+.scroll-region:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: calc(var(--focus-ring-offset) * -1);
+}
+
+.scroll-region__hint {
+  font-size: var(--text-xs);
+  color: var(--c-ink-3);
+  margin-block: var(--space-2) 0;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+  color: var(--c-ink-2);
+}
+
+caption {
+  text-align: start;
+  font-size: var(--text-sm);
+  color: var(--c-ink-3);
+  line-height: var(--leading-loose);
+  padding: var(--space-3) var(--space-4);
+  border-block-end: var(--rule-hairline);
+}
+
+caption .caption__title {
+  display: block;
+  color: var(--c-ink);
+  font-weight: var(--weight-semibold);
+}
+
+th,
+td {
+  text-align: start;
+  padding: var(--space-2) var(--space-4);
+  border-block-start: var(--rule-hairline);
+  vertical-align: baseline;
+}
+
+thead th {
+  color: var(--c-ink);
+  font-weight: var(--weight-semibold);
+  border-block-end: var(--rule-strong);
+  position: sticky;
+  top: 0;
+  background: var(--c-surface);
+}
+
+/* The unit belongs in the header, under the label, on every numeric column (D03). */
+th .unit {
+  display: block;
+  font-weight: var(--weight-regular);
+  font-size: var(--text-xs);
+  color: var(--c-ink-3);
+  white-space: nowrap;
+}
+
+tbody th[scope="row"] {
+  color: var(--c-ink);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+}
+
+td.num,
+th.num {
+  text-align: end;
+  white-space: nowrap;
+}
+
+/* A cell whose value is genuinely absent says so in words. An empty cell is
+   indistinguishable from a rendering failure, which matters most in F05, where the
+   calibration region has no reconstruction by construction. */
+td.na {
+  color: var(--c-ink-3);
+  font-style: normal;
+}
+
+tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--c-sunken) 55%, transparent);
+}
+
+/* ---------------------------------------------------------------------------
+ * 7. Figure block
+ * ------------------------------------------------------------------------ */
+
+.figure {
+  margin: 0 0 var(--section-gap);
+  max-width: var(--figure-max);
+}
+
+.figure__frame {
+  background: var(--c-plot-bg);
+  border: var(--rule-hairline);
+  border-radius: var(--radius-md);
+  padding: var(--plot-padding);
+  overflow-x: auto;
+  max-width: 100%;
+
+  /* The drawing's own numbers, not design values: every generated exhibit is authored on
+     a 1000-unit canvas (checked in injected.spec.ts, which fails if one is not) and its
+     labels are 13 of those units, which is 13px on screen at the browser's default root
+     size and is the D24 floor. They are declared here so the two rules below can stay in
+     the drawing's units instead of restating a pixel size. */
+  --exhibit-units: 1000;
+  --exhibit-label-units: 13;
+}
+
+.figure__frame:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: calc(var(--focus-ring-offset) * -1);
+}
+
+.figure__frame svg {
+  display: block;
+  /* Deliberately NOT max-width:100%. These figures are authored at 1000px with a viewBox, so
+     scaling the element down scales its text with it: at 375px the frame is about a third of
+     the design width and a 13px label would render at 3px, which fails the legibility floor
+     this project set for itself (D24). The figure keeps its authored size and the frame
+     scrolls instead -- the frame is focusable, so the scroll is keyboard-reachable. A
+     genuinely mobile-first redraw of each chart is the better long-term answer and is
+     recorded as future work rather than faked by shrinking. */
+  max-width: none;
+  /* The canvas carries the reader's text-size preference, and the labels below do not.
+     `1000 * 1rem / 16` is 1000px at the browser's default root size, so at the default this
+     is exactly the authored width and nothing about the page changes; at 200 percent text
+     it is 2000px and the whole drawing -- labels, plot, annotations, all in the same
+     proportion -- is twice the size, which is what SC 1.4.4 asks for.
+
+     The alternative, which this file used to do, was to leave the canvas fixed and size the
+     labels in rem. That resizes the text and loses the content: a 13-unit label becomes a
+     26-unit label inside a canvas that is still 1000 units wide, so it runs off the edge and
+     the SVG's own `overflow: hidden` cuts it. Measured before this change, at 200 percent
+     text 182 labels and annotations across the site were painted outside their drawing and
+     clipped; after it, 2 are, and those 2 are the pre-existing F7 pair that is clipped at
+     every text size. */
+  width: calc(var(--exhibit-units) * 1rem / 16);
+  height: auto;
+}
+
+/* Chart labels never render below 13px (D24). Plot's own defaults are overridden here
+   rather than trusted.
+
+   The size is in USER UNITS, not in rem. A CSS length on an SVG text element is resolved in
+   the drawing's own coordinate system, so 13px here means 13 of the canvas's 1000 units and
+   the label keeps its proportion to the plot at every text size. What the reader sees is
+   13 units x the canvas scale above: 13px at the default root size, 26px at 200 percent.
+   injected.spec.ts pins that back to --text-xs so the constant and the token cannot drift. */
+.figure__frame svg text {
+  font-family: var(--font-sans);
+  font-size: calc(var(--exhibit-label-units) * 1px);
+  font-variant-numeric: var(--numeric);
+  fill: var(--c-ink-2);
+}
+
+.figure__head {
+  margin-block-end: var(--space-4);
+}
+
+.figure__title {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  margin: 0;
+}
+
+.figure__caption {
+  margin-block-start: var(--figure-gap);
+  max-width: var(--prose-max);
+  font-size: var(--text-sm);
+  color: var(--c-ink-3);
+  line-height: var(--leading-loose);
+}
+
+.figure__interpretation {
+  font-size: var(--text-md);
+  color: var(--c-ink);
+  line-height: var(--leading-snug);
+  margin-block-end: var(--space-3);
+}
+
+.figure__units {
+  display: block;
+  margin-block-end: var(--space-3);
+}
+
+.figure__caveat {
+  border-inline-start: 2px solid var(--c-border-strong);
+  padding-inline-start: var(--space-4);
+  margin-block: var(--space-4);
+  color: var(--c-ink-2);
+}
+
+.figure__caveat .caveat__label {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--c-ink-3);
+  margin-block-end: var(--space-1);
+}
+
+.figure__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  margin-block-start: var(--space-4);
+  padding-block-start: var(--space-3);
+  border-block-start: var(--rule-hairline);
+  font-size: var(--text-xs);
+  list-style: none;
+  padding-inline: 0;
+  max-width: none;
+}
+
+/* A flex item's `min-width: auto` is its content's max-content width, so a long download
+   name could not be made narrower than itself and pushed the page sideways instead of
+   wrapping. Measured at 320px with the reader's text at 200 percent, where
+   "Download the data - a3_01_error_budget_ranking.json" made a 419px item on a 320px
+   screen and the page scrolled. The same rule was already needed on .explorer__panel for
+   the same reason; this is the second place it applies.
+
+   `overflow-wrap: anywhere` rather than `break-word` is deliberate: only `anywhere`
+   participates in min-content sizing, so it lets the item shrink as well as letting the
+   text break. A file name is exactly the kind of unbreakable string this is for. */
+.figure__meta li {
+  margin: 0;
+  min-width: 0;
+}
+
+.figure__meta a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--target-min-aa);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* The data-table disclosure under a figure. A labelled control, not a hover. */
+.disclosure {
+  margin-block-start: var(--space-5);
+  border: var(--rule-hairline);
+  border-radius: var(--radius-md);
+  background: var(--c-surface);
+}
+
+.disclosure > summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--target-min);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--c-blue);
+  cursor: pointer;
+  list-style: none;
+}
+
+.disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+.disclosure > summary::before {
+  content: "";
+  flex: none;
+  width: 0.5em;
+  height: 0.5em;
+  border-inline-end: 2px solid currentColor;
+  border-block-end: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform var(--motion-fast) var(--motion-ease);
+}
+
+.disclosure[open] > summary::before {
+  transform: rotate(45deg);
+}
+
+.disclosure > summary:hover {
+  color: var(--c-blue-strong);
+  text-decoration: underline;
+}
+
+.disclosure__body {
+  padding: 0 var(--space-4) var(--space-4);
+}
+
+.disclosure__body > .scroll-region {
+  border-radius: var(--radius-sm);
+}
+
+/* ---------------------------------------------------------------------------
+ * 8. Callouts
+ *
+ * Not decorative. A callout carries a limitation, a caveat or a superseded claim,
+ * and its kind is stated in its own label text, never by colour alone.
+ * ------------------------------------------------------------------------ */
+
+.callout {
+  margin-block: var(--space-5);
+  padding: var(--space-4) var(--space-5);
+  border: var(--rule-hairline);
+  border-inline-start: 3px solid var(--c-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--c-sunken);
+  color: var(--c-ink-2);
+  max-width: var(--prose-max);
+}
+
+.callout > :last-child {
+  margin-block-end: 0;
+}
+
+.callout__label {
+  display: block;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--c-ink-3);
+  margin-block-end: var(--space-2);
+}
+
+.callout__title {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--c-ink);
+  margin-block-end: var(--space-2);
+}
+
+/* A limitation is the default treatment: recessed panel, strong left rule. */
+.callout--limitation {
+  border-inline-start-color: var(--c-ink-2);
+}
+
+/* A note about the reading of the page, not about the physics. */
+.callout--note {
+  background: var(--c-blue-tint);
+  border-inline-start-color: var(--c-blue);
+}
+
+.callout--note .callout__label {
+  color: var(--c-blue);
+}
+
+/* The contrast colour is reserved for the mismatched model and anything derived from
+   it (tokens.css). A superseded claim is exactly that: a statement the corrected
+   analysis replaced. It is not used to mean "bad" anywhere else in this system. */
+.callout--superseded {
+  background: var(--c-contrast-tint);
+  border-inline-start-color: var(--c-contrast);
+}
+
+.callout--superseded .callout__label {
+  color: var(--c-contrast);
+}
+
+/* ---------------------------------------------------------------------------
+ * 9. Status table
+ *
+ * State is carried by the word, never by colour. There is no green tick, no badge and
+ * no composite score: a reader is shown each check, its scope, the environment it ran
+ * in, and a link to the evidence.
+ * ------------------------------------------------------------------------ */
+
+.status-table td .status,
+.status {
+  display: inline-block;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid currentColor;
+  border-radius: var(--radius-sm);
+}
+
+.status--pass {
+  color: var(--c-ink-2);
+}
+
+.status--fail {
+  color: var(--c-ink);
+  border-width: 2px;
+}
+
+.status--not-run,
+.status--blocked,
+.status--not-applicable {
+  color: var(--c-ink-3);
+  border-style: dashed;
+}
+
+.status-table .status-note {
+  display: block;
+  margin-block-start: var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--c-ink-3);
+}
+
+/* ---------------------------------------------------------------------------
+ * 10. Utilities
+ * ------------------------------------------------------------------------ */
+
+.visually-hidden:not(:focus):not(:focus-within) {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.stack > * + * {
+  margin-block-start: var(--space-4);
+}
+
+.measure {
+  max-width: var(--prose-max);
+}
+
+.full-bleed {
+  max-width: var(--shell-max);
+}
+
+/* ---------------------------------------------------------------------------
+ * 11. Reduced motion
+ *
+ * tokens.css already zeroes --motion-fast and --motion-state. This removes the two
+ * behaviours that are not expressed through those tokens.
+ * ------------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * 12. Print
+ *
+ * The printed page is how this case most often reaches a reviewer: one figure,
+ * screenshotted or printed, inside somebody else's document. So the limitations, the
+ * caveats and the evidence class print with the exhibit, and every disclosure prints
+ * open. Nothing that carries a qualification is hidden on paper.
+ * ------------------------------------------------------------------------ */
+
+@media print {
+  html,
+  body {
+    background: #fff;
+    color: #000;
+    font-size: 10.5pt;
+  }
+
+  .site-header,
+  .site-footer,
+  .skip-link,
+  .contents,
+  .scroll-region__hint {
+    display: none !important;
+  }
+
+  .page,
+  .page--with-rail {
+    display: block !important;
+    padding: 0;
+  }
+
+  .shell {
+    max-width: none;
+    padding-inline: 0;
+  }
+
+  /* Force every disclosure open. The UA rule hides the non-summary children of a
+     closed <details> -- with display:none in most engines and content-visibility in
+     some -- so both are overridden. The summary itself stays on the paper as the
+     table's label; only its control affordances are stripped, because there is
+     nothing to operate on a sheet of paper. */
+  details > summary {
+    list-style: none;
+    cursor: default;
+    color: #000;
+    font-weight: 600;
+    padding-inline: 0;
+    min-height: 0;
+  }
+
+  details > summary::before {
+    display: none;
+  }
+
+  details > *:not(summary),
+  details:not([open]) > *:not(summary) {
+    display: block !important;
+    content-visibility: visible !important;
+  }
+
+  /* The rule above is necessary and, on its own, not sufficient. Current Chromium,
+     Firefox and WebKit do not hide a closed disclosure's children directly: they wrap
+     them in the ::details-content pseudo-element and set `content-visibility: hidden`
+     there, so overriding the CHILDREN leaves the wrapper hiding them anyway. Measured by
+     printing this page to PDF with the disclosures closed, which is the state a reader
+     prints from: F01's 49-row observation table was absent from the sheet and present
+     once the disclosures were opened by hand. Engines without the pseudo-element ignore
+     this rule, which is why the one above stays. */
+  details::details-content {
+    content-visibility: visible !important;
+  }
+
+  .disclosure,
+  .contents__disclosure {
+    border: 0;
+    background: none;
+  }
+
+  .disclosure__body {
+    padding: 0;
+  }
+
+  /* The parts that must never be dropped from a printout. */
+  .callout,
+  .figure__caveat,
+  .figure__caption,
+  .limitations,
+  .evidence-class,
+  .status-table {
+    display: block !important;
+    visibility: visible !important;
+    break-inside: avoid;
+    background: none;
+    border-color: #000;
+    color: #000;
+  }
+
+  .status-table {
+    display: table !important;
+  }
+
+  .figure,
+  figure {
+    break-inside: avoid;
+  }
+
+  .figure__frame {
+    border: 1px solid #000;
+    overflow: visible;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  table {
+    font-size: 9pt;
+  }
+
+  thead th {
+    position: static;
+  }
+
+  .scroll-region {
+    overflow: visible !important;
+    border-color: #000;
+  }
+
+  /* A printed link whose target is invisible is a dead reference. */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    word-break: break-all;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * 13. Forced colours
+ *
+ * tokens.css maps the palette onto system colours. This keeps the structural rules
+ * visible when the author's colours are discarded entirely.
+ * ------------------------------------------------------------------------ */
+
+@media (forced-colors: active) {
+  .callout,
+  .disclosure,
+  .scroll-region,
+  .figure__frame,
+  .status {
+    border: 1px solid CanvasText;
+  }
+
+  .status--fail {
+    border-width: 3px;
+  }
+}

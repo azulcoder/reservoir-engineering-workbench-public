@@ -1,0 +1,166 @@
+[build-system]
+requires = ["hatchling>=1.21"]
+build-backend = "hatchling.build"
+
+[project]
+name = "reservoir-performance-lab"
+version = "0.2.0"
+description = "Verified gas-reservoir engineering primitives and reproducible case studies"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [{ name = "azul" }]
+keywords = [
+    "reservoir-engineering",
+    "material-balance",
+    "pressure-transient-analysis",
+    "gas-reservoir",
+    "pvt",
+    "reproducible-research",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+]
+
+# Deliberately empty and intended to stay that way. See docs/api_contract.md C8:
+# the numerical core must be checkable with a stock interpreter, and a test walks the
+# import graph of every module under src/ to prove this list is honest.
+dependencies = []
+
+[project.optional-dependencies]
+# Used by the case studies under cases/ for plotting and for cross-checking the
+# stdlib core against an independent implementation. Never imported by src/.
+analysis = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "matplotlib>=3.8",
+]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.6",
+    "mypy>=1.11",
+    "pre-commit>=3.7",
+]
+
+[project.urls]
+Documentation = "https://github.com/azulcoder/reservoir-engineering-workbench/tree/main/docs"
+Source = "https://github.com/azulcoder/reservoir-engineering-workbench"
+
+[tool.hatch.build.targets.wheel]
+# The wheel is the library and nothing else: no data, no cases, no docs. Keeping it that
+# narrow is what makes the distribution easy to check -- there is no directory in it
+# where a restricted file could hide.
+packages = ["src/reservoir_lab"]
+exclude = ["**/__pycache__", "**/*.py[cod]"]
+
+[tool.hatch.build.targets.sdist]
+# Enumerated rather than filtered. A default sdist takes whatever is not VCS-ignored,
+# which on a working machine means local run output and a node_modules tree; naming the
+# contents means a new directory has to be added here deliberately before it ships.
+only-include = [
+    "src",
+    "tests",
+    "cases",
+    "configs",
+    "examples",
+    "docs",
+    "scripts",
+    "data/README.md",
+    "data/raw/README.md",
+    "data/reference/README.md",
+    "data/reference/MANIFEST.json",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "NOTICE.md",
+    "AGENTS.md",
+    "PLAN.md",
+    "pyproject.toml",
+    "requirements-dev.lock",
+    ".pre-commit-config.yaml",
+]
+# Belt and braces against the one thing that must never ship. The extract is not in the
+# tree and is not in the history, and if a working checkout acquires it locally, this
+# rule keeps it out of an archive built from that checkout as well. See
+# docs/release/PUBLIC_DATA_POLICY.md.
+exclude = [
+    "data/reference/*.tsv",
+    "**/*.tsv",
+    "**/__pycache__",
+    "**/*.py[cod]",
+    "**/.DS_Store",
+    ".venv",
+    "artifacts",
+    "site",
+    "dist",
+    "build",
+]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+pythonpath = ["src", "tests"]
+addopts = "-ra --strict-markers --strict-config"
+filterwarnings = [
+    "error::reservoir_lab.errors.RangeWarning",
+]
+
+[tool.ruff]
+# 110, as this project has used from the start. Error messages in this codebase carry
+# their own diagnosis and are deliberately long; wrapping them into fragments makes them
+# harder to grep for than the extra ten columns cost.
+line-length = 110
+target-version = "py311"
+src = ["src", "tests", "scripts"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W",    # pycodestyle
+    "F",         # pyflakes
+    "I",         # import order
+    "B",         # bugbear
+    "UP",        # pyupgrade
+    "SIM",       # simplify
+    "RUF",       # ruff-specific
+    "NPY",       # numpy legacy API
+    "N",         # pep8-naming
+    "D",         # pydocstyle
+    "ARG",       # unused arguments
+    "PTH",       # prefer pathlib
+]
+ignore = [
+    "D203",      # conflicts with D211
+    "D213",      # conflicts with D212
+    # Single-letter and short names are the correct names here. `k` is permeability,
+    # `h` is net pay, `T` is absolute temperature; renaming them to satisfy a linter
+    # would make the code harder for a reservoir engineer to check against a textbook.
+    "E741",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D100", "D101", "D102", "D103", "D104"]
+"scripts/*" = ["D103"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.coverage.run]
+source = ["src/reservoir_lab"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+# Coverage is a completeness check on the test suite, not evidence of correctness.
+# A fully covered wrong equation is fully covered and wrong.
+
+[tool.mypy]
+python_version = "3.11"
+files = ["src/reservoir_lab"]
+strict = true
+warn_unreachable = true

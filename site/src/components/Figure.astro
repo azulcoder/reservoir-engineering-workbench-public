@@ -1,0 +1,144 @@
+---
+/**
+ * One exhibit: the generated SVG, its units, its finding, its caveat, its long
+ * description, its data table and its downloads.
+ *
+ * Works with JavaScript disabled, and that is not an afterthought. The SVG is rendered
+ * to static markup by scripts/render-figures.mjs at build time and inlined here, the
+ * data table is real HTML inside a native <details>, and the downloads are plain links
+ * to files that exist in the output. Nothing on this component needs a script to run.
+ *
+ * The text alternative is the two-part structure from the W3C complex-images tutorial
+ * (docs/design/decisions.md, D11): a short description that identifies the figure and
+ * says where the long description is, plus a long description — the data table — that
+ * is structurally associated with the figure. The table is disclosed with a labelled
+ * control rather than hidden from sighted readers, because for this audience the
+ * numbers are a primary artefact and not an accommodation.
+ */
+import { assetHref, type SitePath } from "../lib/urls";
+
+export interface Props {
+  /** Figure id, e.g. "f01". Used to build every fragment id on this block. */
+  id: string;
+  /** Figure number as displayed, e.g. "F01". Defaults to the uppercased id. */
+  number?: string;
+  /** Figure title. Also the SVG's accessible name. */
+  title: string;
+  /** Inline SVG markup from loadFigure(id).svgMarkup. */
+  svg: string;
+  /** Units and standard-condition basis. Printed on every figure, per D03. */
+  units: string;
+  /** One sentence: what this figure shows. Rendered at --text-md above the caption. */
+  interpretation: string;
+  /** The figure's key caveat, per docs/design/figure_spec.md. */
+  caveat: string;
+  /**
+   * Long description: a textual representation of the essential information in the
+   * figure, for a reader who cannot see it. Visually hidden, because the same content
+   * is on the page in the data table below; it exists so the SVG carries a description
+   * that does not depend on the reader opening a disclosure.
+   */
+  longDescription: string;
+  /** Evidence class line. Defaults to the case's own wording. */
+  evidenceClass?: string;
+  /** Label on the data-table disclosure. */
+  tableLabel?: string;
+  /** Open the data table by default. Per D11: true at ten rows or fewer. */
+  tableOpen?: boolean;
+  /** Downloadable copy of this SVG. */
+  svgDownload?: SitePath;
+  /** Downloadable copy of the figure's source JSON. */
+  dataDownload?: SitePath;
+  /** Visible label for the data download, e.g. "f01_f02_scenarios.json". */
+  dataDownloadLabel?: string;
+  /** Heading level for the figure title, so a page keeps its heading order. */
+  headingLevel?: 2 | 3 | 4;
+}
+
+const {
+  id,
+  number = id.toUpperCase(),
+  title,
+  svg,
+  units,
+  interpretation,
+  caveat,
+  longDescription,
+  evidenceClass =
+    "Synthetic. The generator and the estimator are separate modules. Known inventory is evaluation-only information that no field measurement provides.",
+  tableLabel = "Data table",
+  tableOpen = false,
+  svgDownload,
+  dataDownload,
+  dataDownloadLabel,
+  headingLevel = 2,
+} = Astro.props;
+
+const Heading = `h${headingLevel}` as "h2" | "h3" | "h4";
+const titleId = `${id}-title`;
+const descId = `${id}-longdesc`;
+const frameLabel = `${number}, ${title}`;
+---
+
+<figure class="figure" id={id} aria-labelledby={titleId} aria-describedby={descId}>
+  <div class="figure__head">
+    <span class="eyebrow">{number}</span>
+    <Heading class="figure__title" id={titleId}>{title}</Heading>
+  </div>
+
+  {/* The frame scrolls horizontally on a narrow viewport; the page never does.
+      It is focusable and labelled so a keyboard reader can reach and scroll it. */}
+  <div
+    class="figure__frame"
+    role="group"
+    aria-label={frameLabel}
+    tabindex="0"
+    set:html={svg}
+  />
+
+  {/* The long description. Hidden visually, not from assistive technology, and
+      referenced by the figure's aria-describedby above. */}
+  <p class="visually-hidden" id={descId}>{longDescription}</p>
+
+  <figcaption class="figure__caption">
+    <p class="figure__interpretation">{interpretation}</p>
+    <span class="figure__units">{units}</span>
+
+    <div class="figure__caveat">
+      <span class="caveat__label">Caveat</span>
+      <p>{caveat}</p>
+    </div>
+
+    <p class="evidence-class">{evidenceClass}</p>
+
+    <slot name="notes" />
+  </figcaption>
+
+  <details class="disclosure" open={tableOpen}>
+    <summary>{tableLabel} — {number}</summary>
+    <div class="disclosure__body">
+      <slot />
+    </div>
+  </details>
+
+  {
+    (svgDownload || dataDownload) && (
+      <ul class="figure__meta">
+        {svgDownload && (
+          <li>
+            <a href={assetHref(svgDownload)} download>
+              Download {number} as SVG
+            </a>
+          </li>
+        )}
+        {dataDownload && (
+          <li>
+            <a href={assetHref(dataDownload)} download>
+              Download the data{dataDownloadLabel ? ` — ${dataDownloadLabel}` : ""}
+            </a>
+          </li>
+        )}
+      </ul>
+    )
+  }
+</figure>

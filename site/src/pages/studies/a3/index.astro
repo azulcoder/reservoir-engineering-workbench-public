@@ -1,0 +1,296 @@
+---
+/**
+ * A3 — uncertainty experiments.
+ *
+ * The exhibit is A3-01, the error-budget ranking at three assumed pressure standard
+ * deviations. The table is built from the same summary block the figure was drawn from,
+ * republished under site/public/data/ and checked against its digest during this build.
+ */
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Figure from "../../../components/Figure.astro";
+import DataTable from "../../../components/DataTable.astro";
+import Callout from "../../../components/Callout.astro";
+import { checkedExhibit } from "../../../scripts/exhibits";
+import { download, readJson } from "../../../scripts/public-data";
+import { NAV, NOT_RUN } from "../../../scripts/site";
+import { href } from "../../../lib/urls";
+
+const a3 = await checkedExhibit("A3-01");
+const csv = await download("a3_01_error_budget_ranking.csv");
+const json = await download("a3_01_error_budget_ranking.json");
+
+interface Ranking {
+  rankings_by_assumed_sigma: Record<string, Array<{ source: string; relative_effect: number }>>;
+  top_two_by_assumed_sigma: Record<string, string[]>;
+  ranking_stable_under_sigma_factor_two: boolean;
+  short_depletion_penalty_f010_over_f050: number;
+}
+const r = await readJson<Ranking>("a3_01_error_budget_ranking.json");
+
+const groups = Object.keys(r.rankings_by_assumed_sigma);
+/** Sigma value out of a key such as "sigma_22.5_psia". */
+function sigmaOf(key: string): string {
+  return key.replace(/^sigma_/, "").replace(/_psia$/, "");
+}
+
+/** One row per error source, one column per assumed sigma. */
+const sources = [
+  ...new Set(
+    groups.flatMap((g) => (r.rankings_by_assumed_sigma[g] ?? []).map((e) => e.source)),
+  ),
+];
+const rows = sources.map((source) => {
+  const row: Record<string, string> = { source };
+  for (const g of groups) {
+    const hit = (r.rankings_by_assumed_sigma[g] ?? []).find((e) => e.source === source);
+    row[g] = hit === undefined ? "" : `${(hit.relative_effect * 100).toFixed(3)}`;
+  }
+  return row;
+});
+/* Order the table the way the study orders it: by the declared programme's sigma. */
+const declared = groups.find((g) => sigmaOf(g) === "45") ?? (groups[0] as string);
+rows.sort((a, b) => Number(b[declared] ?? 0) - Number(a[declared] ?? 0));
+
+const contents = [
+  { id: "overview", label: "Overview" },
+  { id: "evidence", label: "Evidence" },
+  { id: "limits", label: "What this does not establish" },
+  { id: "reproduce", label: "Reproduce and download" },
+];
+
+const description =
+  "A3 is an ordinate-side measurement error budget on a synthetic closed tank. Its headline ranking is not robust, which was pre-registered as an inconclusive condition and reported as one.";
+---
+
+<BaseLayout
+  title="A3 — uncertainty experiments"
+  description={description}
+  canonicalPath="/studies/a3/"
+  nav={NAV}
+  contents={contents}
+>
+  <p class="eyebrow">Study A3 — supporting work</p>
+  <h1>The error budget that re-ranks itself</h1>
+
+  <p class="lede">
+    Given a realistic survey programme on a synthetic closed-tank dry-gas reservoir, which
+    error source dominates the inferred gas in place? At the declared programme — twelve
+    annual shut-in surveys, 50 percent of the gas produced by the last one, an assumed
+    45 psia standard deviation on the reported average reservoir pressure — random pressure
+    scatter is largest at 1.32 percent of G and a 25 psia shared calibration bias is second
+    at 0.86 percent. <strong>That ranking is not robust.</strong> Halving the assumed scatter
+    reverses the top two.
+  </p>
+
+  <p>
+    <strong>Synthetic throughout.</strong> {NOT_RUN.fieldData}
+  </p>
+
+  <section id="overview" aria-labelledby="overview-h">
+    <h2 id="overview-h">Overview</h2>
+
+    <p>
+      The reversal was pre-registered as an inconclusive condition and the condition
+      triggered. The ranking of the top two is therefore reported as a restatement of an
+      assumed number, not as a result: the assumed pressure standard deviation is something
+      this study did not measure and could not measure, because the reservoir is synthetic.
+      Everything below the top two is stable across the factor of four in assumed sigma that
+      was tested, and those positions are reportable.
+    </p>
+
+    <h3>What does not depend on the assumption</h3>
+    <ul>
+      <li>
+        The <em>level</em> of the deviation factor is exactly irrelevant to a p/Z gas in
+        place. Over a grid of uniform multiplicative errors in Z running to plus and minus 5
+        percent, the largest movement of the x-intercept is 3.1e-16 relative — machine zero,
+        not a small number. That is algebra, and it is the one result here that transfers to
+        any reservoir. What moves G is the <em>shape</em> of Z across the observed window:
+        a 1 percent tilt moves G by 1.09 percent on this reservoir.
+      </li>
+      <li>
+        A shared offset behaves qualitatively differently from scatter: it does not shrink
+        with more surveys. At +25 psia the bias is +0.8624 percent at 12 surveys and +0.8655
+        percent at 48, while the random one-sigma falls from 1.32 to 0.70 percent. Past about
+        30 surveys the bias is the larger term and no further surveying touches it.
+      </li>
+      <li>
+        Supplying psig where psia was required makes the reservoir look <strong>smaller</strong>,
+        by 0.504 percent here — 1.58 times the common rule of thumb, a factor that is a
+        property of this Z(p) over this window and not a constant.
+      </li>
+      <li>
+        Short observed depletion is the strongest design lever examined: at fixed noise,
+        fixed survey count and an evenly spaced abscissa, the one-sigma error at 10 percent
+        depletion is {r.short_depletion_penalty_f010_over_f050.toFixed(2)} times the error at
+        50 percent. At 4 percent depletion the exact confidence set is unbounded 74 percent of
+        the time, so the correct engineering output there is a lower bound rather than an
+        error bar.
+      </li>
+    </ul>
+
+    <Callout kind="note" title="Prospective ordering, recorded exactly">
+      <p>
+        This study's run script declares its protocol as an input and its run record pins it
+        by SHA-256, so the protocol content that existed at run time is provably the
+        committed content. That establishes <em>internal content linkage as recorded</em>. It
+        is not an independent trusted timestamp and not proof against retrospective
+        construction: no signed tag and no trusted timestamp attests to it, so every date in
+        it is self-reported.
+      </p>
+    </Callout>
+  </section>
+
+  <section id="evidence" aria-labelledby="evidence-h">
+    <h2 id="evidence-h">Evidence</h2>
+
+    <Figure
+      id={a3.id}
+      number={a3.number}
+      title={a3.title}
+      svg={a3.svg}
+      units={a3.units}
+      interpretation={`Only the random-scatter row moves with the assumed gauge accuracy, and it moves far enough to swap the top two: the ranking is stable under a factor of two in the assumption — ${r.ranking_stable_under_sigma_factor_two ? "yes" : "no"}.`}
+      caveat={a3.caveat}
+      longDescription={a3.longDescription}
+      evidenceClass={a3.evidenceClass}
+      tableLabel="Data table — the ranking at three assumed sigmas"
+      tableOpen={true}
+      svgDownload={a3.svgDownload}
+      dataDownload={json.path}
+      dataDownloadLabel={json.name}
+    >
+      <DataTable
+        caption="Effect on G as a percentage of G, at the base survey programme. Ordinate sources only: the abscissa is absent from this table because it was never perturbed. Rows are ordered by the declared 45 psia column."
+        captionTitle="Table A3-01"
+        columns={[
+          { key: "source", label: "Error source", rowHeader: true },
+          ...groups.map((g) => ({
+            key: g,
+            label: `Assumed sigma ${sigmaOf(g)}`,
+            unit: "% of G",
+            numeric: true,
+          })),
+        ]}
+        rows={rows}
+        id="t-a3-01"
+      />
+      <Fragment slot="footnote">
+        <p>
+          Only the first row moves. At the declared sigma the order is scatter, then bias,
+          then the psig slip, then the correlation choice, then the standard basis, then
+          nothing; at half that sigma the top two swap. Three further honesty points travel
+          with the table. The 25 psia calibration bias is a <em>chosen</em> magnitude,
+          justified as 0.25 percent of full scale for a 10,000 psi gauge, so a different gauge
+          class gives a different row. The correlation-choice row is the spread between
+          published correlations, which is not the same quantity as the error against
+          laboratory PVT, so it is a lower bound on the deviation-factor risk rather than an
+          estimate of it. And the whole table is conditional on the tank model being right: a
+          weak aquifer biases G by more than every row of this table added together, while
+          <em> improving</em> the apparent straightness of the line — which is what study
+          {" "}<a href={href("/studies/a4/")}>A4</a> demonstrates.
+        </p>
+      </Fragment>
+    </Figure>
+
+    <h3>The next measurement, with its break-even</h3>
+    <p>
+      Of four candidate next steps compared on a stated convention — the one-sigma random
+      standard error and the absolute value of the systematic shift added <strong>linearly</strong>,
+      because a bias is not a random variable and adding it in quadrature would understate it
+      — a calibration and datum check on the pressure surveys gives the lowest projected total
+      error, 1.32 percent against 1.52 to 1.84 percent for the others. That conclusion assumes
+      the check leaves no residual datum error: a residual above about 5.83 psia would put it
+      behind the next-best option. No cost or effort model is part of this study.
+    </p>
+  </section>
+
+  <section id="limits" aria-labelledby="limits-h">
+    <h2 id="limits-h">What this study does not establish</h2>
+
+    <Callout kind="limitation" title="The headline ranking is inconclusive by its own criterion">
+      <p>
+        The top two sources swap when the assumed pressure standard deviation is halved. That
+        was pre-registered as an inconclusive condition, the condition triggered, and it is
+        reported as inconclusive rather than resolved in favour of the declared programme.
+      </p>
+    </Callout>
+
+    <Callout kind="limitation" title="The budget is ordinate-only">
+      <p>
+        Cumulative production is never perturbed anywhere in this study. A metering bias would
+        enter the answer one for one, so "what dominates the uncertainty in G" is answered for
+        the pressure side of the line and not for the volume side. The study's own
+        recommendation for the repository is to fix that next.
+      </p>
+    </Callout>
+
+    <Callout kind="limitation" title="No interval treatment survives a drifting gauge">
+      <p>
+        The delta method, the Fieller set and the bootstrap all fail at a correlation of 0.8
+        in the pressure error, with coverage falling from 0.94 to 0.54 for both interval
+        methods.
+      </p>
+    </Callout>
+
+    <Callout kind="limitation" title="Conditional on a tank model nothing here tests">
+      <p>
+        A weak aquifer would break the whole budget by more than every measured source
+        combined, and the usual field arguments would not settle it: low water production does
+        not establish a closed tank, and neither does a p/Z estimate that looks stable.
+      </p>
+    </Callout>
+
+    <Callout kind="limitation" title="One correlation-risk figure comes from a study that cannot be reproduced here">
+      <p>
+        The comparison of correlations against laboratory-grade reference equations belongs to
+        study <a href={href("/studies/a2/")}>A2</a>, which reads a reference extract this
+        repository does not redistribute. Those figures cannot be reproduced from this
+        checkout and nothing in this study's results depends on them; the correlation-choice
+        row above is a correlation-against-correlation spread, computed here.
+      </p>
+    </Callout>
+  </section>
+
+  <section id="reproduce" aria-labelledby="reproduce-h">
+    <h2 id="reproduce-h">Reproduce, and download the numbers</h2>
+
+    <pre><code>PYTHONPATH=src python3 cases/A3_uncertainty_experiments/run.py \
+    --out artifacts/A3_uncertainty_experiments/run-008</code></pre>
+
+    <p>
+      Python standard library only, single declared seed, about fifteen seconds. The shipped
+      run is <code>run-006</code>, whose committed snapshot this site's figure was drawn from.
+    </p>
+
+    <ul class="downloads">
+      {[csv, json].map((d) => (
+        <li>
+          <a href={d.href} download>
+            {d.name}
+          </a>
+          <span class="downloads__meta">
+            {d.size} — {d.description}
+          </span>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <style>
+    .downloads {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .downloads li {
+      padding-block: var(--space-2);
+      border-block-end: 1px solid var(--c-rule);
+    }
+    .downloads__meta {
+      display: block;
+      font-size: var(--text-sm);
+      color: var(--c-ink-2);
+    }
+  </style>
+</BaseLayout>

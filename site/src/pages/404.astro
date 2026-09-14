@@ -1,0 +1,104 @@
+---
+/**
+ * 404.
+ *
+ * Astro emits this as `404.html` at the output root. Every link on it is built through
+ * `src/lib/urls.ts`, so the page works under a non-root project base — which is exactly
+ * where a hand-written "/studies/" would send a lost reader somewhere else again.
+ *
+ * It is a real page, not an apology: a reader who mistyped a URL, or followed a link to a
+ * route this site never had, gets the full list of routes that do exist.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { NAV } from "../scripts/site";
+import { href, BASE } from "../lib/urls";
+
+const routes: Array<{ path: Parameters<typeof href>[0]; label: string; what: string }> = [
+  { path: "/", label: "Home", what: "the project's purpose and the flagship figure" },
+  { path: "/studies/", label: "Studies", what: "all four studies and what each one ships" },
+  {
+    path: "/studies/a4/",
+    label: "A4 — misleading fit counterexample",
+    what: "the flagship case, nine exhibits and the scenario explorer",
+  },
+  {
+    path: "/studies/a1/",
+    label: "A1 — volumetric baseline",
+    what: "the exact recovery, and the seeded-defect control that says how narrow it is",
+  },
+  {
+    path: "/studies/a3/",
+    label: "A3 — uncertainty experiments",
+    what: "the measurement error budget whose ranking is not robust",
+  },
+  {
+    path: "/studies/a2/",
+    label: "A2 — availability",
+    what: "why this study's exhibits are withheld and how to run it yourself",
+  },
+  {
+    path: "/methods/",
+    label: "Methods",
+    what: "the verification profiles, the measured counts, and what is not run",
+  },
+  { path: "/about/", label: "About", what: "what was done here, and what is not claimed" },
+];
+---
+
+<BaseLayout
+  title="Page not found"
+  description="That route does not exist on this site. Here is everything that does."
+  canonicalPath="/404.html"
+  nav={NAV}
+>
+  <p class="eyebrow">404</p>
+  <h1>That page is not here</h1>
+
+  <p class="lede">
+    Nothing was removed to make this happen — this site has never had a route at that
+    address. Every page it does have is listed below.
+  </p>
+
+  <p>
+    If you followed a link that used to work, the likeliest cause is a base-path mismatch:
+    this build serves the site from <code>{BASE}</code>, and a link written for a different
+    base will land here. Every internal link on this site is built through one helper for
+    that reason, and the build fails on any link that is not.
+  </p>
+
+  <h2>Every route on this site</h2>
+
+  <ul class="routes">
+    {
+      routes.map((r) => (
+        <li>
+          <a href={href(r.path)}>{r.label}</a>
+          <span class="routes__what">{r.what}</span>
+        </li>
+      ))
+    }
+  </ul>
+
+  <p>
+    Downloads live under <code>{BASE}data/</code> and are listed next to the figures they
+    belong to, on the study pages and on the
+    {" "}<a href={href("/methods/")}>methods page</a>.
+  </p>
+
+  <style>
+    .routes {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .routes li {
+      padding-block: var(--space-3);
+      border-block-end: 1px solid var(--c-rule);
+    }
+    .routes__what {
+      display: block;
+      font-size: var(--text-sm);
+      color: var(--c-ink-2);
+    }
+  </style>
+</BaseLayout>

@@ -1,0 +1,23 @@
+{
+  "config_sha256": "a7df30567879f1f970834f1a5e3dcc96d4cef990d5d38cc7be84e38e04e45ac5",
+  "data_origin": "generated locally; no field measurements or third-party raw data",
+  "git_commit": null,
+  "output_hashes": {
+    "observations.csv": "c2f6175c34cfb676f34b2a3ac73bbc164f28faee6da18b0b31c5a53a7f5871bf",
+    "summary.json": "acc0ed60f974eebb90d55dd4835e431146794c1b8c9a147c1e4c1e234f157592"
+  },
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+  "python": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "run_utc": "2026-09-13T05:44:32.944465+00:00",
+  "seed": 271828,
+  "source_hashes": {
+    "scripts/run_demo.py": "63b4a0796f80b5fa363e5eff7020416179679c0d44c5751282c605d2982d3cfa",
+    "src/reservoir_lab/gas.py": "5d6e356ad511383ba7868f79ed79e379eeac1380319d880125c00ececb5180dd"
+  },
+  "standard_conditions": {
+    "pressure_pa_absolute": 101325.0,
+    "temperature_k": 288.15,
+    "z": 1.0
+  },
+  "working_tree_dirty": null
+}

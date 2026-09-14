@@ -1,0 +1,15 @@
+{
+  "//": "Node-side tooling: the figure renderer, the public-data emitter, the Playwright configuration and the browser tests. Checked separately from the site graph so that neither borrows the other's globals, and so that a green site check cannot be obtained by excluding the tooling.",
+  "extends": "astro/tsconfigs/strict",
+  "include": ["tests/**/*.ts", "playwright.config.ts", "scripts/**/*.mjs", "src/scripts/**/*.mjs"],
+  "exclude": ["node_modules", "dist"],
+  "compilerOptions": {
+    "types": ["node"],
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": true
+  }
+}

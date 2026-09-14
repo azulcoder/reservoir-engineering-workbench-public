@@ -1,0 +1,19 @@
+assumed_sigma_group,rank,source,relative_effect
+sigma_22.5_psia,1,"shared calibration bias, 25 psia",0.00862401217352
+sigma_22.5_psia,2,"random pressure scatter, one sigma",0.00662085838448
+sigma_22.5_psia,3,psig supplied as psia,0.00503673020545
+sigma_22.5_psia,4,deviation-factor correlation choice,0.00332580695092
+sigma_22.5_psia,5,standard basis 14.696 against 14.73,0.00231169209006
+sigma_22.5_psia,6,"uniform multiplicative Z error, 5 percent",3.0517578125e-16
+sigma_45_psia,1,"random pressure scatter, one sigma",0.013241716769
+sigma_45_psia,2,"shared calibration bias, 25 psia",0.00862401217352
+sigma_45_psia,3,psig supplied as psia,0.00503673020545
+sigma_45_psia,4,deviation-factor correlation choice,0.00332580695092
+sigma_45_psia,5,standard basis 14.696 against 14.73,0.00231169209006
+sigma_45_psia,6,"uniform multiplicative Z error, 5 percent",3.0517578125e-16
+sigma_90_psia,1,"random pressure scatter, one sigma",0.0264834335379
+sigma_90_psia,2,"shared calibration bias, 25 psia",0.00862401217352
+sigma_90_psia,3,psig supplied as psia,0.00503673020545
+sigma_90_psia,4,deviation-factor correlation choice,0.00332580695092
+sigma_90_psia,5,standard basis 14.696 against 14.73,0.00231169209006
+sigma_90_psia,6,"uniform multiplicative Z error, 5 percent",3.0517578125e-16

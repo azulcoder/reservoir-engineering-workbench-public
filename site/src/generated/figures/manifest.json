@@ -1,0 +1,1207 @@
+{
+  "manifest_version": "1.0.0",
+  "generated": {
+    "renderer": "site/scripts/render-figures.mjs",
+    "renderer_sha256": "0a425736a7fcea4f787d22de66f46b5561ea7cfa6f8e18a1b223f3303dfcfbb1",
+    "note": "the renderer digest is the SITE BUILD revision and is distinct from the numerical-source digests below, which identify the run that produced the numbers"
+  },
+  "site_build": {
+    "plot": "@observablehq/plot 0.6.17",
+    "dom": "linkedom 0.18.13",
+    "node": "v24.14.0",
+    "authoring_width_px": 1000,
+    "text_floor_px": 13,
+    "png_status": {
+      "emitted": [
+        "F01",
+        "F01b",
+        "F02",
+        "F03",
+        "F04",
+        "F05",
+        "F06",
+        "F07",
+        "F08",
+        "F09",
+        "A1-01",
+        "A3-01"
+      ],
+      "blocked": [],
+      "rasteriser": "sharp 0.35.4 (libvips 8.18.6, librsvg 2.62.91), imported dynamically",
+      "caveat": "sharp is present as a transitive dependency of astro and is NOT declared in site/package.json. PNG emission is best-effort and never fails the build: if the import or the raster fails, the SVG still ships and the per-figure png_status records the reason. Text in the raster is set by the rasteriser's fontconfig, not by the reader's system font stack, so the PNG is a shareable export and the SVG is the authoritative artefact."
+    }
+  },
+  "numerical_source": {
+    "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json",
+    "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+    "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
+    "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506"
+  },
+  "export": {
+    "exporter_path": "scripts/export_presentation_data.py",
+    "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
+    "reconciliation_checks_passed": 43,
+    "reconcile_relative_tolerance": 1e-12
+  },
+  "units": {
+    "pressure": "psia (absolute)",
+    "p_over_z": "psia",
+    "cumulative_gas": "scf, also reported as Bscf = 1e9 scf",
+    "time": "days, also reported as years of 365.25 days",
+    "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
+  },
+  "evidence_class": "synthetic; generator and estimator are separate modules; known inventory is evaluation-only information that no field measurement provides",
+  "contract_version": "1.0.0",
+  "case_id": "A4_misleading_fit_counterexample",
+  "data_file_digests": [
+    {
+      "file": "f01_f02_scenarios.json",
+      "declared": "dd3d8d265ac77a893fa949b37225b76ea6f56259c7cf5ce706d013c04512f499",
+      "measured": "dd3d8d265ac77a893fa949b37225b76ea6f56259c7cf5ce706d013c04512f499",
+      "match": true
+    },
+    {
+      "file": "f05_holdout.json",
+      "declared": "4dcf5257b65b55c0a76f8b6305a9a94e1d329ab690be340b6eb691d66ce3b51c",
+      "measured": "4dcf5257b65b55c0a76f8b6305a9a94e1d329ab690be340b6eb691d66ce3b51c",
+      "match": true
+    },
+    {
+      "file": "f03_bias_sweep.json",
+      "declared": "e4669e92d1d3dddb06baa10c20cf2701b616b1625c7f2ceeb10d56ff3e584b59",
+      "measured": "e4669e92d1d3dddb06baa10c20cf2701b616b1625c7f2ceeb10d56ff3e584b59",
+      "match": true
+    },
+    {
+      "file": "f04_progressive.json",
+      "declared": "908e1e796c9fba54994d4ad916ce6dc75af4b3594cc1ca146d4d1ad113ae46bb",
+      "measured": "908e1e796c9fba54994d4ad916ce6dc75af4b3594cc1ca146d4d1ad113ae46bb",
+      "match": true
+    },
+    {
+      "file": "f06_detection.json",
+      "declared": "568c3f68405172d552f925c2173bab5f3620e9c76b50fce8b26a74a71abaf9a9",
+      "measured": "568c3f68405172d552f925c2173bab5f3620e9c76b50fce8b26a74a71abaf9a9",
+      "match": true
+    },
+    {
+      "file": "f07_z_mismatch.json",
+      "declared": "8adb8d8dc0b0024ca2e6c2085e3040e2d8e1d0e3be894f3efc27638d7db6d0fc",
+      "measured": "8adb8d8dc0b0024ca2e6c2085e3040e2d8e1d0e3be894f3efc27638d7db6d0fc",
+      "match": true
+    },
+    {
+      "file": "f08_refinement.json",
+      "declared": "5e124ef42a76a1e0761b0fbd6ec1b6c9dc552575ea75ccf3b408bfaeb292565e",
+      "measured": "5e124ef42a76a1e0761b0fbd6ec1b6c9dc552575ea75ccf3b408bfaeb292565e",
+      "match": true
+    }
+  ],
+  "case_summary_digests": {
+    "cases/A1_volumetric_baseline/results/summary.json": "701e20d50f10ba7e8b82ea0162d3c0014c883a820f30cb2e70d71893ecbb097e",
+    "cases/A3_uncertainty_experiments/results/summary.json": "0fa6192a68858352f7bacd3ba27b390c148eba8c6240de4c4f9476cc2385d33d"
+  },
+  "figures": [
+    {
+      "figure_id": "F01",
+      "case_id": "A4_misleading_fit_counterexample",
+      "selector": "f01_f02_scenarios.json /scenarios[is_base_case] (J = 2.0 bbl/day/psi), 49 observations",
+      "data_files": [
+        "f01_f02_scenarios.json"
+      ],
+      "axes": {
+        "x": {
+          "quantity": "cumulative gas produced",
+          "unit": "Bscf = 1e9 scf",
+          "scale": "linear",
+          "domain": [
+            -2,
+            120
+          ]
+        },
+        "y": {
+          "quantity": "p/Z",
+          "unit": "psia (absolute)",
+          "scale": "linear",
+          "domain": [
+            0,
+            4650
+          ],
+          "includes_zero": true
+        }
+      },
+      "transformations": [
+        "cumulative gas divided by 1e9 to report Bscf (exported as both scf and Bscf; the Bscf field is used directly)",
+        "extrapolation evaluated as intercept_psia + slope_psia_per_scf * G, from the exported fit coefficients, not by extending a drawn path",
+        "true gas in place derived as fit.gas_in_place_scf / (1 + relative_gas_in_place_error) and cross-checked across all eight scenarios to 1e-9 relative"
+      ],
+      "uncertainty": "none: this figure shows no uncertainty. fit.gas_in_place_stderr_scf exists in the data and belongs in the table, not on the chart; the error here is bias, not scatter.",
+      "question": "What does a volumetric p/Z fit to an aquifer-supported reservoir actually look like, and where does its x-intercept land relative to the truth?",
+      "caveat": "Everything beyond 55.0 Bscf is extrapolation with no data behind it. The true inventory is evaluation-only information; no field measurement provides it.",
+      "evidence_class": "synthetic; generator and estimator are separate modules; known inventory is evaluation-only information that no field measurement provides",
+      "units": {
+        "pressure": "psia (absolute)",
+        "p_over_z": "psia",
+        "cumulative_gas": "scf, also reported as Bscf = 1e9 scf",
+        "time": "days, also reported as years of 365.25 days",
+        "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
+      },
+      "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+      "numerical_run_id": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
+      "numerical_source_digests": {
+        "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
+        "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
+        "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+        "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
+      },
+      "export_code_revision": {
+        "exporter_path": "scripts/export_presentation_data.py",
+        "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
+        "reconciliation_checks_passed": 43,
+        "reconcile_relative_tolerance": 1e-12
+      },
+      "exported_data_hashes": [
+        {
+          "path": "site/src/data/figures/f01_f02_scenarios.json",
+          "sha256": "dd3d8d265ac77a893fa949b37225b76ea6f56259c7cf5ce706d013c04512f499",
+          "matches_contract": true
+        }
+      ],
+      "accessibility": {
+        "role": "img",
+        "accessible_name": "F01 — the fit that looks right: p/Z and the inventory it extrapolates to",
+        "long_description_chars": 573,
+        "non_colour_channels": "every series carries a dash pattern, a marker shape or a direct text label, and each figure's legend repeats them. Only two marks sit below 3:1 on the plot ground: the axis gridlines and the band fills, both aria-hidden, both of which passed a removal test -- every band boundary is also drawn in --c-border-strong at 3.51:1 and labelled in text, so the shading is redundant reinforcement. Every other rule, including the divider above the caveat lines, the separator between table rows and the boundary of a legend band swatch, carries information and is drawn at 3.51:1. The classification is recorded in docs/design/figure_spec.md.",
+        "minimum_label_px": 13,
+        "colour_source": "docs/design/tokens.css, parsed at build time; no colour value is retyped in the renderer"
+      },
+      "public_data_decision": "public. Every value is synthetic and already committed to this repository; there is no field, proprietary or personal data in the source, and the known inventory is evaluation-only information that exists because the history was generated.",
+      "png_status": {
+        "state": "emitted",
+        "rasteriser": "sharp (libvips + librsvg), imported dynamically"
+      },
+      "files": [
+        {
+          "path": "f01.svg",
+          "bytes": 26491,
+          "media_type": "image/svg+xml"
+        },
+        {
+          "path": "f01.png",
+          "bytes": 561566,
+          "media_type": "image/png",
+          "raster": "216 dpi, 3x the 72 dpi authoring scale"
+        }
+      ]
+    },
+    {
+      "figure_id": "F01b",
+      "case_id": "A4_misleading_fit_counterexample",
+      "selector": "f01_f02_scenarios.json /scenarios[is_base_case] (J = 2.0 bbl/day/psi), 49 observations",
+      "data_files": [
+        "f01_f02_scenarios.json"
+      ],
+      "axes": {
+        "x": {
+          "quantity": "cumulative gas produced",
+          "unit": "Bscf = 1e9 scf",
+          "scale": "linear",
+          "domain": [
+            -1.5,
+            56.99999999999984
+          ]
+        },
+        "y": {
+          "quantity": "p/Z",
+          "unit": "psia (absolute)",
+          "scale": "linear",
+          "domain": [
+            2163.2291687339566,
+            4404.1956806485505
+          ],
+          "includes_zero": false
+        }
+      },
+      "transformations": [
+        "cumulative gas divided by 1e9 to report Bscf (exported as both scf and Bscf; the Bscf field is used directly)",
+        "extrapolation evaluated as intercept_psia + slope_psia_per_scf * G, from the exported fit coefficients, not by extending a drawn path",
+        "true gas in place derived as fit.gas_in_place_scf / (1 + relative_gas_in_place_error) and cross-checked across all eight scenarios to 1e-9 relative"
+      ],
+      "uncertainty": "none: this figure shows no uncertainty. fit.gas_in_place_stderr_scf exists in the data and belongs in the table, not on the chart; the error here is bias, not scatter.",
+      "question": "What does a volumetric p/Z fit to an aquifer-supported reservoir actually look like, and where does its x-intercept land relative to the truth?",
+      "caveat": "Vertical axis truncated. This view is for inspecting deviations only; the intercept geometry is in F01. Noise-free synthetic history.",
+      "evidence_class": "synthetic; generator and estimator are separate modules; known inventory is evaluation-only information that no field measurement provides",
+      "units": {
+        "pressure": "psia (absolute)",
+        "p_over_z": "psia",
+        "cumulative_gas": "scf, also reported as Bscf = 1e9 scf",
+        "time": "days, also reported as years of 365.25 days",
+        "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
+      },
+      "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+      "numerical_run_id": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
+      "numerical_source_digests": {
+        "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
+        "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
+        "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+        "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
+      },
+      "export_code_revision": {
+        "exporter_path": "scripts/export_presentation_data.py",
+        "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
+        "reconciliation_checks_passed": 43,
+        "reconcile_relative_tolerance": 1e-12
+      },
+      "exported_data_hashes": [
+        {
+          "path": "site/src/data/figures/f01_f02_scenarios.json",
+          "sha256": "dd3d8d265ac77a893fa949b37225b76ea6f56259c7cf5ce706d013c04512f499",
+          "matches_contract": true
+        }
+      ],
+      "accessibility": {
+        "role": "img",
+        "accessible_name": "F01b — the same fit over the observed interval only",
+        "long_description_chars": 652,
+        "non_colour_channels": "every series carries a dash pattern, a marker shape or a direct text label, and each figure's legend repeats them. Only two marks sit below 3:1 on the plot ground: the axis gridlines and the band fills, both aria-hidden, both of which passed a removal test -- every band boundary is also drawn in --c-border-strong at 3.51:1 and labelled in text, so the shading is redundant reinforcement. Every other rule, including the divider above the caveat lines, the separator between table rows and the boundary of a legend band swatch, carries information and is drawn at 3.51:1. The classification is recorded in docs/design/figure_spec.md.",
+        "minimum_label_px": 13,
+        "colour_source": "docs/design/tokens.css, parsed at build time; no colour value is retyped in the renderer"
+      },
+      "public_data_decision": "public. Every value is synthetic and already committed to this repository; there is no field, proprietary or personal data in the source, and the known inventory is evaluation-only information that exists because the history was generated.",
+      "png_status": {
+        "state": "emitted",
+        "rasteriser": "sharp (libvips + librsvg), imported dynamically"
+      },
+      "files": [
+        {
+          "path": "f01b-observed-range.svg",
+          "bytes": 23056,
+          "media_type": "image/svg+xml"
+        },
+        {
+          "path": "f01b-observed-range.png",
+          "bytes": 479059,
+          "media_type": "image/png",
+          "raster": "216 dpi, 3x the 72 dpi authoring scale"
+        }
+      ]
+    },
+    {
+      "figure_id": "F02",
+      "case_id": "A4_misleading_fit_counterexample",
+      "selector": "f01_f02_scenarios.json /scenarios[is_base_case]/residual_p_over_z_psia, 49 values",
+      "data_files": [
+        "f01_f02_scenarios.json"
+      ],
+      "axes": {
+        "x": {
+          "quantity": "cumulative gas produced",
+          "unit": "Bscf",
+          "scale": "linear",
+          "domain": [
+            -2,
+            120
+          ]
+        },
+        "y": {
+          "quantity": "residual of the volumetric fit",
+          "unit": "psia of p/Z",
+          "scale": "linear",
+          "domain": [
+            -60,
+            60
+          ]
+        }
+      },
+      "transformations": [
+        "none on the residuals; they are the exported observation-minus-fit values, plotted at full precision in source order",
+        "RMS 7.375520 psia and largest absolute residual 24.634283 psia are derived here from the same 49 values"
+      ],
+      "uncertainty": "none: this figure shows no uncertainty. The residuals are not error bars; the drawn bands are a declared engineering judgement about achievable pressure accuracy, labelled as such.",
+      "question": "Is there structure in the residuals of that excellent fit, and how large is it compared with the pressure accuracy a real field could achieve?",
+      "caveat": "Residuals are not uncertainty bars. Noise-free history. The 10 to 50 psi band is the case author's judgement, not a retrieved figure, and the detectability conclusion depends on it.",
+      "evidence_class": "synthetic; generator and estimator are separate modules; known inventory is evaluation-only information that no field measurement provides",
+      "units": {
+        "pressure": "psia (absolute)",
+        "p_over_z": "psia",
+        "cumulative_gas": "scf, also reported as Bscf = 1e9 scf",
+        "time": "days, also reported as years of 365.25 days",
+        "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
+      },
+      "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+      "numerical_run_id": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
+      "numerical_source_digests": {
+        "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
+        "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
+        "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+        "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
+      },
+      "export_code_revision": {
+        "exporter_path": "scripts/export_presentation_data.py",
+        "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
+        "reconciliation_checks_passed": 43,
+        "reconcile_relative_tolerance": 1e-12
+      },
+      "exported_data_hashes": [
+        {
+          "path": "site/src/data/figures/f01_f02_scenarios.json",
+          "sha256": "dd3d8d265ac77a893fa949b37225b76ea6f56259c7cf5ce706d013c04512f499",
+          "matches_contract": true
+        }
+      ],
+      "accessibility": {
+        "role": "img",
+        "accessible_name": "F02 — the residual structure that would have had to give it away",
+        "long_description_chars": 516,
+        "non_colour_channels": "every series carries a dash pattern, a marker shape or a direct text label, and each figure's legend repeats them. Only two marks sit below 3:1 on the plot ground: the axis gridlines and the band fills, both aria-hidden, both of which passed a removal test -- every band boundary is also drawn in --c-border-strong at 3.51:1 and labelled in text, so the shading is redundant reinforcement. Every other rule, including the divider above the caveat lines, the separator between table rows and the boundary of a legend band swatch, carries information and is drawn at 3.51:1. The classification is recorded in docs/design/figure_spec.md.",
+        "minimum_label_px": 13,
+        "colour_source": "docs/design/tokens.css, parsed at build time; no colour value is retyped in the renderer"
+      },
+      "public_data_decision": "public. Every value is synthetic and already committed to this repository; there is no field, proprietary or personal data in the source, and the known inventory is evaluation-only information that exists because the history was generated.",
+      "png_status": {
+        "state": "emitted",
+        "rasteriser": "sharp (libvips + librsvg), imported dynamically"
+      },
+      "files": [
+        {
+          "path": "f02.svg",
+          "bytes": 18365,
+          "media_type": "image/svg+xml"
+        },
+        {
+          "path": "f02.png",
+          "bytes": 443133,
+          "media_type": "image/png",
+          "raster": "216 dpi, 3x the 72 dpi authoring scale"
+        }
+      ]
+    },
+    {
+      "figure_id": "F03",
+      "case_id": "A4_misleading_fit_counterexample",
+      "selector": "f03_bias_sweep.json /rows, audited summary pointer /strength_sweep, 8 rows",
+      "data_files": [
+        "f03_bias_sweep.json"
+      ],
+      "axes": {
+        "x": {
+          "quantity": "terminal invaded pore-volume fraction",
+          "unit": "dimensionless",
+          "scale": "linear",
+          "domain": [
+            -0.012,
+            0.36
+          ]
+        },
+        "y_upper": {
+          "quantity": "relative error",
+          "unit": "percent (signed)",
+          "scale": "linear",
+          "domain": [
+            -10,
+            180
+          ]
+        },
+        "y_lower": {
+          "quantity": "1 − R-squared",
+          "unit": "dimensionless",
+          "scale": "log",
+          "domain": [
+            2.7126212831518613e-9,
+            0.019171394053111523
+          ]
+        }
+      },
+      "transformations": [
+        "relative errors multiplied by 100 to report percent; sign preserved",
+        "R-squared transformed to 1 − R-squared for the log panel; the exactly-zero control is placed at the axis floor as a labelled position, not clipped and not epsilon-shifted"
+      ],
+      "uncertainty": "none: this figure shows no uncertainty. fitted_stderr_scf and bias_over_stderr exist in the source and belong in the table; bias_over_stderr is not interpretable for the J = 0 row.",
+      "question": "Does the error grow with aquifer strength, and does the fit statistic warn you about it?",
+      "caveat": "Only the aquifer productivity index was varied; the horizontal axis is a model output of this generator, not an independent field observation. Eight computed cases, no continuum, no interpolation.",
+      "evidence_class": "synthetic; generator and estimator are separate modules; known inventory is evaluation-only information that no field measurement provides",
+      "units": {
+        "pressure": "psia (absolute)",
+        "p_over_z": "psia",
+        "cumulative_gas": "scf, also reported as Bscf = 1e9 scf",
+        "time": "days, also reported as years of 365.25 days",
+        "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
+      },
+      "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+      "numerical_run_id": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
+      "numerical_source_digests": {
+        "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
+        "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
+        "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+        "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
+      },
+      "export_code_revision": {
+        "exporter_path": "scripts/export_presentation_data.py",
+        "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
+        "reconciliation_checks_passed": 43,
+        "reconcile_relative_tolerance": 1e-12
+      },
+      "exported_data_hashes": [
+        {
+          "path": "site/src/data/figures/f03_bias_sweep.json",
+          "sha256": "e4669e92d1d3dddb06baa10c20cf2701b616b1625c7f2ceeb10d56ff3e584b59",
+          "matches_contract": true
+        }
+      ],
+      "accessibility": {
+        "role": "img",
+        "accessible_name": "F03 — how the inventory bias scales with aquifer support, and what R-squared says about it",
+        "long_description_chars": 870,
+        "non_colour_channels": "every series carries a dash pattern, a marker shape or a direct text label, and each figure's legend repeats them. Only two marks sit below 3:1 on the plot ground: the axis gridlines and the band fills, both aria-hidden, both of which passed a removal test -- every band boundary is also drawn in --c-border-strong at 3.51:1 and labelled in text, so the shading is redundant reinforcement. Every other rule, including the divider above the caveat lines, the separator between table rows and the boundary of a legend band swatch, carries information and is drawn at 3.51:1. The classification is recorded in docs/design/figure_spec.md.",
+        "minimum_label_px": 13,
+        "colour_source": "docs/design/tokens.css, parsed at build time; no colour value is retyped in the renderer"
+      },
+      "public_data_decision": "public. Every value is synthetic and already committed to this repository; there is no field, proprietary or personal data in the source, and the known inventory is evaluation-only information that exists because the history was generated.",
+      "png_status": {
+        "state": "emitted",
+        "rasteriser": "sharp (libvips + librsvg), imported dynamically"
+      },
+      "files": [
+        {
+          "path": "f03.svg",
+          "bytes": 43074,
+          "media_type": "image/svg+xml"
+        },
+        {
+          "path": "f03.png",
+          "bytes": 766665,
+          "media_type": "image/png",
+          "raster": "216 dpi, 3x the 72 dpi authoring scale"
+        }
+      ]
+    },
+    {
+      "figure_id": "F04",
+      "case_id": "A4_misleading_fit_counterexample",
+      "selector": "f04_progressive.json /rows, audited summary pointer /progressive_fits, 40 rows; 4 of 8 series drawn (J = 0, 2, 6, 60)",
+      "data_files": [
+        "f04_progressive.json"
+      ],
+      "axes": {
+        "x": {
+          "quantity": "requested fraction of history",
+          "unit": "percent of the requested horizon",
+          "scale": "linear",
+          "domain": [
+            14,
+            104
+          ]
+        },
+        "y": {
+          "quantity": "relative error in fitted gas in place",
+          "unit": "percent (signed)",
+          "scale": "linear",
+          "domain": [
+            -8,
+            108
+          ]
+        }
+      },
+      "transformations": [
+        "history_fraction multiplied by 100 for the axis; relative errors multiplied by 100 to report percent, sign preserved",
+        "no interpolation between the five requested fractions; the joining line connects computed prefix fits only"
+      ],
+      "uncertainty": "none: this figure shows no uncertainty. relative_stderr exists per row in the source and belongs in the table; prefix fits share observations, so a band drawn across this axis would be misleading.",
+      "question": "If you had refitted every few years, would the estimate have been stable, and does stability mean correctness?",
+      "caveat": "Prefix fits share observations and are not independent samples. The axis is the requested fraction of history, not the realised sample time. Four of eight computed series are drawn; all eight are in the data.",
+      "evidence_class": "synthetic; generator and estimator are separate modules; known inventory is evaluation-only information that no field measurement provides",
+      "units": {
+        "pressure": "psia (absolute)",
+        "p_over_z": "psia",
+        "cumulative_gas": "scf, also reported as Bscf = 1e9 scf",
+        "time": "days, also reported as years of 365.25 days",
+        "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
+      },
+      "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+      "numerical_run_id": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
+      "numerical_source_digests": {
+        "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
+        "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
+        "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+        "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
+      },
+      "export_code_revision": {
+        "exporter_path": "scripts/export_presentation_data.py",
+        "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
+        "reconciliation_checks_passed": 43,
+        "reconcile_relative_tolerance": 1e-12
+      },
+      "exported_data_hashes": [
+        {
+          "path": "site/src/data/figures/f04_progressive.json",
+          "sha256": "908e1e796c9fba54994d4ad916ce6dc75af4b3594cc1ca146d4d1ad113ae46bb",
+          "matches_contract": true
+        }
+      ],
+      "accessibility": {
+        "role": "img",
+        "accessible_name": "F04 — what the inventory estimate does as history accumulates",
+        "long_description_chars": 844,
+        "non_colour_channels": "every series carries a dash pattern, a marker shape or a direct text label, and each figure's legend repeats them. Only two marks sit below 3:1 on the plot ground: the axis gridlines and the band fills, both aria-hidden, both of which passed a removal test -- every band boundary is also drawn in --c-border-strong at 3.51:1 and labelled in text, so the shading is redundant reinforcement. Every other rule, including the divider above the caveat lines, the separator between table rows and the boundary of a legend band swatch, carries information and is drawn at 3.51:1. The classification is recorded in docs/design/figure_spec.md.",
+        "minimum_label_px": 13,
+        "colour_source": "docs/design/tokens.css, parsed at build time; no colour value is retyped in the renderer"
+      },
+      "public_data_decision": "public. Every value is synthetic and already committed to this repository; there is no field, proprietary or personal data in the source, and the known inventory is evaluation-only information that exists because the history was generated.",
+      "png_status": {
+        "state": "emitted",
+        "rasteriser": "sharp (libvips + librsvg), imported dynamically"
+      },
+      "files": [
+        {
+          "path": "f04.svg",
+          "bytes": 34383,
+          "media_type": "image/svg+xml"
+        },
+        {
+          "path": "f04.png",
+          "bytes": 609144,
+          "media_type": "image/png",
+          "raster": "216 dpi, 3x the 72 dpi authoring scale"
+        }
+      ]
+    },
+    {
+      "figure_id": "F05",
+      "case_id": "A4_misleading_fit_counterexample",
+      "selector": "f05_holdout.json, 30 calibration and 19 held-out observations, split index 30",
+      "data_files": [
+        "f05_holdout.json"
+      ],
+      "axes": {
+        "x_primary": {
+          "quantity": "cumulative gas produced",
+          "unit": "Bscf",
+          "scale": "linear",
+          "domain": [
+            -1.5,
+            57
+          ]
+        },
+        "y_primary": {
+          "quantity": "p/Z",
+          "unit": "psia (absolute)",
+          "scale": "linear",
+          "domain": [
+            0,
+            4700
+          ],
+          "includes_zero": true
+        },
+        "x_secondary": {
+          "quantity": "time",
+          "unit": "years of 365.25 days",
+          "scale": "linear",
+          "domain": [
+            -0.3,
+            12.3
+          ]
+        },
+        "y_secondary": {
+          "quantity": "pressure",
+          "unit": "psia (absolute)",
+          "scale": "linear",
+          "domain": [
+            0,
+            4300
+          ],
+          "includes_zero": true
+        }
+      },
+      "transformations": [
+        "none on the plotted series; the calibration-region reconstruction is null by construction and is not imputed, interpolated or drawn",
+        "relative errors multiplied by 100 to report percent"
+      ],
+      "uncertainty": "none: this figure shows no uncertainty band. The two error statistics reported are a calibration inventory error (denominator: true gas in place) and a held-out pressure RMSE (denominator: initial pressure, 4000 psia); they are labelled separately and never combined.",
+      "question": "Does a genuine chronological holdout catch the error?",
+      "caveat": "The pressure reconstruction multiplies a predicted p/Z by the deviation factor of the held-out state — future synthetic Z — so the 15.7 psia figure is a borrowed demonstration, not an attainable forecast error. No validation is claimed.",
+      "evidence_class": "synthetic; generator and estimator are separate modules; known inventory is evaluation-only information that no field measurement provides",
+      "units": {
+        "pressure": "psia (absolute)",
+        "p_over_z": "psia",
+        "cumulative_gas": "scf, also reported as Bscf = 1e9 scf",
+        "time": "days, also reported as years of 365.25 days",
+        "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
+      },
+      "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+      "numerical_run_id": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
+      "numerical_source_digests": {
+        "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
+        "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
+        "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+        "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
+      },
+      "export_code_revision": {
+        "exporter_path": "scripts/export_presentation_data.py",
+        "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
+        "reconciliation_checks_passed": 43,
+        "reconcile_relative_tolerance": 1e-12
+      },
+      "exported_data_hashes": [
+        {
+          "path": "site/src/data/figures/f05_holdout.json",
+          "sha256": "4dcf5257b65b55c0a76f8b6305a9a94e1d329ab690be340b6eb691d66ce3b51c",
+          "matches_contract": true
+        }
+      ],
+      "accessibility": {
+        "role": "img",
+        "accessible_name": "F05 — the chronological holdout the wrong model passes",
+        "long_description_chars": 1015,
+        "non_colour_channels": "every series carries a dash pattern, a marker shape or a direct text label, and each figure's legend repeats them. Only two marks sit below 3:1 on the plot ground: the axis gridlines and the band fills, both aria-hidden, both of which passed a removal test -- every band boundary is also drawn in --c-border-strong at 3.51:1 and labelled in text, so the shading is redundant reinforcement. Every other rule, including the divider above the caveat lines, the separator between table rows and the boundary of a legend band swatch, carries information and is drawn at 3.51:1. The classification is recorded in docs/design/figure_spec.md.",
+        "minimum_label_px": 13,
+        "colour_source": "docs/design/tokens.css, parsed at build time; no colour value is retyped in the renderer"
+      },
+      "public_data_decision": "public. Every value is synthetic and already committed to this repository; there is no field, proprietary or personal data in the source, and the known inventory is evaluation-only information that exists because the history was generated.",
+      "png_status": {
+        "state": "emitted",
+        "rasteriser": "sharp (libvips + librsvg), imported dynamically"
+      },
+      "files": [
+        {
+          "path": "f05.svg",
+          "bytes": 34879,
+          "media_type": "image/svg+xml"
+        },
+        {
+          "path": "f05.png",
+          "bytes": 687863,
+          "media_type": "image/png",
+          "raster": "216 dpi, 3x the 72 dpi authoring scale"
+        }
+      ]
+    },
+    {
+      "figure_id": "F06",
+      "case_id": "A4_misleading_fit_counterexample",
+      "selector": "f06_detection.json /original (pointer /residuals_and_detectability/noise_sweep, 400 replicates, 7 levels) and /post_review_power_curve (pointer /post_review_sensitivities/power_curve, 4000 replicates, 10 levels), drawn as two separate panels",
+      "data_files": [
+        "f06_detection.json"
+      ],
+      "axes": {
+        "x": {
+          "quantity": "standard deviation of added independent Gaussian pressure error",
+          "unit": "psi",
+          "scale": "log",
+          "domain": [
+            0.85,
+            95
+          ]
+        },
+        "y": {
+          "quantity": "detection rate",
+          "unit": "dimensionless, 0 to 1",
+          "scale": "linear",
+          "domain": [
+            -0.04,
+            1.09
+          ]
+        }
+      },
+      "transformations": [
+        "none on the rates; they are plotted as exported",
+        "half-power crossing interpolated linearly on this page between the bracketing exported rows (11 psi at 0.51625 and 11.5 psi at 0.48075), giving 11.2289 psi; the derivation is printed in the figure and the value is not an exported field"
+      ],
+      "uncertainty": "frequency framing rather than an interval: each series prints its replicate count (400 and 4000). No confidence band is drawn, because the two experiments have different replicate counts and different seeds and a band would invite pooling them.",
+      "question": "At what pressure measurement accuracy does the curvature detector actually work, and does it false-positive on a reservoir with no aquifer?",
+      "caveat": "Two experiments with different seeds and replicate counts, drawn in separate panels and never spliced. The 0.0675 null rate is a high draw of one seed, not the detector's size. Connecting lines are visual guides.",
+      "evidence_class": "synthetic; generator and estimator are separate modules; known inventory is evaluation-only information that no field measurement provides",
+      "units": {
+        "pressure": "psia (absolute)",
+        "p_over_z": "psia",
+        "cumulative_gas": "scf, also reported as Bscf = 1e9 scf",
+        "time": "days, also reported as years of 365.25 days",
+        "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
+      },
+      "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+      "numerical_run_id": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
+      "numerical_source_digests": {
+        "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
+        "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
+        "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+        "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
+      },
+      "export_code_revision": {
+        "exporter_path": "scripts/export_presentation_data.py",
+        "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
+        "reconciliation_checks_passed": 43,
+        "reconcile_relative_tolerance": 1e-12
+      },
+      "exported_data_hashes": [
+        {
+          "path": "site/src/data/figures/f06_detection.json",
+          "sha256": "568c3f68405172d552f925c2173bab5f3620e9c76b50fce8b26a74a71abaf9a9",
+          "matches_contract": true
+        }
+      ],
+      "accessibility": {
+        "role": "img",
+        "accessible_name": "F06 — could anyone have told, under noise? Two separate experiments, never spliced",
+        "long_description_chars": 940,
+        "non_colour_channels": "every series carries a dash pattern, a marker shape or a direct text label, and each figure's legend repeats them. Only two marks sit below 3:1 on the plot ground: the axis gridlines and the band fills, both aria-hidden, both of which passed a removal test -- every band boundary is also drawn in --c-border-strong at 3.51:1 and labelled in text, so the shading is redundant reinforcement. Every other rule, including the divider above the caveat lines, the separator between table rows and the boundary of a legend band swatch, carries information and is drawn at 3.51:1. The classification is recorded in docs/design/figure_spec.md.",
+        "minimum_label_px": 13,
+        "colour_source": "docs/design/tokens.css, parsed at build time; no colour value is retyped in the renderer"
+      },
+      "public_data_decision": "public. Every value is synthetic and already committed to this repository; there is no field, proprietary or personal data in the source, and the known inventory is evaluation-only information that exists because the history was generated.",
+      "png_status": {
+        "state": "emitted",
+        "rasteriser": "sharp (libvips + librsvg), imported dynamically"
+      },
+      "files": [
+        {
+          "path": "f06.svg",
+          "bytes": 24015,
+          "media_type": "image/svg+xml"
+        },
+        {
+          "path": "f06.png",
+          "bytes": 677914,
+          "media_type": "image/png",
+          "raster": "216 dpi, 3x the 72 dpi authoring scale"
+        }
+      ]
+    },
+    {
+      "figure_id": "F07",
+      "case_id": "A4_misleading_fit_counterexample",
+      "selector": "f07_z_mismatch.json /values and /critical_t, audited summary pointer /post_review_sensitivities/z_correlation_sensitivity",
+      "data_files": [
+        "f07_z_mismatch.json"
+      ],
+      "axes": {
+        "x_left": {
+          "quantity": "relative error in gas in place",
+          "unit": "percent (signed)",
+          "scale": "linear",
+          "domain": [
+            12,
+            12.75
+          ]
+        },
+        "x_right": {
+          "quantity": "curvature t statistic",
+          "unit": "dimensionless, signed",
+          "scale": "linear",
+          "domain": [
+            -10.5,
+            10.5
+          ],
+          "symmetric_about_zero": true
+        }
+      },
+      "transformations": [
+        "relative errors multiplied by 100 to report percent; sign preserved",
+        "t statistics plotted signed, with no absolute value anywhere in the figure or its description"
+      ],
+      "uncertainty": "the critical value is the uncertainty statement: ±critical_t = ±2.0128955989194295 is the two-sided acceptance band of the pre-registered curvature test, drawn as a shaded region. No interval is placed on the individual statistics.",
+      "question": "If the analyst reads the deviation factor from a different correlation than the one that generated the history, what happens to the bias, and what happens to the detector?",
+      "caveat": "Post-review, not pre-registered. Rejecting the straight-line model does not uniquely identify aquifer support: a strictly volumetric history read with the wrong correlation rejects harder, with the opposite sign.",
+      "evidence_class": "synthetic; generator and estimator are separate modules; known inventory is evaluation-only information that no field measurement provides",
+      "units": {
+        "pressure": "psia (absolute)",
+        "p_over_z": "psia",
+        "cumulative_gas": "scf, also reported as Bscf = 1e9 scf",
+        "time": "days, also reported as years of 365.25 days",
+        "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
+      },
+      "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+      "numerical_run_id": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
+      "numerical_source_digests": {
+        "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
+        "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
+        "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+        "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
+      },
+      "export_code_revision": {
+        "exporter_path": "scripts/export_presentation_data.py",
+        "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
+        "reconciliation_checks_passed": 43,
+        "reconcile_relative_tolerance": 1e-12
+      },
+      "exported_data_hashes": [
+        {
+          "path": "site/src/data/figures/f07_z_mismatch.json",
+          "sha256": "8adb8d8dc0b0024ca2e6c2085e3040e2d8e1d0e3be894f3efc27638d7db6d0fc",
+          "matches_contract": true
+        }
+      ],
+      "accessibility": {
+        "role": "img",
+        "accessible_name": "F07 — the detector is not a clean aquifer diagnostic",
+        "long_description_chars": 773,
+        "non_colour_channels": "every series carries a dash pattern, a marker shape or a direct text label, and each figure's legend repeats them. Only two marks sit below 3:1 on the plot ground: the axis gridlines and the band fills, both aria-hidden, both of which passed a removal test -- every band boundary is also drawn in --c-border-strong at 3.51:1 and labelled in text, so the shading is redundant reinforcement. Every other rule, including the divider above the caveat lines, the separator between table rows and the boundary of a legend band swatch, carries information and is drawn at 3.51:1. The classification is recorded in docs/design/figure_spec.md.",
+        "minimum_label_px": 13,
+        "colour_source": "docs/design/tokens.css, parsed at build time; no colour value is retyped in the renderer"
+      },
+      "public_data_decision": "public. Every value is synthetic and already committed to this repository; there is no field, proprietary or personal data in the source, and the known inventory is evaluation-only information that exists because the history was generated.",
+      "png_status": {
+        "state": "emitted",
+        "rasteriser": "sharp (libvips + librsvg), imported dynamically"
+      },
+      "files": [
+        {
+          "path": "f07.svg",
+          "bytes": 15981,
+          "media_type": "image/svg+xml"
+        },
+        {
+          "path": "f07.png",
+          "bytes": 516737,
+          "media_type": "image/png",
+          "raster": "216 dpi, 3x the 72 dpi authoring scale"
+        }
+      ]
+    },
+    {
+      "figure_id": "F08",
+      "case_id": "A4_misleading_fit_counterexample",
+      "selector": "f08_refinement.json /J_2/levels and /J_60/levels, audited summary pointer /timestep_refinement, 4 levels each",
+      "data_files": [
+        "f08_refinement.json"
+      ],
+      "axes": {
+        "x": {
+          "quantity": "timestep",
+          "unit": "days",
+          "scale": "log, reversed",
+          "domain": [
+            35,
+            3.2
+          ]
+        },
+        "y": {
+          "quantity": "absolute deviation of the relative gas-in-place error from the finest computed level",
+          "unit": "dimensionless",
+          "scale": "log",
+          "domain": [
+            4.605414632985472e-9,
+            0.004
+          ]
+        }
+      },
+      "transformations": [
+        "deviation computed here as |relative_gas_in_place_error(level) − relative_gas_in_place_error(finest level)| per series, and cross-checked against the exported error_span_over_refinement to 1e-9 relative",
+        "the exactly-zero finest level is positioned at the axis floor and labelled; it is not clipped and no epsilon is added"
+      ],
+      "uncertainty": "none: this figure shows no uncertainty. It shows numerical convergence against a comparator, which is a different thing from an error bar, and the comparator is not an exact solution.",
+      "question": "Is the reported bias a physical result or a timestep artefact?",
+      "caveat": "The finest computation is a numerical comparator, not an exact solution. Convergence of this quantity does not establish that the formulation is right.",
+      "evidence_class": "synthetic; generator and estimator are separate modules; known inventory is evaluation-only information that no field measurement provides",
+      "units": {
+        "pressure": "psia (absolute)",
+        "p_over_z": "psia",
+        "cumulative_gas": "scf, also reported as Bscf = 1e9 scf",
+        "time": "days, also reported as years of 365.25 days",
+        "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
+      },
+      "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+      "numerical_run_id": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
+      "numerical_source_digests": {
+        "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
+        "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
+        "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+        "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
+      },
+      "export_code_revision": {
+        "exporter_path": "scripts/export_presentation_data.py",
+        "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
+        "reconciliation_checks_passed": 43,
+        "reconcile_relative_tolerance": 1e-12
+      },
+      "exported_data_hashes": [
+        {
+          "path": "site/src/data/figures/f08_refinement.json",
+          "sha256": "5e124ef42a76a1e0761b0fbd6ec1b6c9dc552575ea75ccf3b408bfaeb292565e",
+          "matches_contract": true
+        }
+      ],
+      "accessibility": {
+        "role": "img",
+        "accessible_name": "F08 — is the reported bias resolved in time, or is it a timestep artefact?",
+        "long_description_chars": 831,
+        "non_colour_channels": "every series carries a dash pattern, a marker shape or a direct text label, and each figure's legend repeats them. Only two marks sit below 3:1 on the plot ground: the axis gridlines and the band fills, both aria-hidden, both of which passed a removal test -- every band boundary is also drawn in --c-border-strong at 3.51:1 and labelled in text, so the shading is redundant reinforcement. Every other rule, including the divider above the caveat lines, the separator between table rows and the boundary of a legend band swatch, carries information and is drawn at 3.51:1. The classification is recorded in docs/design/figure_spec.md.",
+        "minimum_label_px": 13,
+        "colour_source": "docs/design/tokens.css, parsed at build time; no colour value is retyped in the renderer"
+      },
+      "public_data_decision": "public. Every value is synthetic and already committed to this repository; there is no field, proprietary or personal data in the source, and the known inventory is evaluation-only information that exists because the history was generated.",
+      "png_status": {
+        "state": "emitted",
+        "rasteriser": "sharp (libvips + librsvg), imported dynamically"
+      },
+      "files": [
+        {
+          "path": "f08.svg",
+          "bytes": 37245,
+          "media_type": "image/svg+xml"
+        },
+        {
+          "path": "f08.png",
+          "bytes": 677497,
+          "media_type": "image/png",
+          "raster": "216 dpi, 3x the 72 dpi authoring scale"
+        }
+      ]
+    },
+    {
+      "figure_id": "F09",
+      "case_id": "A4_misleading_fit_counterexample",
+      "selector": "contract.json in full: numerical_source, export, units, evidence_class and the seven files entries",
+      "data_files": [
+        "contract.json"
+      ],
+      "axes": {
+        "note": "no axes: this figure is a chain diagram and three semantic tables, with no quantitative encoding"
+      },
+      "transformations": [
+        "none: every value is rendered verbatim from contract.json, except the digest match column, which this renderer measured"
+      ],
+      "uncertainty": "none: this figure shows no uncertainty. It shows provenance and verification state.",
+      "question": "Are the numbers on this page the numbers in the repository, and how would I check without taking anyone's word for it?",
+      "caveat": "States are PASS, FAIL, NOT RUN, BLOCKED and NOT APPLICABLE, with no composite score. The reconciliation tolerance is a same-environment determinism target, not an independent reproduction.",
+      "evidence_class": "synthetic; generator and estimator are separate modules; known inventory is evaluation-only information that no field measurement provides",
+      "units": {
+        "pressure": "psia (absolute)",
+        "p_over_z": "psia",
+        "cumulative_gas": "scf, also reported as Bscf = 1e9 scf",
+        "time": "days, also reported as years of 365.25 days",
+        "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
+      },
+      "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+      "numerical_run_id": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
+      "numerical_source_digests": {
+        "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
+        "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
+        "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+        "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
+      },
+      "export_code_revision": {
+        "exporter_path": "scripts/export_presentation_data.py",
+        "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
+        "reconciliation_checks_passed": 43,
+        "reconcile_relative_tolerance": 1e-12
+      },
+      "exported_data_hashes": [
+        {
+          "path": "site/src/data/figures/contract.json",
+          "sha256": "320519b8e2cc57fdd7e441a4cc4ec499372d7a12374d23af2855235fa8fae4b6",
+          "matches_contract": null
+        }
+      ],
+      "accessibility": {
+        "role": "img",
+        "accessible_name": "F09 — how to check all of this without taking anyone's word for it",
+        "long_description_chars": 924,
+        "non_colour_channels": "every series carries a dash pattern, a marker shape or a direct text label, and each figure's legend repeats them. Only two marks sit below 3:1 on the plot ground: the axis gridlines and the band fills, both aria-hidden, both of which passed a removal test -- every band boundary is also drawn in --c-border-strong at 3.51:1 and labelled in text, so the shading is redundant reinforcement. Every other rule, including the divider above the caveat lines, the separator between table rows and the boundary of a legend band swatch, carries information and is drawn at 3.51:1. The classification is recorded in docs/design/figure_spec.md.",
+        "minimum_label_px": 13,
+        "colour_source": "docs/design/tokens.css, parsed at build time; no colour value is retyped in the renderer"
+      },
+      "public_data_decision": "public. Every value is synthetic and already committed to this repository; there is no field, proprietary or personal data in the source, and the known inventory is evaluation-only information that exists because the history was generated.",
+      "png_status": {
+        "state": "emitted",
+        "rasteriser": "sharp (libvips + librsvg), imported dynamically"
+      },
+      "files": [
+        {
+          "path": "f09.svg",
+          "bytes": 48632,
+          "media_type": "image/svg+xml"
+        },
+        {
+          "path": "f09.png",
+          "bytes": 1457920,
+          "media_type": "image/png",
+          "raster": "216 dpi, 3x the 72 dpi authoring scale"
+        }
+      ]
+    },
+    {
+      "figure_id": "A1-01",
+      "case_id": "A1_volumetric_baseline",
+      "selector": "cases/A1_volumetric_baseline/results/summary.json /diagnostic_d1_defect_sensitivity, 14 seeded cases and 4 detection-threshold blocks",
+      "data_files": [
+        "cases/A1_volumetric_baseline/results/summary.json"
+      ],
+      "axes": {
+        "x": {
+          "quantity": "absolute relative error in recovered gas in place",
+          "unit": "dimensionless",
+          "scale": "log",
+          "domain": [
+            5.551115123125783e-19,
+            0.1200000000000001
+          ]
+        },
+        "y": {
+          "quantity": "seeded defect",
+          "unit": "categorical, 14 rows ordered by defect class",
+          "scale": "band"
+        }
+      },
+      "transformations": [
+        "absolute value taken for the logarithmic position only; the signed value is printed as the direct label on every point",
+        "rows whose error is exactly zero are positioned at the axis floor and labelled; not clipped, no epsilon added"
+      ],
+      "uncertainty": "none: this figure shows no uncertainty. The recovery errors are deterministic, noise-free arithmetic; the only threshold drawn is the declared A1 detection gate.",
+      "question": "Which defects would the A1 recovery criterion actually have caught, and which are invisible to it?",
+      "caveat": "Post-hoc, not pre-registered and not gated, as the case summary states. It is a positive control for one criterion, not evidence about the physics.",
+      "evidence_class": "synthetic; generator and estimator are separate modules; known inventory is evaluation-only information that no field measurement provides",
+      "units": {
+        "pressure": "psia (absolute)",
+        "p_over_z": "psia",
+        "cumulative_gas": "scf, also reported as Bscf = 1e9 scf",
+        "time": "days, also reported as years of 365.25 days",
+        "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
+      },
+      "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+      "numerical_run_id": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
+      "numerical_source_digests": {
+        "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
+        "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
+        "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+        "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
+      },
+      "export_code_revision": {
+        "exporter_path": "scripts/export_presentation_data.py",
+        "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
+        "reconciliation_checks_passed": 43,
+        "reconcile_relative_tolerance": 1e-12
+      },
+      "exported_data_hashes": [
+        {
+          "path": "cases/A1_volumetric_baseline/results/summary.json",
+          "sha256": "701e20d50f10ba7e8b82ea0162d3c0014c883a820f30cb2e70d71893ecbb097e",
+          "matches_contract": null,
+          "note": "committed case summary, outside the export contract"
+        }
+      ],
+      "accessibility": {
+        "role": "img",
+        "accessible_name": "A1-01 — what the A1 recovery gate can and cannot see: a seeded-defect positive control",
+        "long_description_chars": 1293,
+        "non_colour_channels": "every series carries a dash pattern, a marker shape or a direct text label, and each figure's legend repeats them. Only two marks sit below 3:1 on the plot ground: the axis gridlines and the band fills, both aria-hidden, both of which passed a removal test -- every band boundary is also drawn in --c-border-strong at 3.51:1 and labelled in text, so the shading is redundant reinforcement. Every other rule, including the divider above the caveat lines, the separator between table rows and the boundary of a legend band swatch, carries information and is drawn at 3.51:1. The classification is recorded in docs/design/figure_spec.md.",
+        "minimum_label_px": 13,
+        "colour_source": "docs/design/tokens.css, parsed at build time; no colour value is retyped in the renderer"
+      },
+      "public_data_decision": "public. Every value is synthetic and already committed to this repository; there is no field, proprietary or personal data in the source, and the known inventory is evaluation-only information that exists because the history was generated.",
+      "png_status": {
+        "state": "emitted",
+        "rasteriser": "sharp (libvips + librsvg), imported dynamically"
+      },
+      "files": [
+        {
+          "path": "a1-01.svg",
+          "bytes": 24507,
+          "media_type": "image/svg+xml"
+        },
+        {
+          "path": "a1-01.png",
+          "bytes": 755432,
+          "media_type": "image/png",
+          "raster": "216 dpi, 3x the 72 dpi authoring scale"
+        }
+      ]
+    },
+    {
+      "figure_id": "A3-01",
+      "case_id": "A3_uncertainty_experiments",
+      "selector": "cases/A3_uncertainty_experiments/results/summary.json /results/E7_ranking/rankings_by_assumed_sigma, 3 groups of 6 sources",
+      "data_files": [
+        "cases/A3_uncertainty_experiments/results/summary.json"
+      ],
+      "axes": {
+        "x": {
+          "quantity": "relative effect on the fitted gas in place",
+          "unit": "percent",
+          "scale": "linear",
+          "domain": [
+            -0.08,
+            3.125045157473115
+          ]
+        },
+        "y": {
+          "quantity": "error source",
+          "unit": "categorical, 6 rows in the 45 psia order",
+          "scale": "band"
+        }
+      },
+      "transformations": [
+        "relative effects multiplied by 100 to report percent; no other transformation"
+      ],
+      "uncertainty": "the figure is itself a sensitivity statement rather than an interval: the three marker shapes are three assumed values of the pressure standard deviation, and no distribution is placed over that assumption.",
+      "question": "Which measurement error dominates the inventory estimate, and does that ordering survive a change in the assumed gauge accuracy?",
+      "caveat": "The ranking is not stable under a factor of two in the assumed sigma. The combination convention is the case's own and is printed in the subtitle; the ordering is a property of the assumption, not of the reservoir.",
+      "evidence_class": "synthetic; generator and estimator are separate modules; known inventory is evaluation-only information that no field measurement provides",
+      "units": {
+        "pressure": "psia (absolute)",
+        "p_over_z": "psia",
+        "cumulative_gas": "scf, also reported as Bscf = 1e9 scf",
+        "time": "days, also reported as years of 365.25 days",
+        "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
+      },
+      "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+      "numerical_run_id": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
+      "numerical_source_digests": {
+        "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
+        "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
+        "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+        "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
+      },
+      "export_code_revision": {
+        "exporter_path": "scripts/export_presentation_data.py",
+        "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
+        "reconciliation_checks_passed": 43,
+        "reconcile_relative_tolerance": 1e-12
+      },
+      "exported_data_hashes": [
+        {
+          "path": "cases/A3_uncertainty_experiments/results/summary.json",
+          "sha256": "0fa6192a68858352f7bacd3ba27b390c148eba8c6240de4c4f9476cc2385d33d",
+          "matches_contract": null,
+          "note": "committed case summary, outside the export contract"
+        }
+      ],
+      "accessibility": {
+        "role": "img",
+        "accessible_name": "A3-01 — the error budget re-ranks itself when you change the assumed gauge accuracy",
+        "long_description_chars": 938,
+        "non_colour_channels": "every series carries a dash pattern, a marker shape or a direct text label, and each figure's legend repeats them. Only two marks sit below 3:1 on the plot ground: the axis gridlines and the band fills, both aria-hidden, both of which passed a removal test -- every band boundary is also drawn in --c-border-strong at 3.51:1 and labelled in text, so the shading is redundant reinforcement. Every other rule, including the divider above the caveat lines, the separator between table rows and the boundary of a legend band swatch, carries information and is drawn at 3.51:1. The classification is recorded in docs/design/figure_spec.md.",
+        "minimum_label_px": 13,
+        "colour_source": "docs/design/tokens.css, parsed at build time; no colour value is retyped in the renderer"
+      },
+      "public_data_decision": "public. Every value is synthetic and already committed to this repository; there is no field, proprietary or personal data in the source, and the known inventory is evaluation-only information that exists because the history was generated.",
+      "png_status": {
+        "state": "emitted",
+        "rasteriser": "sharp (libvips + librsvg), imported dynamically"
+      },
+      "files": [
+        {
+          "path": "a3-01.svg",
+          "bytes": 25043,
+          "media_type": "image/svg+xml"
+        },
+        {
+          "path": "a3-01.png",
+          "bytes": 625590,
+          "media_type": "image/png",
+          "raster": "216 dpi, 3x the 72 dpi authoring scale"
+        }
+      ]
+    }
+  ]
+}

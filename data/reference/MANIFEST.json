@@ -1,0 +1,168 @@
+{
+  "acquired_utc_date": "2026-09-13",
+  "endpoint": "https://webbook.nist.gov/cgi/fluid.cgi",
+  "source": "NIST Chemistry WebBook, SRD 69, Thermophysical Properties of Fluid Systems",
+  "source_url": "https://webbook.nist.gov/chemistry/fluid/",
+  "what_these_numbers_are": "Values evaluated by the reference equations of state that the NIST Chemistry WebBook cites for each species. They are model outputs traceable to the cited correlations, not new laboratory measurements.",
+  "citation_required": "Cite NIST Chemistry WebBook, SRD 69, and the per-species reference equation recorded below, whenever these values or results derived from them are reported. Citation is required. It is not, on the evidence retrieved for this project, sufficient on its own to license redistribution; see the redistribution block below.",
+  "redistribution": {
+    "distributed_in_this_repository": false,
+    "decision": "non-redistribution",
+    "decision_kind": "Conservative publication decision. This is not an adjudication of copyright exceptions and not a legal opinion. No claim is made that redistribution would infringe, or that a fair-use or de-minimis argument would fail.",
+    "reason": "NIST Standard Reference Data is a statutory exception to the rule that works of the United States Government are in the public domain (Standard Reference Data Act, Public Law 90-396). Nothing retrieved from NIST establishes that citation alone permits redistributing an SRD extract, and an unestablished permission is not a permission.",
+    "evidence": [
+      "NIST Chemistry WebBook footer, retrieved 2026-09-13: '(c) 2026 by the U.S. Secretary of Commerce on behalf of the United States of America. All rights reserved.'",
+      "https://www.nist.gov/srd/public-law, retrieved 2026-09-13: 'None of our SRD may be reproduced, stored in a retrieval system or transmitted, in any form or by any means, electronic, mechanical, photocopying, recording or otherwise, without prior permission.' This page carries NIST's own banner stating it is no longer being updated.",
+      "https://www.nist.gov/open/copyright-fair-use-and-licensing-statements-srd-data-software-and-technical-series-publications#SRD, the licence URL the WebBook itself designates in its structured metadata, retrieved 2026-09-13: it does not repeat the 'may not be reproduced' sentence, and it separates Standard Reference Data from a fair-use section scoped to data and works NOT covered by the Standard Reference Data Act.",
+      "docs/evidence/provenance.md in this repository records both retrievals, their dates and the disagreement between the two NIST pages."
+    ],
+    "what_is_published_here": "Metadata only: request URLs, declared units, row counts, per-property citations and SHA-256 digests of the files. Metadata is not the data, and none of it reproduces a retrieved value.",
+    "how_to_obtain": "python3 scripts/fetch_nist_reference.py acquire --out <directory outside this checkout> --access-basis <your own recorded basis>",
+    "policy_document": "docs/release/PUBLIC_DATA_POLICY.md",
+    "public_tree_gate": "scripts/check_public_release.py"
+  },
+  "request_units": {
+    "TUnit": "F",
+    "PUnit": "psia",
+    "DUnit": "lbm/ft3",
+    "HUnit": "Btu/lbm",
+    "WUnit": "ft/s",
+    "VisUnit": "uPa*s",
+    "STUnit": "N/m",
+    "RefState": "DEF",
+    "Digits": "8"
+  },
+  "pressure_grid_psia": {
+    "low": 200.0,
+    "high": 6000.0,
+    "increment": 200.0
+  },
+  "isotherms_degF": [
+    100.0,
+    160.0,
+    200.0,
+    260.0,
+    320.0
+  ],
+  "files": [
+    {
+      "path": "nist_methane_isotherms.tsv",
+      "species": "methane",
+      "formula": "CH4",
+      "webbook_id": "C74828",
+      "molar_mass_lbm_per_lbmol": 16.0425,
+      "molar_mass_source": "IUPAC 2021 standard atomic weights, C 12.011 + 4 x H 1.008",
+      "eos_reference": "Setzmann, U. and Wagner, W. (1991), A New Equation of State and Tables of Thermodynamic Properties for Methane Covering the Range from the Melting Line to 625 K at Pressures up to 1000 MPa, J. Phys. Chem. Ref. Data 20(6), 1061-1155, doi:10.1063/1.555898.",
+      "viscosity_reference": "Quinones-Cisneros, S.E., Huber, M.L. and Deiters, U.K. (2011), unpublished work, as cited by the NIST Chemistry WebBook. NIST states the estimated uncertainty in viscosity is below 0.3 percent between 200 and 400 K for pressures below 30 MPa, below 2 percent over the rest of the fluid surface to 100 MPa, rising to 5 percent from 100 to 500 MPa.",
+      "request_urls": [
+        "https://webbook.nist.gov/cgi/fluid.cgi?Action=Data&Wide=on&ID=C74828&Type=IsoTherm&T=100&PLow=200&PHigh=6000&PInc=200&TUnit=F&PUnit=psia&DUnit=lbm%2Fft3&HUnit=Btu%2Flbm&WUnit=ft%2Fs&VisUnit=uPa%2As&STUnit=N%2Fm&RefState=DEF&Digits=8",
+        "https://webbook.nist.gov/cgi/fluid.cgi?Action=Data&Wide=on&ID=C74828&Type=IsoTherm&T=160&PLow=200&PHigh=6000&PInc=200&TUnit=F&PUnit=psia&DUnit=lbm%2Fft3&HUnit=Btu%2Flbm&WUnit=ft%2Fs&VisUnit=uPa%2As&STUnit=N%2Fm&RefState=DEF&Digits=8",
+        "https://webbook.nist.gov/cgi/fluid.cgi?Action=Data&Wide=on&ID=C74828&Type=IsoTherm&T=200&PLow=200&PHigh=6000&PInc=200&TUnit=F&PUnit=psia&DUnit=lbm%2Fft3&HUnit=Btu%2Flbm&WUnit=ft%2Fs&VisUnit=uPa%2As&STUnit=N%2Fm&RefState=DEF&Digits=8",
+        "https://webbook.nist.gov/cgi/fluid.cgi?Action=Data&Wide=on&ID=C74828&Type=IsoTherm&T=260&PLow=200&PHigh=6000&PInc=200&TUnit=F&PUnit=psia&DUnit=lbm%2Fft3&HUnit=Btu%2Flbm&WUnit=ft%2Fs&VisUnit=uPa%2As&STUnit=N%2Fm&RefState=DEF&Digits=8",
+        "https://webbook.nist.gov/cgi/fluid.cgi?Action=Data&Wide=on&ID=C74828&Type=IsoTherm&T=320&PLow=200&PHigh=6000&PInc=200&TUnit=F&PUnit=psia&DUnit=lbm%2Fft3&HUnit=Btu%2Flbm&WUnit=ft%2Fs&VisUnit=uPa%2As&STUnit=N%2Fm&RefState=DEF&Digits=8"
+      ],
+      "columns": [
+        "Temperature (F)",
+        "Pressure (psia)",
+        "Density (lbm/ft3)",
+        "Volume (ft3/lbm)",
+        "Internal Energy (Btu/lbm)",
+        "Enthalpy (Btu/lbm)",
+        "Entropy (Btu/lbm*R)",
+        "Cv (Btu/lbm*R)",
+        "Cp (Btu/lbm*R)",
+        "Sound Spd. (ft/s)",
+        "Joule-Thomson (F/psia)",
+        "Viscosity (uPa*s)",
+        "Therm. Cond. (W/m*K)",
+        "Phase"
+      ],
+      "rows": 150,
+      "duplicate_phase_boundary_rows_removed": 10,
+      "sha256": "98d79fcf0528e68cc60e7ab4f84061538552c1ec89cbf040db08787442008402",
+      "critical_temperature_k": 190.564,
+      "critical_pressure_psia": 667.06,
+      "critical_constants_source": "NIST Chemistry WebBook fluid page for this species, 'Additional fluid properties'."
+    },
+    {
+      "path": "nist_carbon_dioxide_isotherms.tsv",
+      "species": "carbon_dioxide",
+      "formula": "CO2",
+      "webbook_id": "C124389",
+      "molar_mass_lbm_per_lbmol": 44.0095,
+      "molar_mass_source": "IUPAC 2021 standard atomic weights, C 12.011 + 2 x O 15.999",
+      "eos_reference": "Span, R. and Wagner, W. (1996), A New Equation of State for Carbon Dioxide Covering the Fluid Region from the Triple-Point Temperature to 1100 K at Pressures up to 800 MPa, J. Phys. Chem. Ref. Data 25(6), 1509-1596.",
+      "viscosity_reference": "Laesecke, A. and Muzny, C.D. (2017), Reference Correlation for the Viscosity of Carbon Dioxide, J. Phys. Chem. Ref. Data 46(1), 013107, doi:10.1063/1.4977429.",
+      "request_urls": [
+        "https://webbook.nist.gov/cgi/fluid.cgi?Action=Data&Wide=on&ID=C124389&Type=IsoTherm&T=100&PLow=200&PHigh=6000&PInc=200&TUnit=F&PUnit=psia&DUnit=lbm%2Fft3&HUnit=Btu%2Flbm&WUnit=ft%2Fs&VisUnit=uPa%2As&STUnit=N%2Fm&RefState=DEF&Digits=8",
+        "https://webbook.nist.gov/cgi/fluid.cgi?Action=Data&Wide=on&ID=C124389&Type=IsoTherm&T=160&PLow=200&PHigh=6000&PInc=200&TUnit=F&PUnit=psia&DUnit=lbm%2Fft3&HUnit=Btu%2Flbm&WUnit=ft%2Fs&VisUnit=uPa%2As&STUnit=N%2Fm&RefState=DEF&Digits=8",
+        "https://webbook.nist.gov/cgi/fluid.cgi?Action=Data&Wide=on&ID=C124389&Type=IsoTherm&T=200&PLow=200&PHigh=6000&PInc=200&TUnit=F&PUnit=psia&DUnit=lbm%2Fft3&HUnit=Btu%2Flbm&WUnit=ft%2Fs&VisUnit=uPa%2As&STUnit=N%2Fm&RefState=DEF&Digits=8",
+        "https://webbook.nist.gov/cgi/fluid.cgi?Action=Data&Wide=on&ID=C124389&Type=IsoTherm&T=260&PLow=200&PHigh=6000&PInc=200&TUnit=F&PUnit=psia&DUnit=lbm%2Fft3&HUnit=Btu%2Flbm&WUnit=ft%2Fs&VisUnit=uPa%2As&STUnit=N%2Fm&RefState=DEF&Digits=8",
+        "https://webbook.nist.gov/cgi/fluid.cgi?Action=Data&Wide=on&ID=C124389&Type=IsoTherm&T=320&PLow=200&PHigh=6000&PInc=200&TUnit=F&PUnit=psia&DUnit=lbm%2Fft3&HUnit=Btu%2Flbm&WUnit=ft%2Fs&VisUnit=uPa%2As&STUnit=N%2Fm&RefState=DEF&Digits=8"
+      ],
+      "columns": [
+        "Temperature (F)",
+        "Pressure (psia)",
+        "Density (lbm/ft3)",
+        "Volume (ft3/lbm)",
+        "Internal Energy (Btu/lbm)",
+        "Enthalpy (Btu/lbm)",
+        "Entropy (Btu/lbm*R)",
+        "Cv (Btu/lbm*R)",
+        "Cp (Btu/lbm*R)",
+        "Sound Spd. (ft/s)",
+        "Joule-Thomson (F/psia)",
+        "Viscosity (uPa*s)",
+        "Therm. Cond. (W/m*K)",
+        "Phase"
+      ],
+      "rows": 150,
+      "duplicate_phase_boundary_rows_removed": 10,
+      "sha256": "f72cecc022306946bce081004034538e100a28a1269d26e01d6a353672d57b1b",
+      "critical_temperature_k": 304.1282,
+      "critical_pressure_psia": 1070.0,
+      "critical_constants_source": "NIST Chemistry WebBook fluid page for this species, 'Additional fluid properties'."
+    },
+    {
+      "path": "nist_nitrogen_isotherms.tsv",
+      "species": "nitrogen",
+      "formula": "N2",
+      "webbook_id": "C7727379",
+      "molar_mass_lbm_per_lbmol": 28.0134,
+      "molar_mass_source": "IUPAC 2021 standard atomic weights, 2 x N 14.007",
+      "eos_reference": "Span, R., Lemmon, E.W., Jacobsen, R.T, Wagner, W. and Yokozeki, A. (2000), A Reference Equation of State for the Thermodynamic Properties of Nitrogen for Temperatures from 63.151 to 1000 K and Pressures to 2200 MPa, J. Phys. Chem. Ref. Data 29(6), 1361-1433.",
+      "viscosity_reference": "Lemmon, E.W. and Jacobsen, R.T (2004), Viscosity and Thermal Conductivity Equations for Nitrogen, Oxygen, Argon, and Air, Int. J. Thermophys. 25(1), 21-69.",
+      "request_urls": [
+        "https://webbook.nist.gov/cgi/fluid.cgi?Action=Data&Wide=on&ID=C7727379&Type=IsoTherm&T=100&PLow=200&PHigh=6000&PInc=200&TUnit=F&PUnit=psia&DUnit=lbm%2Fft3&HUnit=Btu%2Flbm&WUnit=ft%2Fs&VisUnit=uPa%2As&STUnit=N%2Fm&RefState=DEF&Digits=8",
+        "https://webbook.nist.gov/cgi/fluid.cgi?Action=Data&Wide=on&ID=C7727379&Type=IsoTherm&T=160&PLow=200&PHigh=6000&PInc=200&TUnit=F&PUnit=psia&DUnit=lbm%2Fft3&HUnit=Btu%2Flbm&WUnit=ft%2Fs&VisUnit=uPa%2As&STUnit=N%2Fm&RefState=DEF&Digits=8",
+        "https://webbook.nist.gov/cgi/fluid.cgi?Action=Data&Wide=on&ID=C7727379&Type=IsoTherm&T=200&PLow=200&PHigh=6000&PInc=200&TUnit=F&PUnit=psia&DUnit=lbm%2Fft3&HUnit=Btu%2Flbm&WUnit=ft%2Fs&VisUnit=uPa%2As&STUnit=N%2Fm&RefState=DEF&Digits=8",
+        "https://webbook.nist.gov/cgi/fluid.cgi?Action=Data&Wide=on&ID=C7727379&Type=IsoTherm&T=260&PLow=200&PHigh=6000&PInc=200&TUnit=F&PUnit=psia&DUnit=lbm%2Fft3&HUnit=Btu%2Flbm&WUnit=ft%2Fs&VisUnit=uPa%2As&STUnit=N%2Fm&RefState=DEF&Digits=8",
+        "https://webbook.nist.gov/cgi/fluid.cgi?Action=Data&Wide=on&ID=C7727379&Type=IsoTherm&T=320&PLow=200&PHigh=6000&PInc=200&TUnit=F&PUnit=psia&DUnit=lbm%2Fft3&HUnit=Btu%2Flbm&WUnit=ft%2Fs&VisUnit=uPa%2As&STUnit=N%2Fm&RefState=DEF&Digits=8"
+      ],
+      "columns": [
+        "Temperature (F)",
+        "Pressure (psia)",
+        "Density (lbm/ft3)",
+        "Volume (ft3/lbm)",
+        "Internal Energy (Btu/lbm)",
+        "Enthalpy (Btu/lbm)",
+        "Entropy (Btu/lbm*R)",
+        "Cv (Btu/lbm*R)",
+        "Cp (Btu/lbm*R)",
+        "Sound Spd. (ft/s)",
+        "Joule-Thomson (F/psia)",
+        "Viscosity (uPa*s)",
+        "Therm. Cond. (W/m*K)",
+        "Phase"
+      ],
+      "rows": 150,
+      "duplicate_phase_boundary_rows_removed": 10,
+      "sha256": "e9ed0a1630ce2c8119402a4ee7560fd01342d233ed8e5809620633fdef56901f",
+      "critical_temperature_k": 126.192,
+      "critical_pressure_psia": 492.52,
+      "critical_constants_source": "NIST Chemistry WebBook fluid page for this species, 'Additional fluid properties'."
+    }
+  ],
+  "citations_verified_utc_date": "2026-09-13",
+  "citations_verified_how": "Read from each species' own NIST Chemistry WebBook fluid page 'References and Notes' section on the date above. An earlier revision of this manifest attributed methane viscosity to Younglove & Ely (1987) and carbon dioxide viscosity to Fenghour et al. (1998); both were wrong, and both were caught by a test that compared the manifest against the evidence card rather than by review."
+}

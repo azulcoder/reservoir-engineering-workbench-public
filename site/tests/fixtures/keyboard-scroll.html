@@ -1,0 +1,17 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Keyboard scroll control fixture</title>
+<!--
+  One focusable scroll container and nothing else: no stylesheet from the site, no SVG,
+  no script. If the arrow key does not scroll this box in an engine, that engine cannot
+  express keyboard scrolling of a focused overflow container in this environment, and a
+  figure frame that behaves the same way is not a defect in the figure frame.
+-->
+<style>
+  body { margin: 0; font: 16px system-ui, sans-serif; }
+  #region { width: 300px; overflow-x: auto; border: 1px solid #333; }
+  #wide { width: 2000px; height: 60px; background: linear-gradient(90deg, #ccc, #333); }
+</style>
+<div id="region" tabindex="0" role="group" aria-label="Control scroll region">
+  <div id="wide"></div>
+</div>

@@ -1,0 +1,100 @@
+{
+  "schema_version": "1.0.0",
+  "purpose": "Locations where the payload screen fires on numbers that are not NIST Standard Reference Data tabulations. Each entry is reviewed, reasoned and visible: the screen reports them as EXEMPT rather than suppressing them, so a reader can audit the judgement instead of trusting it.",
+  "rule": "An exemption is only valid for a physical constant, a unit conversion, or a setting that is published independently of the SRD tabulation. A retrieved density, viscosity or derived value from the extract is never exempt, whatever format it appears in. Non-invertibility is not a permission decision: an exemption was previously granted to a compressibility figure derived from the extract on the grounds that it could not be inverted back to it. That reasoning contradicted this rule, the figure has been removed from the release, and the exemption with it.",
+  "exemptions": [
+    {
+      "path": "docs/evidence/viscosity.md",
+      "line_hint": 614,
+      "numbers": [
+        "310.928",
+        "559.6704",
+        "16.0425"
+      ],
+      "reason": "Experiment settings and a molar mass, not reference data. 310.928 K is 100.0 degF expressed in kelvin; 559.6704 degR is the same temperature on the Rankine scale (100 + 459.67); 16.0425 lbm/lbmol is the IUPAC-2021 molar mass of methane, already published in data/reference/MANIFEST.json as metadata. The retrieved densities and viscosities on this line have been withheld.",
+      "reviewed": "2026-09-13"
+    },
+    {
+      "path": "docs/evidence/viscosity.md",
+      "line_hint": 786,
+      "numbers": [
+        "190.564",
+        "667.06",
+        "162.66",
+        "0.01142",
+        "310.928"
+      ],
+      "reason": "Critical constants and the acentric factor of methane. These are physical constants of the substance, published in Setzmann and Wagner (1991) and in standard property compilations independently of the SRD tabulation, and this repository already publishes the critical temperature and pressure in data/reference/MANIFEST.json as metadata under a decision recorded in the public data policy. They are not rows of the extract.",
+      "reviewed": "2026-09-13"
+    },
+    {
+      "path": "docs/evidence/viscosity.md",
+      "line_hint": 616,
+      "numbers": [
+        "118.3787",
+        "5.3723",
+        "1.2522",
+        "-1.0725741442",
+        "0.3389463178",
+        "1.6740364205",
+        "0.36124438",
+        "0.13612169",
+        "1.04176170"
+      ],
+      "reason": "The screen counts numbers within two lines of the marker, and this is a dense specification table, so the count aggregates across neighbouring rows that have no reference input at all. Every number in the window was enumerated and classified. 118.3787 / 5.3723 / 1.2522 are the LGE K, X and Y intermediates, which reproduce exactly from the published coefficients at M = 16.0425 and T = 559.6704 degR and were recomputed to confirm it. The remaining values are analytic-derivative and finite-difference results from rows whose inputs are declared pseudo-reduced coordinates, a pure mathematics check with no physics and no external data. The reference densities this row would compare against are withheld.",
+      "reviewed": "2026-09-14"
+    },
+    {
+      "path": "docs/evidence/viscosity.md",
+      "line_hint": 621,
+      "numbers": [
+        "0.94567",
+        "0.89791",
+        "0.84021",
+        "0.84695",
+        "373.97",
+        "670.91",
+        "10.731577",
+        "62.42796",
+        "1.63162",
+        "0.99845",
+        "2.00170"
+      ],
+      "reason": "This library's own output, a unit conversion and a gas constant. The four Z values are what this implementation's DAK solver returns: they reproduce from the published inputs T_pr = 1.63162 and p_pc = 667.0 psia to within 6e-06, which was recomputed to confirm, so they carry no reference content. 373.97 degR and 670.91 psia are this repository's Standing pseudocriticals at gamma_g = 0.65, likewise reproduced exactly. 10.731577 is the field-unit gas constant and 62.42796 the exact lbm/ft3 per g/cm3 conversion. The reference side of this comparison, and every pointwise deviation against it, are withheld.",
+      "reviewed": "2026-09-14"
+    },
+    {
+      "path": "docs/evidence/viscosity.md",
+      "line_hint": 723,
+      "numbers": [
+        "16.0425",
+        "559.6704"
+      ],
+      "reason": "Only the experiment settings remain in this window: the molar mass of methane and 100 degF on the Rankine scale. This oracle previously quoted the correlation evaluated on the reference densities. Those values held no reference digit of their own, but the correlation is strictly monotonic in density, so each one inverted back to a reference density to machine precision, which was demonstrated before they were removed. They are gone from this release, and the derived-value screen exists because of them.",
+      "reviewed": "2026-09-14"
+    },
+    {
+      "path": "docs/evidence/viscosity.md",
+      "line_hint": 753,
+      "numbers": [
+        "1.095779e-3",
+        "0.89791",
+        "310.928"
+      ],
+      "reason": "The analytic route, not the reference route. 1.095779e-3 /psi is what this library's DAK plus Mattar-Brar-Aziz path returns at 1000 psia and 559.6704 degR: recomputing it from the published methane criticals gives agreement to 1.5e-05, the residual being the document's rounded T_pr. 0.89791 is the DAK Z at the same state, likewise reproduced. 310.928 K is the temperature setting. The reference-derived compressibility that this row compares against, and the agreement statistic, are both withheld.",
+      "reviewed": "2026-09-14"
+    },
+    {
+      "path": "tests/test_release_payload_guard.py",
+      "line_hint": 105,
+      "numbers": [
+        "0.9123456",
+        "0.8234567",
+        "0.7345678",
+        "0.6456789"
+      ],
+      "reason": "The screen firing on its own regression fixture, which is the fixture working. These four values are invented sentinels chosen to look like a reference-derived series so that the derived-value screen can be shown to reject one; the test file states the same and pairs it with a negative control carrying identical numbers under a non-derived provenance, which must not fire. No value here comes from the extract.",
+      "reviewed": "2026-09-14"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+# Development environment lock for reservoir-performance-lab.
+#
+# This is a record of a resolved install, not a hand-maintained wish list. It was
+# produced by creating .venv with the interpreter recorded below, installing
+#     hatchling>=1.21 build pytest>=8.0 pytest-cov>=5.0 ruff>=0.6 mypy>=1.11
+# and freezing what the resolver actually chose:
+#     python3 -m venv .venv
+#     .venv/bin/python -m pip install hatchling build pytest pytest-cov ruff mypy
+#     .venv/bin/python -m pip freeze --exclude-editable > requirements-dev.lock
+#
+# Resolved on 2026-09-13 with CPython 3.13.2 on macOS (darwin, arm64), pip 26.2.1.
+# It pins the development toolchain only. The library itself has no runtime
+# dependencies and is not pinned by anything here: see the empty `dependencies` list in
+# pyproject.toml, which a test enforces by walking the import graph under src/.
+#
+# Reproduce the environment with:
+#     python3 -m venv .venv
+#     .venv/bin/python -m pip install -r requirements-dev.lock
+#
+# These are not hashes and this is not a cross-platform lock. It records what one
+# resolution produced on one platform, which is enough to reproduce a run and to notice
+# when a tool changed under the project, and it does not claim more than that.
+ast_serialize==0.11.1
+build==1.6.1
+coverage==7.16.0
+hatchling==1.32.0
+iniconfig==2.3.0
+librt==0.15.0
+mypy==2.3.1
+mypy_extensions==1.1.0
+packaging==26.3
+pathspec==1.1.1
+pluggy==1.6.0
+Pygments==2.21.0
+pyproject_hooks==1.2.0
+pytest==9.1.1
+pytest-cov==7.1.0
+ruff==0.16.7
+tomlkit==0.15.1
+trove-classifiers==2026.6.1.19
+typing_extensions==4.16.0

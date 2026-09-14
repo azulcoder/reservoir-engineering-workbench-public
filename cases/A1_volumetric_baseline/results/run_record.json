@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "label": "A1_volumetric_baseline",
+  "status": "completed",
+  "started_utc": "2026-09-13T09:14:29Z",
+  "elapsed_seconds": 0.6301834589976352,
+  "seed": 20260913,
+  "config": {
+    "case_id": "A1_volumetric_baseline",
+    "gas_in_place_scf": 100000000000.0,
+    "initial_pressure_psia": 4000.0,
+    "temperature_degr": 640.0,
+    "gas_rate_scf_per_day": 25000000.0,
+    "n_points": 11,
+    "constant_z": 0.9,
+    "specific_gravity": 0.65,
+    "pseudocritical_correlation": "sutton-1985",
+    "z_correlation": "dranchuk-abou-kassem-1975",
+    "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+    "minimum_pressure_psia": 200.0,
+    "solver_tolerance": 1e-12,
+    "max_iterations": 200,
+    "pressure_sigma_psia": 5.0,
+    "monte_carlo_replicates": 1000,
+    "monte_carlo_first_seed": 1000,
+    "extrapolation_seed": 20260913,
+    "depletion_fractions": [
+      0.5,
+      0.1
+    ],
+    "acceptance": {
+      "A1_A2_tolerance": 5e-12,
+      "A3_tolerance": 2e-11,
+      "A4_band": [
+        0.01,
+        0.1
+      ],
+      "A5_band": [
+        0.9,
+        1.15
+      ],
+      "A6_limit": 0.0005,
+      "A7_band": [
+        0.92,
+        0.97
+      ],
+      "A8_band": [
+        0.95,
+        1.0
+      ],
+      "A9_predicted_ratio": 6.2005,
+      "A9_tolerance": 0.05
+    }
+  },
+  "config_sha256": "d6212de4c08796f6a369a5a47c9b8c04481000f347f21cd7c1aae8a38b53574e",
+  "settings": {
+    "python_float": "IEEE 754 binary64",
+    "dependencies": "standard library only"
+  },
+  "settings_sha256": "c1f60eb3b78a52e6f5be9fe8e85d0269aa1eeb457be18fa30758121b62eb7910",
+  "source_revision": {
+    "repo_root": ".",
+    "commit": "855fe5447b5f2a87ea006727dd893204a18a2832",
+    "branch": "main",
+    "describe": "855fe54-dirty",
+    "dirty": true,
+    "dirty_paths": [
+      ".gitignore",
+      "CHANGELOG.md",
+      "cases/"
+    ]
+  },
+  "environment": {
+    "python_version": "3.13.2",
+    "python_implementation": "CPython",
+    "python_executable": "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "imported_package_versions": {
+      "argparse": "1.1",
+      "decimal": "1.70",
+      "json": "2.0.9",
+      "platform": "1.0.8",
+      "re": "2.2.1",
+      "reservoir_lab": "0.2.0",
+      "zlib": "1.0"
+    }
+  },
+  "files": [
+    {
+      "role": "output",
+      "path": "artifacts/A1_volumetric_baseline/run-006/summary.json",
+      "sha256": "701e20d50f10ba7e8b82ea0162d3c0014c883a820f30cb2e70d71893ecbb097e",
+      "bytes": 25778
+    }
+  ],
+  "metrics": {
+    "experiment_1_relative_error": 0.0,
+    "experiment_2_consistent_relative_error": 5.395683899678261e-14,
+    "experiment_2_frozen_z_relative_error": -0.057388424796945614,
+    "experiment_3_spread_over_reported": 1.0136481243142483,
+    "experiment_3_coverage": 0.96,
+    "experiment_4_stderr_ratio": 5.990648211992662,
+    "all_criteria_met": true,
+    "metrics_sha256": "c45dbaa6ee614460662b16c8bb418ce7218c1610368d49cfb852d4231965f771"
+  },
+  "notes": [
+    "Forward generation by reservoir_lab.depletion, inversion by reservoir_lab.material_balance. The two modules share no code, so a coding slip in one does not cancel against the other. They do share the physical assumption set, and diagnostic D1 shows the comparison is blind to any uniform multiplicative error in the ordinate, the standard-volume basis included.",
+    "Acceptance thresholds were fixed in cases/A1_volumetric_baseline/protocol.md before this run.py was first executed. Diagnostics D1 and D2 were added afterwards, are not gated, and changed no threshold."
+  ],
+  "limitations": [
+    "Numerical verification only. The generator and the estimator share the volumetric assumption set: one tank, constant hydrocarbon pore volume, dry gas of fixed composition, isothermal, no influx, no injection, one declared standard basis. Agreement checks the arithmetic and cannot validate any of those assumptions.",
+    "No field data and no published benchmark is used. Exact recovery here is compatible with the same estimator being badly wrong on a reservoir that violates the volumetric assumption; that case is A2, not this one.",
+    "Experiments 1 and 2a are blind to any multiplicative error in the ordinate. Diagnostic D1 shows that corrupting the standard-volume basis by 50 percent, changing the reservoir temperature, or rescaling the whole p/Z series leaves the recovery error at zero, because the x-intercept of a line does not move when the ordinate is rescaled. Zero recovery error is evidence only against the defect classes D1 shows are visible: abscissa bias and point-wise ordinate error.",
+    "Only the pressure channel of NoiseModel is exercised anywhere in this case. Error in cumulative production is never simulated, and diagnostic D1 shows it maps one for one into the recovered G, which makes allocation and metering bias the most consequential untested input.",
+    "The fit is ordinary least squares, which assumes an error-free abscissa. Once cumulative production carries error the problem is errors-in-variables and OLS is the wrong estimator; the library's Deming and York fits are not exercised here, so nothing establishes what the reported standard error means in that case.",
+    "The Dranchuk-Abou-Kassem deviation factor is a correlation evaluated inside its published window, not a measured PVT report. One composition is used: a 0.65 specific-gravity dry gas with no H2S, CO2 or N2, so no Wichert-Aziz correction is exercised. For pure carbon dioxide this repository's own check.py records DAK errors against NIST of up to 39.7 percent.",
+    "The Monte Carlo in experiment 3 uses independent Gaussian pressure error only. Real shut-in pressures carry shared calibration bias and temporally correlated error, which a per-point independent model cannot represent and which the reported standard error would understate.",
+    "Average reservoir pressure is handed to the estimator exactly. In the field it is itself an estimate, from a build-up extrapolation and a datum correction, whose error is systematic rather than Gaussian and whose well count may not sample the drainage volume.",
+    "Constant hydrocarbon pore volume is asserted, not tested. Formation and connate-water compressibility, which is what makes an abnormally pressured gas reservoir curve its p/Z plot and overestimate G, is not represented at all, and it is a non-water-drive violation of the same assumption.",
+    "Dry gas of fixed composition is asserted. Retrograde condensate dropout, which removes liquid from the reservoir gas and changes the composition as pressure falls, is outside the generator's model.",
+    "Cumulative production is evenly spaced by construction, which is what makes the section-5 error budget exact: xbar = fG/2 and Sxx = 1.1 f^2 G^2. Real survey dates cluster, and every leverage and tolerance in that budget changes with the spacing.",
+    "Experiment 2b measures one specific Z inconsistency, the initial deviation factor reused throughout, on one depletion window. Diagnostic D2 shows that both the magnitude and the sign of that bias depend on where the window sits relative to the minimum of Z(p); neither transfers.",
+    "No reserves terminology, development decision or operational limit follows from any number here."
+  ]
+}

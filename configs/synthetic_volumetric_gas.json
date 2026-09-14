@@ -1,0 +1,18 @@
+{
+  "case_type": "synthetic_self_consistency_demo",
+  "seed": 271828,
+  "true_giip_sm3": 1000000000.0,
+  "initial_pressure_pa": 25000000.0,
+  "initial_z": 0.9,
+  "temperature_k": 360.0,
+  "pressure_noise_sd_pa": 25000.0,
+  "recovery_fractions": [0, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60],
+  "training_observations": 9,
+  "max_relative_giip_error": 0.01,
+  "max_holdout_rmse_fraction_initial_pressure": 0.01,
+  "standard_conditions": {
+    "pressure_pa_absolute": 101325.0,
+    "temperature_k": 288.15,
+    "z": 1.0
+  }
+}

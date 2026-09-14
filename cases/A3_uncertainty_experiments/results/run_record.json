@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "label": "A3 gas-in-place uncertainty experiments",
+  "status": "completed",
+  "started_utc": "2026-09-13T09:15:42Z",
+  "elapsed_seconds": 14.209778707998339,
+  "seed": 20260913,
+  "config": {
+    "case_id": "A3_uncertainty_experiments",
+    "case_type": "synthetic_measurement_error_budget",
+    "gas_in_place_scf": 100000000000.0,
+    "initial_pressure_psia": 4500.0,
+    "temperature_degf": 200.0,
+    "gas_specific_gravity": 0.65,
+    "pseudocritical_correlation": "sutton-1985",
+    "z_correlation": "dak",
+    "alternative_z_correlations": [
+      "hall-yarborough",
+      "dpr"
+    ],
+    "standard_basis": "SPE_STANDARD (14.696 psia, 60 degF)",
+    "alternative_standard_basis": "US_CONTRACTUAL_STANDARD (14.73 psia, 60 degF)",
+    "minimum_pressure_psia": 400.0,
+    "base_surveys": 12,
+    "base_depletion_fraction": 0.5,
+    "survey_interval_days": 365.0,
+    "pressure_sigma_psia": 45.0,
+    "calibration_bias_grid_psia": [
+      -50.0,
+      -25.0,
+      -14.696,
+      0.0,
+      25.0,
+      50.0
+    ],
+    "reference_calibration_bias_psia": 25.0,
+    "atmosphere_psia": 14.696,
+    "multiplicative_z_error_grid": [
+      -0.05,
+      -0.02,
+      -0.01,
+      0.01,
+      0.02,
+      0.05
+    ],
+    "z_profile_scan_points": 401,
+    "z_tilt_grid": [
+      -0.01,
+      -0.005,
+      0.005,
+      0.01
+    ],
+    "depletion_fraction_grid": [
+      0.1,
+      0.2,
+      0.35,
+      0.5
+    ],
+    "degraded_surveys": 6,
+    "degraded_depletion_fraction": 0.04,
+    "degraded_pressure_sigma_psia": 120.0,
+    "sigma_robustness_grid_psia": [
+      22.5,
+      45.0,
+      90.0
+    ],
+    "monte_carlo_replicates": 4000,
+    "sweep_monte_carlo_replicates": 2000,
+    "bootstrap_replicates": 4000,
+    "ar1_lag1_correlation": 0.8,
+    "holdout_training_surveys": 8,
+    "confidence": 0.95,
+    "seed": 20260913
+  },
+  "config_sha256": "3274099046e333a2ea4626d80d7f5b1250598f6d39959311add319fe3f916b88",
+  "settings": {
+    "identity_tolerance": 1e-09,
+    "tight_identity_tolerance": 1e-12,
+    "coverage_band": [
+      0.935,
+      0.965
+    ]
+  },
+  "settings_sha256": "944b4043747f920632584724f9cf601dd9429486e487770d16af511b1642379a",
+  "source_revision": {
+    "repo_root": ".",
+    "commit": "855fe5447b5f2a87ea006727dd893204a18a2832",
+    "branch": "main",
+    "describe": "855fe54-dirty",
+    "dirty": true,
+    "dirty_paths": [
+      ".gitignore",
+      "CHANGELOG.md",
+      "cases/"
+    ]
+  },
+  "environment": {
+    "python_version": "3.13.2",
+    "python_implementation": "CPython",
+    "python_executable": "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "imported_package_versions": {
+      "argparse": "1.1",
+      "decimal": "1.70",
+      "json": "2.0.9",
+      "platform": "1.0.8",
+      "re": "2.2.1",
+      "reservoir_lab": "0.2.0",
+      "zlib": "1.0"
+    }
+  },
+  "files": [
+    {
+      "role": "source",
+      "path": "cases/A3_uncertainty_experiments/run.py",
+      "sha256": "b8f272cbd9a07b2ef19d5d8eff5fc72fd37e70dfe00bdee3016d0d86c1fe09b6",
+      "bytes": 69024
+    },
+    {
+      "role": "protocol",
+      "path": "cases/A3_uncertainty_experiments/protocol.md",
+      "sha256": "d55b042faf5d30af10a82a3ee239de5dab54d6f20b6cdef223ae58e099ea301b",
+      "bytes": 19476
+    },
+    {
+      "role": "source",
+      "path": "src/reservoir_lab/depletion.py",
+      "sha256": "eb1a67824690ae37ec4c64debfe83cde4105a4ec8099a9da8d76bc8d75770529",
+      "bytes": 59249
+    },
+    {
+      "role": "source",
+      "path": "src/reservoir_lab/gas_properties.py",
+      "sha256": "8d75243361150a631d207489fd3218d539f47ca65fc39270f1d7166f1659172a",
+      "bytes": 30809
+    },
+    {
+      "role": "source",
+      "path": "src/reservoir_lab/material_balance.py",
+      "sha256": "3794ce30a6818f1c2b8932b565a00dd276e30fce9d54c41eb45d841aa35b77da",
+      "bytes": 65559
+    },
+    {
+      "role": "source",
+      "path": "src/reservoir_lab/regression.py",
+      "sha256": "76f5549a761f56c4139f0b16a022c0c029e55dd87ad061c91ccdfd80b8dac9ee",
+      "bytes": 82463
+    },
+    {
+      "role": "source",
+      "path": "src/reservoir_lab/units.py",
+      "sha256": "1cfb9e3439c3d7b40a8ae214ce82203b110ef8c0eca2273c548628edf296fb41",
+      "bytes": 12441
+    },
+    {
+      "role": "output",
+      "path": "artifacts/A3_uncertainty_experiments/run-006/summary.json",
+      "sha256": "0fa6192a68858352f7bacd3ba27b390c148eba8c6240de4c4f9476cc2385d33d",
+      "bytes": 42906
+    }
+  ],
+  "metrics": {
+    "noise_free_relative_error": 7.194245199571014e-14,
+    "random_noise_relative_sd": 0.01413175066523484,
+    "psig_relative_shift": -0.005036730205453366,
+    "correlation_choice_relative_shift": 0.003325806950919441,
+    "multiplicative_z_relative_shift": 3.0517578125e-16,
+    "standard_basis_relative_shift": -0.002311692090057882,
+    "degraded_unbounded_fieller_fraction": 0.7355,
+    "best_next_step": "calibrate the pressure datum, removing the bias",
+    "all_acceptance_criteria_met": true
+  },
+  "notes": [
+    "AC1 met: noise-free x-intercept recovers G to better than 1e-9 relative",
+    "AC2 met: exact linear-perturbation prediction matches the refit for every offset",
+    "AC3 met: psig slip moves G negative and matches its exact prediction",
+    "AC4 met: uniform multiplicative Z error leaves G unchanged",
+    "AC5 met: delta-method 95 percent coverage at f = 0.50 inside [0.935, 0.965]",
+    "AC6 met: Fieller 95 percent coverage inside [0.935, 0.965] at every setting whose error model is the fitted least-squares one: E5 f = 0.10, 0.20, 0.35, 0.50, the degraded programme, E1 n = 12 and E1 n = 24. E1b violates that model by construction and is excluded from this criterion and reported separately",
+    "AC7 met: library delta standard error equals the collapsed closed form",
+    "AC8 met: standard-basis change scales static and dynamic G by exactly the declared standard-pressure ratio SPE_STANDARD/US_CONTRACTUAL_STANDARD = 14.695948775513450/14.73, the constants the library carries rather than the rounded 14.696/14.73",
+    "AC9 met: degraded programme reaches the unbounded Fieller regime in >= 10 percent of draws",
+    "The evidence card's rule of thumb for a shared offset, c*G/(p_i/Z_i), is the Z = 1 special case. With a real Z(p) and Z recomputed at the reported pressure it understates the shift by a factor of 1.58 here."
+  ],
+  "limitations": [
+    "Synthetic throughout. No field data, no simulator execution, no third-party dataset.",
+    "The generator and the estimator share the volumetric tank assumption, so this measures a measurement error budget, not model adequacy.",
+    "Every mechanism that biases a p/Z line physically -- aquifer support, rock and connate-water expansion, retrograde condensation, multi-tank communication -- is excluded by construction and is larger than anything ranked here.",
+    "sigma_p = 45 psia is an assumed representativeness figure for a volume-averaged shut-in pressure, not a measured gauge specification. The ranking is conditional on it.",
+    "The shared calibration bias is treated as a single unknown constant, not as a distribution. No prior is placed on its size.",
+    "The Monte Carlo noise is applied to the reported series only and never feeds back into the balance, which is the NoiseModel contract, not a claim about real measurement physics.",
+    "Deviation-factor differences are between published correlations, not against laboratory PVT. The repository's own check.py compares DAK with NIST reference equations of state for pure methane and reports a signed range of -1.696 to -0.129 percent across its sampled corners, a wider spread than the correlation-choice row of the ranking table uses.",
+    "Cumulative production is never perturbed. The abscissa is the noise-free generated volume in every experiment, so this is an error budget on the ordinate only. A metering or allocation error scales the x-intercept by exactly the same factor (the E6 rescale identity), which would place a 1 percent metering bias above every row of the ranking table, and an error in the abscissa also violates the errors-free-regressor assumption that ordinary least squares rests on, biasing the slope rather than only widening it.",
+    "Gas gravity, composition and reservoir temperature are treated as exactly known. An error in any of them is a shape error on Z(p), which is the mechanism this case finds matters most.",
+    "The calibrated option in the next-measurement table is modelled as leaving no systematic behind. A residual datum error above residual_datum_error_break_even_psia reverses the recommendation.",
+    "The pressure error is homoscedastic and additive in psia over a window from 4500 down to 2071 psia. A proportional error would tilt the line rather than scatter it, and by this case's own tilt result a tilt is the damaging mode. No heteroscedastic case was run.",
+    "The estimator is unweighted ordinary least squares by declaration. No weighted, errors-in-variables or robust fit was tried, and under a non-constant ordinate variance that choice would change every standard error reported here.",
+    "The abscissa grid is evenly spaced, that is, constant offtake. The design formula, the 1/f scaling and the short-depletion penalty all rest on that geometry; real programmes have irregular spacing and shut-in timing that correlates with rate.",
+    "Every percentage is for one synthetic tank at G = 100 Bscf, p_i = 4500 psia, T = 200 degF and gamma = 0.65. No sensitivity to initial pressure, temperature or gravity was run, so the magnitudes are not known to transfer to another reservoir."
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "captured_on": "2026-09-14",
+  "platform": "darwin",
+  "engine": "chromium",
+  "note": "captures for human inspection; not pixel baselines, not comparable across operating systems",
+  "files": [
+    {
+      "file": "home-375.png",
+      "what": "home page, whole page",
+      "width": 375,
+      "engine": "chromium"
+    },
+    {
+      "file": "a4-375.png",
+      "what": "case page A4, first screen, default state",
+      "width": 375,
+      "engine": "chromium"
+    },
+    {
+      "file": "home-768.png",
+      "what": "home page, whole page",
+      "width": 768,
+      "engine": "chromium"
+    },
+    {
+      "file": "a4-768.png",
+      "what": "case page A4, first screen, default state",
+      "width": 768,
+      "engine": "chromium"
+    },
+    {
+      "file": "home-1440.png",
+      "what": "home page, whole page",
+      "width": 1440,
+      "engine": "chromium"
+    },
+    {
+      "file": "a4-1440.png",
+      "what": "case page A4, first screen, default state",
+      "width": 1440,
+      "engine": "chromium"
+    },
+    {
+      "file": "explorer-case-60-1440.png",
+      "what": "scenario explorer with J = 60 selected, arrived by deep link",
+      "width": 1440,
+      "engine": "chromium"
+    },
+    {
+      "file": "explorer-invalid-case-1440.png",
+      "what": "scenario explorer asked for a case that does not exist",
+      "width": 1440,
+      "engine": "chromium"
+    },
+    {
+      "file": "explorer-case-0-375.png",
+      "what": "scenario explorer, volumetric control case, narrow viewport",
+      "width": 375,
+      "engine": "chromium"
+    },
+    {
+      "file": "figure-f01-1440.png",
+      "what": "exhibit F01 alone, as rendered, for judging label legibility",
+      "width": 1440,
+      "engine": "chromium"
+    },
+    {
+      "file": "figure-f01-375.png",
+      "what": "exhibit F01 alone, as rendered, for judging label legibility",
+      "width": 375,
+      "engine": "chromium"
+    },
+    {
+      "file": "a2-unavailable-1440.png",
+      "what": "A2, the study whose exhibits are withheld on rights grounds",
+      "width": 1440,
+      "engine": "chromium"
+    },
+    {
+      "file": "a4-nojs-1440.png",
+      "what": "case page A4, first screen, with JavaScript blocked at the context level",
+      "width": 1440,
+      "engine": "chromium"
+    },
+    {
+      "file": "explorer-nojs-1440.png",
+      "what": "the explorer section with JavaScript blocked: no control, base case in full",
+      "width": 1440,
+      "engine": "chromium"
+    },
+    {
+      "file": "a4-print-top.png",
+      "what": "case page A4 under the print stylesheet, first screen",
+      "width": 1440,
+      "engine": "chromium"
+    },
+    {
+      "file": "a4-print-limitations.png",
+      "what": "case page A4 under the print stylesheet, the limitations section",
+      "width": 1440,
+      "engine": "chromium"
+    },
+    {
+      "file": "metrics-table-375.png",
+      "what": "the three-column metrics table at 375: finding F3, clipped with no way to scroll",
+      "width": 375,
+      "engine": "chromium"
+    }
+  ]
+}

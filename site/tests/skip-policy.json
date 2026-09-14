@@ -1,0 +1,54 @@
+{
+  "//": [
+    "Every skip the browser suite is permitted to take, keyed by a stable capability id.",
+    "",
+    "A skip is a statement that a check could not be made here, so it has to name what was",
+    "unavailable. The id is the stable part and it is what the validator matches on; the",
+    "human sentence that follows it in the skip reason is diagnostic text that may be",
+    "reworded without touching this file or the gates that read it. The previous version of",
+    "this policy matched whole English sentences, so rewording a message silently turned a",
+    "declared skip into an undeclared one.",
+    "",
+    "'engines' is the set of engines that are PERMITTED to take the skip. It is not a",
+    "prediction and it is not a quota. The same suite takes 14 skips on macOS and may take",
+    "fewer on Linux, because a capability is a property of the engine build and the platform",
+    "it runs on. The validator therefore never requires a skip to happen; it only ever",
+    "rejects one that is not permitted, not evidenced, or contradicted.",
+    "",
+    "'evidence' says how a skip is justified:",
+    "  probe  -- a control fixture carrying nothing of the site measured the behaviour in",
+    "            this engine, in this run. The skipping test must carry the measurement as",
+    "            an annotation, and the independent probe test in measure.spec.ts must have",
+    "            run on the same engine and agreed. Disagreement is a failure, not a skip.",
+    "  engine -- a documented, unconditional property of the engine's API surface with no",
+    "            site-side behaviour to measure. Permitted for a narrow, named API only."
+  ],
+  "reason_grammar": "^NOT APPLICABLE \\[([a-z0-9][a-z0-9-]*)\\]: (.+)$",
+  "annotation_prefix": "capability:",
+  "engines": ["chromium", "firefox", "webkit"],
+  "capabilities": [
+    {
+      "id": "print-to-pdf",
+      "capability": "programmatic print-to-PDF (CDP Page.printToPDF)",
+      "evidence": "engine",
+      "engines": ["firefox", "webkit"],
+      "note": "page.pdf() is implemented over the Chrome DevTools Protocol and Playwright exposes it on Chromium only. There is no site behaviour to measure: the method does not exist to be called. The print stylesheet it exercises is checked on every engine through the print emulation tests, which do not skip."
+    },
+    {
+      "id": "tab-order-includes-links",
+      "capability": "links participate in sequential keyboard navigation",
+      "evidence": "probe",
+      "engines": ["webkit"],
+      "probe_test": "the tab-ring control fixture is measured, not assumed",
+      "note": "macOS WebKit keeps links out of the tab ring unless the system preference 'Press Tab to highlight each item' is on, and Playwright's WebKit inherits that default. The probe loads a page holding one link and one button and reports what Tab actually reached. A Linux WebKit build that does reach the link arms these checks again with no edit here."
+    },
+    {
+      "id": "keyboard-scroll-overflow",
+      "capability": "a focused overflow container scrolls with the arrow keys",
+      "evidence": "probe",
+      "engines": ["webkit"],
+      "probe_test": "the keyboard-scroll control fixture is measured, not assumed",
+      "note": "The probe is a 300px box with a 2000px child, a tabindex, no stylesheet and no script. Where ArrowRight does not move it but scrollBy(60) does, the engine cannot express the behaviour at all and a figure frame that does not respond is failing the environment. Where it moves, the check runs against the site."
+    }
+  ]
+}

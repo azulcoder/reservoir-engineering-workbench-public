@@ -1,0 +1,16 @@
+{
+ "cases/A1_volumetric_baseline/results/run_record.json": "eb6f6cf10b1ae2642eaa0baf21afeb8315df9aea97e4965e4d2f9303b64bc375",
+ "cases/A1_volumetric_baseline/results/summary.json": "701e20d50f10ba7e8b82ea0162d3c0014c883a820f30cb2e70d71893ecbb097e",
+ "cases/A3_uncertainty_experiments/results/run_record.json": "7edbc0a68b2975166dacf4bd5222c861005fc023d97904bffa04b2450e43293e",
+ "cases/A3_uncertainty_experiments/results/summary.json": "0fa6192a68858352f7bacd3ba27b390c148eba8c6240de4c4f9476cc2385d33d",
+ "cases/A4_misleading_fit_counterexample/results/run_record.json": "a2022bde2b8580336a37bbfca986ca4c70e8210cc3028ae7a2f1b4b6a0541335",
+ "cases/A4_misleading_fit_counterexample/results/summary.json": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+ "site/src/data/figures/contract.json": "320519b8e2cc57fdd7e441a4cc4ec499372d7a12374d23af2855235fa8fae4b6",
+ "site/src/data/figures/f01_f02_scenarios.json": "dd3d8d265ac77a893fa949b37225b76ea6f56259c7cf5ce706d013c04512f499",
+ "site/src/data/figures/f03_bias_sweep.json": "e4669e92d1d3dddb06baa10c20cf2701b616b1625c7f2ceeb10d56ff3e584b59",
+ "site/src/data/figures/f04_progressive.json": "908e1e796c9fba54994d4ad916ce6dc75af4b3594cc1ca146d4d1ad113ae46bb",
+ "site/src/data/figures/f05_holdout.json": "4dcf5257b65b55c0a76f8b6305a9a94e1d329ab690be340b6eb691d66ce3b51c",
+ "site/src/data/figures/f06_detection.json": "568c3f68405172d552f925c2173bab5f3620e9c76b50fce8b26a74a71abaf9a9",
+ "site/src/data/figures/f07_z_mismatch.json": "8adb8d8dc0b0024ca2e6c2085e3040e2d8e1d0e3be894f3efc27638d7db6d0fc",
+ "site/src/data/figures/f08_refinement.json": "5e124ef42a76a1e0761b0fbd6ec1b6c9dc552575ea75ccf3b408bfaeb292565e"
+}

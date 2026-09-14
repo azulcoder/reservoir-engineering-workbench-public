@@ -1,0 +1,158 @@
+{
+  "rankings_by_assumed_sigma": {
+    "sigma_22.5_psia": [
+      {
+        "source": "shared calibration bias, 25 psia",
+        "relative_effect": 0.008624012173521045
+      },
+      {
+        "source": "random pressure scatter, one sigma",
+        "relative_effect": 0.006620858384476938
+      },
+      {
+        "source": "psig supplied as psia",
+        "relative_effect": 0.005036730205453366
+      },
+      {
+        "source": "deviation-factor correlation choice",
+        "relative_effect": 0.003325806950919441
+      },
+      {
+        "source": "standard basis 14.696 against 14.73",
+        "relative_effect": 0.002311692090057882
+      },
+      {
+        "source": "uniform multiplicative Z error, 5 percent",
+        "relative_effect": 3.0517578125e-16
+      }
+    ],
+    "sigma_45_psia": [
+      {
+        "source": "random pressure scatter, one sigma",
+        "relative_effect": 0.013241716768953877
+      },
+      {
+        "source": "shared calibration bias, 25 psia",
+        "relative_effect": 0.008624012173521045
+      },
+      {
+        "source": "psig supplied as psia",
+        "relative_effect": 0.005036730205453366
+      },
+      {
+        "source": "deviation-factor correlation choice",
+        "relative_effect": 0.003325806950919441
+      },
+      {
+        "source": "standard basis 14.696 against 14.73",
+        "relative_effect": 0.002311692090057882
+      },
+      {
+        "source": "uniform multiplicative Z error, 5 percent",
+        "relative_effect": 3.0517578125e-16
+      }
+    ],
+    "sigma_90_psia": [
+      {
+        "source": "random pressure scatter, one sigma",
+        "relative_effect": 0.026483433537907754
+      },
+      {
+        "source": "shared calibration bias, 25 psia",
+        "relative_effect": 0.008624012173521045
+      },
+      {
+        "source": "psig supplied as psia",
+        "relative_effect": 0.005036730205453366
+      },
+      {
+        "source": "deviation-factor correlation choice",
+        "relative_effect": 0.003325806950919441
+      },
+      {
+        "source": "standard basis 14.696 against 14.73",
+        "relative_effect": 0.002311692090057882
+      },
+      {
+        "source": "uniform multiplicative Z error, 5 percent",
+        "relative_effect": 3.0517578125e-16
+      }
+    ]
+  },
+  "top_two_by_assumed_sigma": {
+    "sigma_22.5_psia": [
+      "shared calibration bias, 25 psia",
+      "random pressure scatter, one sigma"
+    ],
+    "sigma_45_psia": [
+      "random pressure scatter, one sigma",
+      "shared calibration bias, 25 psia"
+    ],
+    "sigma_90_psia": [
+      "random pressure scatter, one sigma",
+      "shared calibration bias, 25 psia"
+    ]
+  },
+  "ranking_stable_under_sigma_factor_two": false,
+  "short_depletion_penalty_f010_over_f050": 5.061588879781202,
+  "noise_free_relative_error": 7.194245199571014e-14,
+  "options": [
+    {
+      "option": "base programme as it stands",
+      "n_surveys": 12,
+      "depletion_fraction": 0.5,
+      "pressure_sigma_psia": 45,
+      "calibration_bias_present": true,
+      "design_stderr_relative": 0.013241716768953877,
+      "bias_relative": 0.008624012173521045,
+      "total_relative": 0.021865728942474922
+    },
+    {
+      "option": "double the survey count at the same depletion",
+      "n_surveys": 24,
+      "depletion_fraction": 0.5,
+      "pressure_sigma_psia": 45,
+      "calibration_bias_present": true,
+      "design_stderr_relative": 0.009760502574940901,
+      "bias_relative": 0.008644603948637197,
+      "total_relative": 0.0184051065235781
+    },
+    {
+      "option": "wait three more years, to 65 percent depletion",
+      "n_surveys": 15,
+      "depletion_fraction": 0.65,
+      "pressure_sigma_psia": 45,
+      "calibration_bias_present": true,
+      "design_stderr_relative": 0.008885427936969508,
+      "bias_relative": 0.007987559123923571,
+      "total_relative": 0.01687298706089308
+    },
+    {
+      "option": "halve the average-pressure scatter",
+      "n_surveys": 12,
+      "depletion_fraction": 0.5,
+      "pressure_sigma_psia": 22.5,
+      "calibration_bias_present": true,
+      "design_stderr_relative": 0.006620858384476938,
+      "bias_relative": 0.008624012173521045,
+      "total_relative": 0.015244870557997984
+    },
+    {
+      "option": "calibrate the pressure datum, removing the bias",
+      "n_surveys": 12,
+      "depletion_fraction": 0.5,
+      "pressure_sigma_psia": 45,
+      "calibration_bias_present": false,
+      "design_stderr_relative": 0.013241716768953877,
+      "bias_relative": 7.194245199571014e-14,
+      "total_relative": 0.01324171676902582
+    }
+  ],
+  "best_option": "calibrate the pressure datum, removing the bias",
+  "best_option_total_relative": 0.01324171676902582,
+  "best_option_runner_up": "halve the average-pressure scatter",
+  "best_option_margin_relative": 0.002003153788972164,
+  "residual_datum_error_break_even_psia": 5.82513592489704,
+  "break_even_note": "The recommended option assumes the calibration check leaves no systematic behind. A residual datum error larger than residual_datum_error_break_even_psia, applied as a shared offset on every survey, puts the calibrated programme behind best_option_runner_up on the same linear combination convention.",
+  "combination_convention": "one-sigma random standard error and the absolute value of the systematic shift are added linearly. A bias is not a random variable and adding it in quadrature would understate it; the two components are reported separately as well."
+}

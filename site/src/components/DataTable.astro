@@ -1,0 +1,156 @@
+---
+/**
+ * An accessible data table.
+ *
+ *  - A real <caption>, which is the table's accessible name.
+ *  - scope="col" on every column header, scope="row" on the row header when one is
+ *    declared, so a screen reader can announce a cell's coordinates.
+ *  - A labelled, focusable scroll region around every table. The region is reachable by
+ *    keyboard and announced by name; the page itself never scrolls sideways.
+ *
+ *    Whether a given table scrolls is decided by layout, not by a column count, and it
+ *    changes with the viewport: a three-column table overflows a 375px screen and fits a
+ *    1440px one. Measured across the site, nine of the eighteen regions scroll at 375 and
+ *    the same nine fit at 1440. Static markup cannot be right at both widths, so it takes
+ *    the safe side: the region is always focusable, because a region that scrolls and
+ *    cannot be focused is a keyboard failure, while a region that is focusable with
+ *    nothing to scroll is an inert stop. The hint below is worded for both states rather
+ *    than promising a scroll that may not happen -- it used to state the scroll as a fact
+ *    and was false at desktop width for half the tables on the site.
+ *  - An explicit word for an absent value. An empty cell cannot be distinguished from
+ *    a rendering failure, and in F05 the calibration region genuinely has no
+ *    reconstruction: it prints "not applicable, calibration region", not a blank.
+ *
+ * Numbers are formatted by the caller, not here. A component that decides significant
+ * figures would be deciding how precisely the case reports itself, and that decision
+ * belongs with the page that knows what the quantity is.
+ */
+
+export interface Column {
+  /** Key into each row object. */
+  key: string;
+  /** Header text. */
+  label: string;
+  /** Unit, printed under the label. Every numeric column should carry one. */
+  unit?: string;
+  /** Right-align and use tabular figures. */
+  numeric?: boolean;
+  /** Render this column's cell as the row header (at most one column). */
+  rowHeader?: boolean;
+}
+
+export type CellValue = string | number | null | undefined;
+
+export interface Props {
+  /** Caption text: what the table is. Becomes the table's accessible name. */
+  caption: string;
+  /** Optional bold first line of the caption, e.g. "Table F01". */
+  captionTitle?: string;
+  columns: Column[];
+  rows: Array<Record<string, CellValue>>;
+  /**
+   * Wrap in a labelled scroll region. Set it for any table with more than about six
+   * columns, which will not fit a phone at 15px.
+   */
+  wide?: boolean;
+  /** What an absent value prints as. */
+  naText?: string;
+  /** Fragment id for the table element. */
+  id?: string;
+}
+
+const {
+  caption,
+  captionTitle,
+  columns,
+  rows,
+  /* Every table gets the scroll region, not only the ones with many columns. A
+     two-column table of long numeric labels was 581px wide and, with no region, its values
+     were simply clipped off a 375px screen. Column count was never the right proxy for
+     rendered width; overflow-x:auto costs nothing when the table fits. */
+  wide = true,
+  naText = "not applicable",
+  id,
+} = Astro.props;
+
+const regionId = id ? `${id}-region` : `table-region-${Math.abs(hash(caption))}`;
+const captionId = `${regionId}-caption`;
+const headerColumn = columns.find((c) => c.rowHeader);
+
+function hash(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i += 1) h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
+  return h;
+}
+
+function isAbsent(v: CellValue): boolean {
+  return v === null || v === undefined || v === "";
+}
+---
+
+{
+  wide && (
+    <p class="scroll-region__hint">
+      {columns.length} columns. Where this table is wider than the screen it scrolls
+      sideways inside its own region, which is reachable with the keyboard. The page itself
+      never scrolls sideways.
+    </p>
+  )
+}
+
+<div
+  class={wide ? "scroll-region" : undefined}
+  role={wide ? "region" : undefined}
+  aria-labelledby={wide ? captionId : undefined}
+  tabindex={wide ? 0 : undefined}
+>
+  <table id={id}>
+    <caption id={captionId}>
+      {captionTitle && <span class="caption__title">{captionTitle}</span>}
+      {caption}
+    </caption>
+    <thead>
+      <tr>
+        {
+          columns.map((col) => (
+            <th scope="col" class={col.numeric ? "num" : undefined}>
+              {col.label}
+              {col.unit && (
+                <>
+                  <br />
+                  <span class="unit">{col.unit}</span>
+                </>
+              )}
+            </th>
+          ))
+        }
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((row) => (
+          <tr>
+            {columns.map((col) => {
+              const value = row[col.key];
+              const absent = isAbsent(value);
+              const text = absent ? naText : String(value);
+              const classes = [col.numeric && !absent ? "num" : "", absent ? "na" : ""]
+                .filter(Boolean)
+                .join(" ");
+              return col === headerColumn ? (
+                <th scope="row" class={classes || undefined}>
+                  {text}
+                </th>
+              ) : (
+                <td class={classes || undefined}>{text}</td>
+              );
+            })}
+          </tr>
+        ))
+      }
+    </tbody>
+    <slot name="tfoot" />
+  </table>
+</div>
+
+<slot name="footnote" />

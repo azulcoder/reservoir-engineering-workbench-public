@@ -1,0 +1,33 @@
+{
+  "name": "reservoir-performance-lab-site",
+  "private": true,
+  "type": "module",
+  "description": "Static publication site for the Gas Reservoir Performance Lab",
+  "scripts": {
+    "figures": "node scripts/render-figures.mjs",
+    "data": "node src/scripts/emit-public-data.mjs",
+    "data:verify": "node src/scripts/emit-public-data.mjs --verify",
+    "dev": "astro dev",
+    "build": "node scripts/render-figures.mjs && node src/scripts/emit-public-data.mjs && node src/scripts/emit-public-data.mjs --verify && astro build",
+    "preview": "astro preview",
+    "check": "astro check && tsc --noEmit -p tsconfig.node.json",
+    "test:e2e": "playwright test",
+    "check:site": "astro check",
+    "check:node": "tsc --noEmit -p tsconfig.node.json",
+    "release": "python3 ../scripts/build_release.py --base-path / --out-dir site/dist/root",
+    "release:project": "python3 ../scripts/build_release.py --base-path /reservoir-engineering-workbench-public/ --out-dir site/dist/project",
+    "drills": "python3 ../scripts/drills_release.py"
+  },
+  "dependencies": {
+    "@observablehq/plot": "0.6.17",
+    "astro": "7.3.2",
+    "linkedom": "0.18.13"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.63.0",
+    "@types/node": "26.5.1",
+    "typescript": "6.0.3"
+  }
+}

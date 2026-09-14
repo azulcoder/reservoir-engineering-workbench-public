@@ -1,0 +1,591 @@
+---
+/**
+ * The scenario explorer.
+ *
+ * What it does, and the honesty rules built into it
+ * ------------------------------------------------
+ * The selector offers the eight cases the study computed — J = 0, 0.05, 0.2, 0.6, 2, 6,
+ * 20 and 60 bbl/day/psi — and nothing else. There is no slider, no interpolation and no
+ * value between two computed cases, because there is no computation between two computed
+ * cases. Changing the control is a presentation choice: it reveals markup this build
+ * already produced from the committed export. It never re-runs anything, and it says so
+ * on the page rather than only in this comment.
+ *
+ * Everything that depends on the case is inside a `[data-case]` region — the active-case
+ * label, the headline sentence, the three panels, the metrics table, the observations
+ * table, the caveat and the per-case downloads — and one function toggles all of them in
+ * a single pass. There is no path through the script that updates the metrics without the
+ * charts, or the charts without the downloads.
+ *
+ * Without JavaScript the page shows the base case in full: three panels, both tables, its
+ * caveat and its working downloads, plus the full-dataset downloads that carry all eight
+ * cases. The controls are `hidden` in the delivered HTML and the script reveals them, so a
+ * reader whose script did not run is never shown a control that does nothing. The static
+ * figures are never hidden behind the script.
+ *
+ * F05, F06 and F07 are fixed-base experiments and are not in this component at all. They
+ * live in the case page's evidence section with a standing note saying that the selector
+ * does not reach them.
+ */
+import DataTable from "./DataTable.astro";
+import Callout from "./Callout.astro";
+import { scenarios, baseScenario } from "../scripts/scenarios";
+import { panelsFor } from "../scripts/panels";
+import { download } from "../scripts/public-data";
+import explorerScript from "../scripts/explorer.js?raw";
+
+const cases = await scenarios();
+const base = await baseScenario();
+const allMaxAbs = Math.max(...cases.map((s) => s.residualMaxAbs));
+
+/** Downloads that carry every computed case. Labelled apart from the selected-case set. */
+const fullDownloads = [
+  await download("f01_f02_scenarios_all.csv"),
+  await download("f01_f02_scenarios_all.json"),
+  await download("f01_f02_scenario_summaries.json"),
+];
+
+const views = await Promise.all(
+  cases.map(async (s) => {
+    const panels = panelsFor(s, allMaxAbs);
+    const rows = s.years
+      .map((t, i) => ({ i, t }))
+      .filter(({ i }) => i % 3 === 0 || i === s.years.length - 1)
+      .map(({ i, t }) => ({
+        i,
+        years: t.toFixed(2),
+        g: (s.gBscf[i] as number).toFixed(3),
+        p: (s.pressurePsia[i] as number).toFixed(1),
+        z: (s.zFactor[i] as number).toFixed(5),
+        pz: (s.pz[i] as number).toFixed(2),
+        fit: (s.fittedPz[i] as number).toFixed(2),
+        res: (s.residual[i] as number).toFixed(2),
+      }));
+    return {
+      s,
+      panels,
+      rows,
+      selected: [
+        await download(`f01_f02_case-${s.slug}.csv`),
+        await download(`f01_f02_case-${s.slug}.json`),
+      ],
+    };
+  }),
+);
+
+const OBS_COLUMNS = [
+  { key: "i", label: "Observation", numeric: true, rowHeader: true },
+  { key: "years", label: "Time", unit: "years of 365.25 days", numeric: true },
+  { key: "g", label: "Cumulative gas", unit: "Bscf", numeric: true },
+  { key: "p", label: "Pressure", unit: "psia", numeric: true },
+  { key: "z", label: "Deviation factor", unit: "dimensionless", numeric: true },
+  { key: "pz", label: "Observed p/Z", unit: "psia", numeric: true },
+  { key: "fit", label: "Fitted p/Z", unit: "psia", numeric: true },
+  { key: "res", label: "Residual", unit: "psia", numeric: true },
+];
+
+const METRIC_COLUMNS = [
+  { key: "q", label: "Quantity", rowHeader: true },
+  { key: "v", label: "Value", numeric: true },
+  { key: "n", label: "What it is" },
+];
+
+function metricRows(s: (typeof cases)[number]) {
+  return [
+    {
+      q: "R-squared of the volumetric fit",
+      v: s.rSquared.toFixed(6),
+      n: "how much of the ordinate the straight line accounted for",
+    },
+    {
+      q: "Fitted gas in place",
+      v: `${s.fittedBscf.toFixed(3)} Bscf`,
+      n: "the x-intercept of that line",
+    },
+    {
+      q: "True gas in place",
+      v: `${s.trueBscf.toFixed(3)} Bscf`,
+      n: "evaluation-only information; derived as fit.gas_in_place_scf / (1 + relative_gas_in_place_error)",
+    },
+    {
+      q: "Inventory error",
+      v: `${s.errorPct >= 0 ? "+" : ""}${s.errorPct.toFixed(3)} %`,
+      n: "fitted against true gas in place",
+    },
+    {
+      q: "Remaining-gas error",
+      v: `${s.remainingErrorPct >= 0 ? "+" : ""}${s.remainingErrorPct.toFixed(2)} %`,
+      n: "the same absolute error against a smaller denominator, G minus G_p",
+    },
+    {
+      q: "Fit's own standard error on G",
+      v: `${s.stderrPctOfEstimate.toFixed(4)} % of the estimate`,
+      n: "the delta-method standard error of the x-intercept, computed inside the wrong model",
+    },
+    {
+      q: "Bias in units of that standard error",
+      v: s.biasOverStderr.toFixed(2),
+      n: "model-structure error is not represented anywhere in the regression's uncertainty",
+    },
+    {
+      q: "Terminal water influx",
+      v: `${(s.invadedPoreVolumeFraction * 100).toFixed(2)} % of initial HCPV`,
+      n: "the physical measure of aquifer strength; a generator parameter, not a field observable",
+    },
+    {
+      q: "Terminal pressure",
+      v: `${s.terminalPressurePsia.toFixed(1)} psia`,
+      n: "at the last of the 49 observations",
+    },
+    {
+      q: "Residual range",
+      v: `${s.residualMin.toFixed(2)} to ${s.residualMax.toFixed(2)} psia`,
+      n: `root-mean-square ${s.residualRms.toFixed(2)} psia over ${s.observations} observations`,
+    },
+    {
+      q: "Worst coupled-solve residual",
+      v: `${s.maxSolverResidualPsia.toExponential(2)} psia`,
+      n: "the generator's own arithmetic error, for comparison with the residuals above",
+    },
+  ];
+}
+
+/** Per-case caveat. The base case carries the study's own wording for F01. */
+function caveatFor(s: (typeof cases)[number]) {
+  const extrapolation = `Everything beyond ${s.observedExtentBscf.toFixed(1)} Bscf is extrapolation with no data behind it.`;
+  if (s.isVolumetricControl) {
+    return `${extrapolation} This is the volumetric control: no aquifer at all, so the p/Z line is straight by construction and the recovered inventory is exact to rounding. It is the reduction case, not a result about water drive.`;
+  }
+  if (s.isBase) {
+    return `${extrapolation} The true inventory is evaluation-only information; no field measurement provides it.`;
+  }
+  return `${extrapolation} Only the aquifer productivity index differs from the base case; pore volume, compressibility, offtake schedule and horizon are fixed, so this is one line through a parameter space and not a mapped surface.`;
+}
+
+function headline(s: (typeof cases)[number]) {
+  if (s.isVolumetricControl) {
+    return `With no aquifer, the volumetric fit to ${s.observations} quarterly noise-free observations returns R-squared = ${s.rSquared.toFixed(6)} and a gas in place of ${s.fittedBscf.toFixed(3)} Bscf against a true ${s.trueBscf.toFixed(1)} Bscf — an error of ${s.errorPct.toExponential(2)} percent, which is rounding. The estimator is exact on the problem it is meant to be exact on.`;
+  }
+  return `At J = ${s.key} bbl/day/psi the volumetric fit to ${s.observations} quarterly noise-free observations returns R-squared = ${s.rSquared.toFixed(6)} and a gas in place of ${s.fittedBscf.toFixed(3)} Bscf against a true ${s.trueBscf.toFixed(1)} Bscf — an overestimate of ${s.errorPct.toFixed(3)} percent, which is ${Math.abs(s.biasOverStderr).toFixed(1)} times the standard error the same fit reports for itself.`;
+}
+---
+
+<section
+  class="explorer"
+  id="explorer"
+  aria-labelledby="explorer-title"
+  data-explorer-default={base.key}
+>
+  <h2 id="explorer-title">Scenario explorer — the eight computed cases</h2>
+
+  <p>
+    The study computed eight aquifer strengths and no others. The control below selects
+    among those eight. It does not interpolate, it does not simulate a value that was
+    never computed, and it does not re-run anything: <strong>changing the control is a
+    presentation choice, not a rerun.</strong> Every panel, number and download it reveals
+    was produced by this build from the committed export.
+  </p>
+
+  <div class="explorer__controls" data-explorer-controls hidden>
+    <fieldset class="explorer__fieldset">
+      <legend class="explorer__legend">
+        Aquifer productivity index J, bbl/day/psi — eight computed cases
+      </legend>
+      <div class="explorer__options">
+        {
+          cases.map((s) => (
+            <span class="explorer__option">
+              <input
+                type="radio"
+                name="explorer-case"
+                id={`case-${s.slug}`}
+                value={s.key}
+                checked={s.isBase}
+              />
+              <label for={`case-${s.slug}`}>
+                {s.key}
+                {s.isBase && <span class="explorer__tag"> base</span>}
+                {s.isVolumetricControl && <span class="explorer__tag"> control</span>}
+              </label>
+            </span>
+          ))
+        }
+      </div>
+    </fieldset>
+    <button type="button" class="explorer__reset" data-explorer-reset>
+      Reset to the base case, J = {base.key}
+    </button>
+  </div>
+
+  <p class="explorer__static" data-explorer-static>
+    This page is showing the base case, J = {base.key} bbl/day/psi. Selecting a different
+    case needs JavaScript; with it switched off the base case above is complete — panels,
+    tables, caveat and downloads — and the full-dataset downloads at the end of this
+    section carry all eight cases in one file.
+  </p>
+
+  <p class="explorer__status" role="status" data-explorer-status></p>
+
+  <p class="explorer__invalid" data-explorer-invalid hidden></p>
+
+  {
+    views.map(({ s, panels, rows, selected }) => (
+      <div data-case={s.key} hidden={!s.isBase}>
+        <p class="eyebrow">
+          Active case: J = {s.key} bbl/day/psi — {s.label}
+        </p>
+        <p class="lede">{headline(s)}</p>
+
+        {/* Each frame is a scroll container: the panel is drawn on a 660-unit canvas and
+            keeps that canvas, so below about 500px of column -- and at any width once the
+            reader scales their text -- it overflows and has to be scrolled. It is therefore
+            focusable and named, exactly as the figure frames and the table regions are.
+            Before this it was neither, and a keyboard-only reader could not reach the part
+            of the panel that was off the edge. The name is the panel's own caption, so the
+            region and the caption cannot drift apart. */}
+        <div class="explorer__panels">
+          <figure class="explorer__panel">
+            <div
+              class="explorer__frame"
+              role="group"
+              aria-labelledby={`panel-${s.slug}-1-caption`}
+              tabindex="0"
+              set:html={panels.intercept}
+            />
+            <figcaption id={`panel-${s.slug}-1-caption`}>
+              Panel 1 of 3, J = {s.key}. Same axes for every case: horizontal to 185 Bscf,
+              vertical including zero.
+            </figcaption>
+          </figure>
+          <figure class="explorer__panel">
+            <div
+              class="explorer__frame"
+              role="group"
+              aria-labelledby={`panel-${s.slug}-2-caption`}
+              tabindex="0"
+              set:html={panels.observed}
+            />
+            <figcaption id={`panel-${s.slug}-2-caption`}>
+              Panel 2 of 3, J = {s.key}. The vertical axis is truncated and rescales per
+              case, which is why the intercept must be read from panel 1.
+            </figcaption>
+          </figure>
+          <figure class="explorer__panel">
+            <div
+              class="explorer__frame"
+              role="group"
+              aria-labelledby={`panel-${s.slug}-3-caption`}
+              tabindex="0"
+              set:html={panels.residuals}
+            />
+            <figcaption id={`panel-${s.slug}-3-caption`}>
+              Panel 3 of 3, J = {s.key}. Residuals are not uncertainty bars, and the history
+              is noise-free.
+            </figcaption>
+          </figure>
+        </div>
+
+        <Callout kind="caveat">
+          <p>{caveatFor(s)}</p>
+        </Callout>
+
+        <DataTable
+          caption={`Headline quantities for the case with aquifer productivity index J = ${s.key} bbl/day/psi.`}
+          captionTitle={`Case J = ${s.key}`}
+          columns={METRIC_COLUMNS}
+          rows={metricRows(s)}
+          id={`metrics-${s.slug}`}
+        />
+
+        <details class="disclosure">
+          <summary>Observations — J = {s.key}</summary>
+          <div class="disclosure__body">
+            <DataTable
+              caption={`Every third observation and the last, of ${s.observations}, for J = ${s.key} bbl/day/psi. The complete ${s.observations} are in this case's CSV and JSON below.`}
+              captionTitle={`Case J = ${s.key}`}
+              columns={OBS_COLUMNS}
+              rows={rows}
+              id={`obs-${s.slug}`}
+            />
+          </div>
+        </details>
+
+        <div class="explorer__downloads">
+          <h3>Downloads for the selected case, J = {s.key}</h3>
+          <p>
+            These two files carry this case only. They are not the full dataset; the
+            full-dataset files are listed separately below.
+          </p>
+          <ul>
+            {selected.map((d) => (
+              <li>
+                <a href={d.href} download>
+                  {d.name}
+                </a>
+                <span class="explorer__meta">
+                  {d.size} — {d.description}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    ))
+  }
+
+  <div class="explorer__downloads explorer__downloads--full">
+    <h3>Full-dataset downloads — all eight computed cases</h3>
+    <p>
+      These do not change with the selector. Each carries every computed case in one file,
+      which is what a reader reproducing the study wants and what the per-case files above
+      deliberately are not.
+    </p>
+    <ul>
+      {
+        fullDownloads.map((d) => (
+          <li>
+            <a href={d.href} download>
+              {d.name}
+            </a>
+            <span class="explorer__meta">
+              {d.size} — {d.description}
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <Callout kind="note" title="What the panels in this section are" id="explorer-provenance">
+    <p>
+      F01, F01b and F02 as the study publishes them are drawn by
+      <code>site/scripts/render-figures.mjs</code>, recorded in the generated manifest with
+      their byte counts, and inlined under Evidence above. Those exhibits show the base
+      case. The study does not publish the same three views for the other seven cases, so
+      the three panels in this section are drawn by this site at build time from the same
+      committed export — <code>f01_f02_scenarios.json</code>, checked against
+      <code>contract.json</code> during the build — and they are a site-drawn view rather
+      than an audited exhibit. The numbers are the same numbers; the drawing is not the
+      same drawing.
+    </p>
+  </Callout>
+</section>
+
+<style>
+  .explorer {
+    margin-block: var(--space-8);
+  }
+
+  /* The controls ship with the `hidden` attribute and the script removes it. A bare
+     `display: flex` on the class outranks the user-agent's `[hidden] { display: none }`,
+     which is a specificity rule, not a cascade accident -- so without this line the
+     control that cannot work is shown to exactly the reader whose script did not run.
+     Scoping the display rule to the not-hidden state is the whole fix; nothing changes
+     for a reader whose script did run. */
+  .explorer__controls[hidden] {
+    display: none;
+  }
+
+  .explorer__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--space-4);
+    padding: var(--space-4);
+    background: var(--c-sunken);
+    border: 1px solid var(--c-rule);
+    border-radius: var(--radius-md);
+  }
+
+  .explorer__fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+  }
+
+  .explorer__legend {
+    padding: 0;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--c-ink-2);
+  }
+
+  .explorer__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--control-gap, 0.5rem);
+    margin-top: var(--space-3);
+  }
+
+  .explorer__option {
+    display: inline-flex;
+  }
+
+  .explorer__option input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .explorer__option label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--target-min, 2.75rem);
+    min-width: var(--target-min, 2.75rem);
+    padding-inline: var(--control-padding-x, 0.75rem);
+    border: 1px solid var(--c-border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--c-surface);
+    color: var(--c-ink);
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+  }
+
+  .explorer__option input:checked + label {
+    background: var(--c-blue-tint);
+    border-color: var(--c-blue-strong);
+    border-width: 2px;
+    font-weight: var(--weight-semibold);
+  }
+
+  .explorer__option input:focus-visible + label {
+    outline: var(--focus-ring-width, 2px) solid var(--c-focus);
+    outline-offset: var(--focus-ring-offset, 2px);
+  }
+
+  .explorer__tag {
+    font-size: var(--text-xs);
+    color: var(--c-ink-2);
+    margin-inline-start: 0.35em;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caps);
+  }
+
+  .explorer__reset {
+    min-height: var(--target-min, 2.75rem);
+    padding-inline: var(--control-padding-x, 0.75rem);
+    border: 1px solid var(--c-border-strong);
+    border-radius: var(--radius-sm);
+    background: var(--c-surface);
+    color: var(--c-ink);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .explorer__reset:focus-visible {
+    outline: var(--focus-ring-width, 2px) solid var(--c-focus);
+    outline-offset: var(--focus-ring-offset, 2px);
+  }
+
+  .explorer__status {
+    font-size: var(--text-sm);
+    color: var(--c-ink-2);
+    min-height: 1.5em;
+  }
+
+  .explorer__invalid {
+    border-inline-start: 4px solid var(--c-contrast);
+    padding: var(--space-3) var(--space-4);
+    background: var(--c-contrast-tint);
+  }
+
+  .explorer__panels {
+    display: grid;
+    gap: var(--figure-gap, var(--space-5));
+    margin-block: var(--space-5);
+  }
+
+  .explorer__panel {
+    margin: 0;
+    /* Without min-width:0 a grid or flex item takes its content's intrinsic width as its
+       minimum, so the 460px panel pushed the whole page to 486px at a 375px viewport. The
+       scroll region below can only do its job if its ancestors are allowed to be narrower
+       than their contents. */
+    min-width: 0;
+  }
+
+  .explorer__frame {
+    overflow-x: auto;
+    min-width: 0;
+    max-width: 100%;
+    border: 1px solid var(--c-rule);
+    border-radius: var(--radius-sm);
+    background: var(--c-surface);
+
+    /* The panels' own numbers: each is drawn on a 660-unit canvas with 13-unit labels,
+       and 460 units is the narrowest the panel stays readable at. Declared here so the
+       rules below stay in the drawing's units. */
+    --panel-units: 660;
+    --panel-min-units: 460;
+  }
+
+  .explorer__frame:focus-visible {
+    outline: var(--focus-ring-width, 2px) solid var(--c-focus);
+    outline-offset: calc(var(--focus-ring-offset, 2px) * -1);
+  }
+
+  /* :global because the panel SVG is injected with set:html and therefore never carries
+     Astro's component-scoping attribute. Without it the compiled selector matched nothing
+     and the panels shrank instead of scrolling -- a dead rule that looked alive. */
+  .explorer__frame :global(svg) {
+    display: block;
+    /* Not width:100% and not auto, for the same reason as the main figures: either one on
+       an SVG with a viewBox scales the drawing and its text down together. The width is
+       the authored canvas expressed at the reader's text size -- 660px at the browser
+       default, twice that at 200 percent -- so the panel scales as a whole and the frame
+       scrolls.
+
+       This is also what makes the panel labels obey a text-size preference at all. They
+       carry font-size="13" as a presentation attribute and nothing in the stylesheet
+       overrode it, so before this the panels rendered 13px labels at every root font size,
+       measured: 13px at 100 percent and 13px at 200 percent, while the surrounding prose
+       doubled. Now the canvas carries the preference and the label goes with it. */
+    height: auto;
+    width: calc(var(--panel-units) * 1rem / 16);
+    min-width: calc(var(--panel-min-units) * 1rem / 16);
+    max-width: none;
+  }
+
+  .explorer__panel figcaption {
+    font-size: var(--text-sm);
+    color: var(--c-ink-2);
+    margin-top: var(--space-2);
+  }
+
+  .explorer__downloads {
+    margin-block: var(--space-5);
+  }
+
+  .explorer__downloads ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .explorer__downloads li {
+    padding-block: var(--space-2);
+    border-block-end: 1px solid var(--c-rule);
+  }
+
+  .explorer__meta {
+    display: block;
+    font-size: var(--text-sm);
+    color: var(--c-ink-2);
+  }
+
+  .explorer__downloads--full {
+    border-block-start: 2px solid var(--c-border-strong);
+    padding-block-start: var(--space-4);
+  }
+</style>
+
+<script is:inline set:html={explorerScript} />

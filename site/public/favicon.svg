@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="A p over Z plot: a curved history and the straight line fitted through it">
+  <title>p/Z: the curve and the straight line through it</title>
+  <!-- The subject of the case in one mark: an aquifer-supported p/Z history, which
+       curves, and the volumetric straight line fitted to it, which does not. Colours
+       are the literal values of --c-canvas, --c-border-strong, --c-contrast-mark and
+       --c-blue from src/styles/tokens.css; a favicon cannot read custom properties. -->
+  <rect width="32" height="32" rx="3" fill="#fbfaf8"/>
+  <path d="M6 5 V26 H27" fill="none" stroke="#8a8981" stroke-width="1.5" stroke-linecap="square"/>
+  <path d="M8 8 L26 24" fill="none" stroke="#c04e13" stroke-width="2" stroke-linecap="round" stroke-dasharray="5 3"/>
+  <path d="M8 8 C13 13.5 17 15.5 24 16.5" fill="none" stroke="#17518f" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

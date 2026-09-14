@@ -1,0 +1,15 @@
+# Gas Reservoir Performance Lab — case site
+#
+# Everything published here is intended to be read, indexed and quoted. There is no
+# private area, no login, no tracking and no user content, so nothing is disallowed.
+#
+# No Sitemap line is present. A sitemap URL must be absolute, and this build has no
+# origin unless SITE_URL is supplied to it; robots.txt is copied verbatim from
+# site/public/ and cannot be templated with that value. Writing a guessed domain here
+# would be an invented fact on a site whose subject is traceable numbers. When a real
+# origin exists, add the line by hand and record the change:
+#
+#   Sitemap: <SITE_URL><SITE_BASE>sitemap-index.xml
+
+User-agent: *
+Allow: /

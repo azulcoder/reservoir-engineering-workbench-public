@@ -1,0 +1,553 @@
+{
+  "case_id": "A1_volumetric_baseline",
+  "config": {
+    "case_id": "A1_volumetric_baseline",
+    "gas_in_place_scf": 100000000000.0,
+    "initial_pressure_psia": 4000.0,
+    "temperature_degr": 640.0,
+    "gas_rate_scf_per_day": 25000000.0,
+    "n_points": 11,
+    "constant_z": 0.9,
+    "specific_gravity": 0.65,
+    "pseudocritical_correlation": "sutton-1985",
+    "z_correlation": "dranchuk-abou-kassem-1975",
+    "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+    "minimum_pressure_psia": 200.0,
+    "solver_tolerance": 1e-12,
+    "max_iterations": 200,
+    "pressure_sigma_psia": 5.0,
+    "monte_carlo_replicates": 1000,
+    "monte_carlo_first_seed": 1000,
+    "extrapolation_seed": 20260913,
+    "depletion_fractions": [
+      0.5,
+      0.1
+    ],
+    "acceptance": {
+      "A1_A2_tolerance": 5e-12,
+      "A3_tolerance": 2e-11,
+      "A4_band": [
+        0.01,
+        0.1
+      ],
+      "A5_band": [
+        0.9,
+        1.15
+      ],
+      "A6_limit": 0.0005,
+      "A7_band": [
+        0.92,
+        0.97
+      ],
+      "A8_band": [
+        0.95,
+        1.0
+      ],
+      "A9_predicted_ratio": 6.2005,
+      "A9_tolerance": 0.05
+    }
+  },
+  "experiment_1": {
+    "description": "noise-free, constant Z, 50 percent observed depletion",
+    "initial_p_over_z_psia": 4444.444444444444,
+    "initial_z_factor": 0.9,
+    "final_pressure_psia": 2000.0,
+    "generator_max_abs_residual_p_over_z_psia": 0.0,
+    "generator_warnings": [],
+    "fit": {
+      "gas_in_place_scf": 100000000000.0,
+      "gas_in_place_stderr_scf": 2.6845285600310082e-05,
+      "relative_error": 0.0,
+      "slope_psia_per_scf": -4.4444444444444434e-08,
+      "intercept_psia": 4444.444444444443,
+      "slope_stderr_psia_per_scf": 1.5566163045528524e-23,
+      "covariance_psia2_per_scf": -6.057635798999445e-36,
+      "r_squared": 1.0,
+      "max_abs_residual_psia": 9.094947017729282e-13,
+      "n_points": 11,
+      "degrees_of_freedom": 9,
+      "fieller_g": 6.277312286766073e-31,
+      "depletion_fraction_observed": 0.5,
+      "warnings": [
+        "linearity_is_not_evidence_of_volumetric_drive: a high R-squared shows the points lie on a line, not that the line's x-intercept is gas in place. A documented weak-water-drive case gives R-squared 0.9998 with an 8 percent overestimate. Confirm the drive mechanism with a Cole or pot-aquifer plot before using this G."
+      ]
+    },
+    "closed_form_gas_in_place_scf": 100000000000.0,
+    "closed_form_relative_difference": 0.0,
+    "two_point_oracle_gas_in_place_scf": 100000000000.0,
+    "two_point_oracle_relative_difference": 0.0,
+    "condition_number_sqrt_h": 1.4616304718921387,
+    "condition_number_sqrt_hn": 4.847679857416329,
+    "conditioning_bound_from_generator_residual": 0.0,
+    "predicted_tolerance": 5e-12,
+    "generator_error_resolvable": true,
+    "criterion_A1_met": true,
+    "criterion_A2_met": true
+  },
+  "experiment_2": {
+    "description": "noise-free, Dranchuk-Abou-Kassem Z, 50 percent observed depletion",
+    "pseudocritical_temperature_degr": 365.11,
+    "pseudocritical_pressure_psia": 670.129,
+    "pseudocritical_correlation": "sutton-1985",
+    "initial_z_factor": 0.9321853994465445,
+    "final_z_factor": 0.8844272711191914,
+    "minimum_z_factor_observed": 0.8797151589972962,
+    "initial_p_over_z_psia": 4290.991901798583,
+    "final_pressure_psia": 1897.53512905123,
+    "generator_max_abs_residual_p_over_z_psia": 1.7994352674577385e-09,
+    "generator_warnings": [],
+    "consistent_z": {
+      "fit": {
+        "gas_in_place_scf": 100000000000.00539,
+        "gas_in_place_stderr_scf": 0.027414979907492632,
+        "relative_error": 5.395683899678261e-14,
+        "slope_psia_per_scf": -4.2909919017982055e-08,
+        "intercept_psia": 4290.991901798437,
+        "slope_stderr_psia_per_scf": 1.534764309886724e-20,
+        "covariance_psia2_per_scf": -5.888753717255181e-30,
+        "r_squared": 1.0,
+        "max_abs_residual_psia": 1.7093952919822186e-09,
+        "n_points": 11,
+        "degrees_of_freedom": 9,
+        "fieller_g": 6.546565857556351e-25,
+        "depletion_fraction_observed": 0.4999999999999731,
+        "warnings": [
+          "linearity_is_not_evidence_of_volumetric_drive: a high R-squared shows the points lie on a line, not that the line's x-intercept is gas in place. A documented weak-water-drive case gives R-squared 0.9998 with an 8 percent overestimate. Confirm the drive mechanism with a Cole or pot-aquifer plot before using this G."
+        ]
+      },
+      "two_point_oracle_gas_in_place_scf": 100000000000.005,
+      "two_point_oracle_relative_difference": 3.814697265625e-15,
+      "conditioning_bound_from_generator_residual": 2.032883375315422e-12,
+      "predicted_tolerance": 2e-11,
+      "criterion_A3_met": true
+    },
+    "pressure_curvature": {
+      "max_abs_deviation_from_chord_psia": 101.77872253253827,
+      "as_fraction_of_initial_pressure": 0.025444680633134566
+    },
+    "frozen_initial_z": {
+      "fit": {
+        "gas_in_place_scf": 94261157520.30544,
+        "gas_in_place_stderr_scf": 1284375871.7871182,
+        "relative_error": -0.057388424796945614,
+        "slope_psia_per_scf": -4.473793420409825e-08,
+        "intercept_psia": 4217.049463145566,
+        "slope_stderr_psia_per_scf": 8.08810477053944e-10,
+        "covariance_psia2_per_scf": -1.6354359694805715e-08,
+        "r_squared": 0.9970670237509869,
+        "max_abs_residual_psia": 73.94243865301723,
+        "n_points": 11,
+        "degrees_of_freedom": 9,
+        "fieller_g": 0.0016725812809949626,
+        "depletion_fraction_observed": 0.5304411839970156,
+        "warnings": [
+          "linearity_is_not_evidence_of_volumetric_drive: a high R-squared shows the points lie on a line, not that the line's x-intercept is gas in place. A documented weak-water-drive case gives R-squared 0.9998 with an 8 percent overestimate. Confirm the drive mechanism with a Cole or pot-aquifer plot before using this G."
+        ]
+      },
+      "max_relative_ordinate_shortfall": 0.056287344213287405,
+      "predicted_sign": "underestimate",
+      "predicted_band": [
+        0.01,
+        0.1
+      ],
+      "criterion_A4_met": true
+    }
+  },
+  "experiment_3": {
+    "description": "1000 realisations, constant Z, 5 psia gauge scatter, 50 percent depletion",
+    "replicates_requested": 1000,
+    "replicates_fitted": 1000,
+    "failed_realisations": [],
+    "first_seed": 1000,
+    "pressure_sigma_psia": 5.0,
+    "mean_gas_in_place_scf": 99997049825.47891,
+    "mean_relative_bias": -2.9501745210880337e-05,
+    "monte_carlo_spread_scf": 179387270.49648458,
+    "mean_reported_stderr_scf": 176971935.52036944,
+    "analytic_stderr_scf": 182703808.98651734,
+    "spread_over_mean_reported_stderr": 1.0136481243142483,
+    "mean_reported_stderr_over_analytic": 0.9686275097495592,
+    "spread_over_analytic": 0.981847458416822,
+    "monte_carlo_stderr_of_spread_fraction": 0.022360679774997897,
+    "t_critical_0975_dof9": 2.2621571627982027,
+    "coverage_of_95_percent_interval": 0.96,
+    "mean_fieller_g": 2.888051313917178e-05,
+    "criterion_A5_met": true,
+    "criterion_A6_met": true,
+    "criterion_A7_met": true,
+    "criterion_A8_met": true
+  },
+  "experiment_4": {
+    "description": "identical eleven noise draws, 50 percent versus 10 percent observed depletion",
+    "seed": 20260913,
+    "pressure_sigma_psia": 5.0,
+    "deep": {
+      "depletion_fraction_designed": 0.5,
+      "last_cumulative_gas_scf": 50000000000.0,
+      "final_pressure_psia": 2000.0,
+      "fit": {
+        "gas_in_place_scf": 99671538893.70335,
+        "gas_in_place_stderr_scf": 170613287.02270547,
+        "relative_error": -0.0032846110629665137,
+        "slope_psia_per_scf": -4.463740396728082e-08,
+        "intercept_psia": 4449.078745638779,
+        "slope_stderr_psia_per_scf": 9.977748437426158e-11,
+        "covariance_psia2_per_scf": -2.4888865970140034e-10,
+        "r_squared": 0.9999550333822169,
+        "max_abs_residual_psia": 7.696236842707549,
+        "n_points": 11,
+        "degrees_of_freedom": 9,
+        "fieller_g": 2.556894393316222e-05,
+        "depletion_fraction_observed": 0.5016477176430824,
+        "warnings": [
+          "linearity_is_not_evidence_of_volumetric_drive: a high R-squared shows the points lie on a line, not that the line's x-intercept is gas in place. A documented weak-water-drive case gives R-squared 0.9998 with an 8 percent overestimate. Confirm the drive mechanism with a Cole or pot-aquifer plot before using this G."
+        ]
+      },
+      "relative_stderr": 0.0017117553206904862,
+      "closed_form_gas_in_place_scf": 99671538893.70335,
+      "closed_form_stderr_scf": 170613287.0227055,
+      "closed_form_stderr_relative_difference": 1.746776168946864e-16,
+      "residual_sd_psia": 5.232375422994229,
+      "sqrt_leverage_at_true_g": 1.4616304718921387,
+      "sqrt_leverage_at_fitted_g": 1.455502252676668,
+      "pz_residuals_psia": [
+        5.283692856239213,
+        0.08834431198556558,
+        -6.736811247339574,
+        0.00998458295407545,
+        7.696236842707549,
+        -5.877065571555704,
+        -6.7307185378122085,
+        -0.147391111194338,
+        5.656227128893079,
+        -0.5469294436552445,
+        1.3044301887757683
+      ]
+    },
+    "shallow": {
+      "depletion_fraction_designed": 0.1,
+      "last_cumulative_gas_scf": 10000000000.0,
+      "final_pressure_psia": 3600.0,
+      "fit": {
+        "gas_in_place_scf": 97977383984.84436,
+        "gas_in_place_stderr_scf": 1022084182.8447614,
+        "relative_error": -0.020226160151556427,
+        "slope_psia_per_scf": -4.540924205862636e-08,
+        "intercept_psia": 4449.078745638779,
+        "slope_stderr_psia_per_scf": 4.988874218713251e-10,
+        "covariance_psia2_per_scf": -1.2444432985070876e-09,
+        "r_squared": 0.9989148554732736,
+        "max_abs_residual_psia": 7.696236842707549,
+        "n_points": 11,
+        "degrees_of_freedom": 9,
+        "fieller_g": 0.0006176780256233673,
+        "depletion_fraction_observed": 0.10206437029944432,
+        "warnings": [
+          "linearity_is_not_evidence_of_volumetric_drive: a high R-squared shows the points lie on a line, not that the line's x-intercept is gas in place. A documented weak-water-drive case gives R-squared 0.9998 with an 8 percent overestimate. Confirm the drive mechanism with a Cole or pot-aquifer plot before using this G.",
+          "weak_extrapolation: only 10.2% of the fitted gas in place has been produced, so the x-intercept sits 8.8 data-spans beyond the last observation. The intercept is a long extrapolation and its standard error grows roughly as the reciprocal of the observed depletion fraction."
+        ]
+      },
+      "relative_stderr": 0.010431837851507269,
+      "closed_form_gas_in_place_scf": 97977383984.84436,
+      "closed_form_stderr_scf": 1022084182.8447615,
+      "closed_form_stderr_relative_difference": 1.166335332760817e-16,
+      "residual_sd_psia": 5.2323754229944095,
+      "sqrt_leverage_at_true_g": 9.062911432666857,
+      "sqrt_leverage_at_fitted_g": 8.870171635453895,
+      "pz_residuals_psia": [
+        5.283692856239213,
+        0.08834431198647508,
+        -6.736811247339574,
+        0.009984582955439691,
+        7.696236842707549,
+        -5.877065571556159,
+        -6.7307185378122085,
+        -0.147391111194338,
+        5.656227128893988,
+        -0.5469294436552445,
+        1.304430188776223
+      ]
+    },
+    "reported_stderr_ratio": 5.990648211992662,
+    "sqrt_leverage_ratio_at_true_g": 6.20054904912769,
+    "sqrt_leverage_ratio_at_fitted_g": 6.094234219934495,
+    "slope_magnitude_ratio_deep_over_shallow": 0.9830026211327412,
+    "residual_sd_ratio_shallow_over_deep": 1.0000000000000344,
+    "predicted_stderr_ratio": 6.2005,
+    "predicted_stderr_ratio_with_slope_correction": 6.095155967754645,
+    "reconstructed_stderr_ratio": 5.990648211992661,
+    "reconstruction_relative_error": -1.1102230246251565e-16,
+    "stderr_ratio_relative_departure": -0.03384433320011904,
+    "point_error_ratio": 6.157855454974129,
+    "deep_error_scf": -328461106.2966461,
+    "shallow_error_scf": -2022616015.1556396,
+    "max_abs_residual_difference_psia": 1.3642420526593924e-12,
+    "criterion_A9_met": true
+  },
+  "diagnostic_d1_defect_sensitivity": {
+    "description": "post-hoc positive control, not pre-registered and not gated: seeded defects against the experiment-1 arm, whose uncorrupted recovery error is exactly 0.0",
+    "gate_used_for_detection": 5e-12,
+    "cases": [
+      {
+        "name": "baseline_uncorrupted",
+        "defect_class": "none",
+        "magnitude": "-",
+        "recovery_relative_error": 0.0,
+        "detected_at_A1_gate": false
+      },
+      {
+        "name": "standard_pressure_x1.5",
+        "defect_class": "standard-volume basis",
+        "magnitude": "+50 percent",
+        "recovery_relative_error": 0.0,
+        "detected_at_A1_gate": false
+      },
+      {
+        "name": "standard_temperature_x1.5",
+        "defect_class": "standard-volume basis",
+        "magnitude": "+50 percent",
+        "recovery_relative_error": 0.0,
+        "detected_at_A1_gate": false
+      },
+      {
+        "name": "standard_z_factor_x1.5",
+        "defect_class": "standard-volume basis",
+        "magnitude": "+50 percent",
+        "recovery_relative_error": 0.0,
+        "detected_at_A1_gate": false
+      },
+      {
+        "name": "reservoir_temperature_640_to_900_degr",
+        "defect_class": "reservoir temperature",
+        "magnitude": "+40.6 percent",
+        "recovery_relative_error": 0.0,
+        "detected_at_A1_gate": false
+      },
+      {
+        "name": "ordinate_scaled_by_1_plus_1e-10",
+        "defect_class": "ordinate multiplicative",
+        "magnitude": "+1.0e-10 relative",
+        "recovery_relative_error": 0.0,
+        "detected_at_A1_gate": false
+      },
+      {
+        "name": "ordinate_scaled_by_1_plus_0.001",
+        "defect_class": "ordinate multiplicative",
+        "magnitude": "+1.0e-03 relative",
+        "recovery_relative_error": 0.0,
+        "detected_at_A1_gate": false
+      },
+      {
+        "name": "ordinate_scaled_by_1_plus_0.5",
+        "defect_class": "ordinate multiplicative",
+        "magnitude": "+5.0e-01 relative",
+        "recovery_relative_error": 2.220446049250313e-16,
+        "detected_at_A1_gate": false
+      },
+      {
+        "name": "analyst_divides_by_z_0.8_not_0.9",
+        "defect_class": "ordinate multiplicative",
+        "magnitude": "-11.1 percent relative",
+        "recovery_relative_error": 2.220446049250313e-16,
+        "detected_at_A1_gate": false
+      },
+      {
+        "name": "cumulative_gas_scaled_by_1_plus_0.001",
+        "defect_class": "abscissa multiplicative",
+        "magnitude": "+1.0e-03 relative",
+        "recovery_relative_error": 0.0009999999999998899,
+        "detected_at_A1_gate": true
+      },
+      {
+        "name": "cumulative_gas_scaled_by_1_plus_0.01",
+        "defect_class": "abscissa multiplicative",
+        "magnitude": "+1.0e-02 relative",
+        "recovery_relative_error": 0.010000000000000009,
+        "detected_at_A1_gate": true
+      },
+      {
+        "name": "first_point_ordinate_plus_0.01_psia",
+        "defect_class": "ordinate point-wise",
+        "magnitude": "0.01 psia of p/Z on one point",
+        "recovery_relative_error": -1.3295427350179523e-06,
+        "detected_at_A1_gate": true
+      },
+      {
+        "name": "middle_point_ordinate_plus_0.01_psia",
+        "defect_class": "ordinate point-wise",
+        "magnitude": "0.01 psia of p/Z on one point",
+        "recovery_relative_error": 2.045454547960901e-07,
+        "detected_at_A1_gate": true
+      },
+      {
+        "name": "last_point_ordinate_plus_0.01_psia",
+        "defect_class": "ordinate point-wise",
+        "magnitude": "0.01 psia of p/Z on one point",
+        "recovery_relative_error": 1.7386399202568015e-06,
+        "detected_at_A1_gate": true
+      }
+    ],
+    "detection_thresholds": {
+      "ordinate_multiplicative": {
+        "detected": false,
+        "largest_magnitude_probed_relative": 0.5,
+        "largest_recovery_error_observed": 2.220446049250313e-16,
+        "note": "no detection at any probed magnitude; the x-intercept of a straight line is invariant under a uniform rescaling of the ordinate"
+      },
+      "standard_volume_basis": {
+        "detected": false,
+        "note": "no detection at +50 percent; the standard group cancels out of the balance"
+      },
+      "abscissa_multiplicative": {
+        "detected": true,
+        "sensitivity_dG_over_dbias": 0.9999999999998899,
+        "minimum_detectable_relative_bias": 5.000000000000551e-12
+      },
+      "ordinate_point_wise": {
+        "detected": true,
+        "sensitivity_relative_error_per_psia": 0.00017386399202568015,
+        "minimum_detectable_shift_psia": 2.8758111105958542e-08
+      }
+    }
+  },
+  "diagnostic_d2_frozen_z_sign_sweep": {
+    "description": "post-hoc counterexample sweep, not pre-registered and not gated: the sign of the frozen-Zi bias against the position of the depletion window",
+    "z_minimum_pressure_psia": 2347.0,
+    "z_minimum_value": 0.879556914986464,
+    "z_minimum_grid_step_psia": 1.0,
+    "initial_pressure_sweep": [
+      {
+        "initial_pressure_psia": 4000.0,
+        "depletion_fraction": 0.5,
+        "final_pressure_psia": 1897.53512905123,
+        "initial_z_factor": 0.9321853994465445,
+        "minimum_z_factor_observed": 0.8797151589972962,
+        "final_z_factor": 0.8844272711191914,
+        "frozen_z_relative_error": -0.057388424796945614,
+        "frozen_z_r_squared": 0.9970670237509869,
+        "consistent_z_relative_error": 5.395683899678261e-14
+      },
+      {
+        "initial_pressure_psia": 3000.0,
+        "depletion_fraction": 0.5,
+        "final_pressure_psia": 1512.6629378743269,
+        "initial_z_factor": 0.8889547214126183,
+        "minimum_z_factor_observed": 0.8795752990886447,
+        "final_z_factor": 0.8964592403528421,
+        "frozen_z_relative_error": 0.00607640580936164,
+        "frozen_z_r_squared": 0.999489646143766,
+        "consistent_z_relative_error": -1.4632739464559563e-13
+      },
+      {
+        "initial_pressure_psia": 2500.0,
+        "depletion_fraction": 0.5,
+        "final_pressure_psia": 1287.7921740157453,
+        "initial_z_factor": 0.8801026347325485,
+        "minimum_z_factor_observed": 0.879573878443374,
+        "final_z_factor": 0.9067114282713712,
+        "frozen_z_relative_error": 0.03136035569123119,
+        "frozen_z_r_squared": 0.9999188965983706,
+        "consistent_z_relative_error": -1.4577228313328305e-13
+      },
+      {
+        "initial_pressure_psia": 2000.0,
+        "depletion_fraction": 0.5,
+        "final_pressure_psia": 1042.938733525922,
+        "initial_z_factor": 0.8824461813029658,
+        "minimum_z_factor_observed": 0.8824461813029658,
+        "final_z_factor": 0.9203373027329014,
+        "frozen_z_relative_error": 0.04688365393048288,
+        "frozen_z_r_squared": 0.9999924426876566,
+        "consistent_z_relative_error": 4.3298697960381105e-14
+      },
+      {
+        "initial_pressure_psia": 1500.0,
+        "depletion_fraction": 0.5,
+        "final_pressure_psia": 783.6719231055661,
+        "initial_z_factor": 0.89697552738092,
+        "minimum_z_factor_observed": 0.89697552738092,
+        "final_z_factor": 0.9372460486949334,
+        "frozen_z_relative_error": 0.049815684041671915,
+        "frozen_z_r_squared": 0.9999416209001293,
+        "consistent_z_relative_error": 3.7969627442180354e-14
+      },
+      {
+        "initial_pressure_psia": 1000.0,
+        "depletion_fraction": 0.5,
+        "final_pressure_psia": 518.3248559266729,
+        "initial_z_factor": 0.922970976190976,
+        "minimum_z_factor_observed": 0.922970976190976,
+        "final_z_factor": 0.9567975965173698,
+        "frozen_z_relative_error": 0.0406048956045042,
+        "frozen_z_r_squared": 0.9999290971346053,
+        "consistent_z_relative_error": 5.995204332975845e-15
+      }
+    ],
+    "depletion_fraction_sweep": [
+      {
+        "initial_pressure_psia": 4000.0,
+        "depletion_fraction": 0.5,
+        "final_pressure_psia": 1897.53512905123,
+        "initial_z_factor": 0.9321853994465445,
+        "minimum_z_factor_observed": 0.8797151589972962,
+        "final_z_factor": 0.8844272711191914,
+        "frozen_z_relative_error": -0.057388424796945614,
+        "frozen_z_r_squared": 0.9970670237509869,
+        "consistent_z_relative_error": 5.395683899678261e-14
+      },
+      {
+        "initial_pressure_psia": 4000.0,
+        "depletion_fraction": 0.7,
+        "final_pressure_psia": 1174.903920310679,
+        "initial_z_factor": 0.9321853994465445,
+        "minimum_z_factor_observed": 0.8798251767119615,
+        "final_z_factor": 0.912690233555101,
+        "frozen_z_relative_error": -0.0195008444664011,
+        "frozen_z_r_squared": 0.9968897104670446,
+        "consistent_z_relative_error": -3.941291737419306e-14
+      },
+      {
+        "initial_pressure_psia": 4000.0,
+        "depletion_fraction": 0.9,
+        "final_pressure_psia": 414.0847857287789,
+        "initial_z_factor": 0.9321853994465445,
+        "minimum_z_factor_observed": 0.8796685534935437,
+        "final_z_factor": 0.9650094784732967,
+        "frozen_z_relative_error": -0.003037319831961871,
+        "frozen_z_r_squared": 0.9977619437949601,
+        "consistent_z_relative_error": 1.7763568394002505e-15
+      }
+    ],
+    "sign_is_negative_everywhere": false,
+    "most_positive_relative_error": 0.049815684041671915,
+    "most_negative_relative_error": -0.057388424796945614
+  },
+  "criteria": {
+    "A1_constant_z_recovery": true,
+    "A2_two_point_oracle_agreement": true,
+    "A3_variable_z_recovery": true,
+    "A4_frozen_z_bias_in_band": true,
+    "A5_spread_matches_reported_stderr": true,
+    "A6_mean_bias_within_limit": true,
+    "A7_interval_coverage": true,
+    "A8_mean_stderr_versus_analytic": true,
+    "A9_extrapolation_stderr_ratio": true
+  },
+  "all_criteria_met": true,
+  "limitations": [
+    "Numerical verification only. The generator and the estimator share the volumetric assumption set: one tank, constant hydrocarbon pore volume, dry gas of fixed composition, isothermal, no influx, no injection, one declared standard basis. Agreement checks the arithmetic and cannot validate any of those assumptions.",
+    "No field data and no published benchmark is used. Exact recovery here is compatible with the same estimator being badly wrong on a reservoir that violates the volumetric assumption; that case is A2, not this one.",
+    "Experiments 1 and 2a are blind to any multiplicative error in the ordinate. Diagnostic D1 shows that corrupting the standard-volume basis by 50 percent, changing the reservoir temperature, or rescaling the whole p/Z series leaves the recovery error at zero, because the x-intercept of a line does not move when the ordinate is rescaled. Zero recovery error is evidence only against the defect classes D1 shows are visible: abscissa bias and point-wise ordinate error.",
+    "Only the pressure channel of NoiseModel is exercised anywhere in this case. Error in cumulative production is never simulated, and diagnostic D1 shows it maps one for one into the recovered G, which makes allocation and metering bias the most consequential untested input.",
+    "The fit is ordinary least squares, which assumes an error-free abscissa. Once cumulative production carries error the problem is errors-in-variables and OLS is the wrong estimator; the library's Deming and York fits are not exercised here, so nothing establishes what the reported standard error means in that case.",
+    "The Dranchuk-Abou-Kassem deviation factor is a correlation evaluated inside its published window, not a measured PVT report. One composition is used: a 0.65 specific-gravity dry gas with no H2S, CO2 or N2, so no Wichert-Aziz correction is exercised. For pure carbon dioxide this repository's own check.py records DAK errors against NIST of up to 39.7 percent.",
+    "The Monte Carlo in experiment 3 uses independent Gaussian pressure error only. Real shut-in pressures carry shared calibration bias and temporally correlated error, which a per-point independent model cannot represent and which the reported standard error would understate.",
+    "Average reservoir pressure is handed to the estimator exactly. In the field it is itself an estimate, from a build-up extrapolation and a datum correction, whose error is systematic rather than Gaussian and whose well count may not sample the drainage volume.",
+    "Constant hydrocarbon pore volume is asserted, not tested. Formation and connate-water compressibility, which is what makes an abnormally pressured gas reservoir curve its p/Z plot and overestimate G, is not represented at all, and it is a non-water-drive violation of the same assumption.",
+    "Dry gas of fixed composition is asserted. Retrograde condensate dropout, which removes liquid from the reservoir gas and changes the composition as pressure falls, is outside the generator's model.",
+    "Cumulative production is evenly spaced by construction, which is what makes the section-5 error budget exact: xbar = fG/2 and Sxx = 1.1 f^2 G^2. Real survey dates cluster, and every leverage and tolerance in that budget changes with the spacing.",
+    "Experiment 2b measures one specific Z inconsistency, the initial deviation factor reused throughout, on one depletion window. Diagnostic D2 shows that both the magnitude and the sign of that bias depend on where the window sits relative to the minimum of Z(p); neither transfers.",
+    "No reserves terminology, development decision or operational limit follows from any number here."
+  ],
+  "metrics_sha256": "c45dbaa6ee614460662b16c8bb418ce7218c1610368d49cfb852d4231965f771"
+}

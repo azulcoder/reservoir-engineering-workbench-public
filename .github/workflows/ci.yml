@@ -1,0 +1,838 @@
+# Verification pipeline.
+#
+# STATUS: configured, never executed on a hosted runner. This repository has no git
+# remote and no hosted project, so no run of this workflow has ever happened and there
+# is no build badge to point at. Everything recorded in docs/release/VERIFICATION.md and
+# docs/release/UI_QA.md was measured by running the same commands locally, on macOS.
+# Treat this file as the specification of what CI would do, not as evidence that CI did
+# it. docs/release/DEPLOYMENT_RUNBOOK.md states what would have to be observed before
+# "hosted CI is green" becomes a claim anyone may make.
+#
+# The graph is:
+#
+#   source-policy  ->  public-core-tests  (stdlib runner, Python matrix)
+#                  ->  pytest-parity      (the other runner, same suite)
+#                  ->  synthetic-cases    (re-run every case, diff its snapshot)
+#                          |
+#                          v
+#                      figure-contract    (re-export, diff the committed figure data)
+#                          |
+#                          v
+#                      qa-plan            (which base paths to build and test)
+#                          |
+#                          v
+#                      site-release       (one leg per base: scripts/build_release.py,
+#                                          then the browser suite against THAT build)
+#
+# The cases are executed, not linted. A job that only ran `ruff check cases/` would go
+# green on a case study that no longer reproduces its own published numbers, which is
+# the failure this pipeline exists to catch. The site half is the same idea: the browser
+# suite runs against a directory that was built in this job and is fingerprinted before
+# and after, so a green QA report is a report about the bytes that would ship.
+#
+# The site build is not spelled out here. scripts/build_release.py is the single
+# canonical sequence -- policy, verification prerequisites, figure-data reconciliation,
+# figure rendering, download emission, download/source identity, type checks, the site
+# build, and required-output validation, in that order -- and the site-release job calls
+# it. Writing those steps out again in YAML would create a second list that nobody runs
+# locally, and the day the two disagree the YAML one is the one that decides whether a
+# release ships.
+
+name: verification
+
+on:
+  pull_request:
+  # Verification runs on the default branch and on release branches. The release branch
+  # is here because of the bootstrap: a brand new repository has no base branch to open a
+  # pull request against, so the first hosted verification of a candidate has to be
+  # triggered by the push of that candidate. Afterwards the pull_request trigger above is
+  # the one that matters and this is a safety net. Deployment is NOT here and never will
+  # be: pages.yml has workflow_dispatch and nothing else, so no push to any branch can
+  # publish anything.
+  push:
+    branches:
+      - main
+      - "release/**"
+  workflow_dispatch:
+    inputs:
+      additional_base:
+        description: >-
+          An extra base path to build and test, on top of the two fixture bases. Use it
+          to dry-run the real deployment base without deploying. Must begin and end with
+          "/". Leave empty to test the fixtures only.
+        required: false
+        type: string
+        default: ""
+  # pages.yml calls this workflow rather than restating its checks, so the gate in
+  # front of a deployment is the same gate that runs on a pull request, by construction
+  # and not by two lists that have to be kept in step by hand.
+  workflow_call:
+    inputs:
+      additional_base:
+        description: "An extra base path to build and test, on top of the two fixtures."
+        required: false
+        type: string
+        default: ""
+
+# Read-only for the whole workflow. No job here needs to write to the repository, and
+# nothing here deploys; deployment lives in pages.yml and grants its own permissions to
+# one job only.
+#
+# This workflow is reachable from `pull_request`, which on a fork runs the contributor's
+# code. That trigger is deliberate and `pull_request_target` is deliberately NOT used:
+# under `pull_request` a fork's run gets a read-only token and no repository secrets, so
+# there is nothing here for untrusted code to exfiltrate. No job below reads a secret,
+# and every checkout sets persist-credentials: false so the token is not left on disk
+# for a build script to find.
+permissions:
+  contents: read
+
+# Cancel a superseded pull-request run; let everything else finish. A push to main, a
+# manual dry run, and the verification that sits in front of a deployment are each worth
+# a complete result, and cancelling the last of those halfway would leave a deployment
+# decision resting on a partial report.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  # The interpreter every single-version job uses. It is the one the local measurements
+  # in docs/release/VERIFICATION.md were taken on.
+  PRIMARY_PYTHON: "3.13"
+
+  # Tool installation is lock-driven. The data-policy stream owns this file. If it is
+  # renamed, this is the one line to change; the install steps below refuse to run
+  # without it rather than falling back to an unpinned install.
+  LOCK_FILE: requirements-dev.lock
+
+  # The number of tests that skip because the NIST reference extract is absent from a
+  # public checkout. verify.py measures this from the suite's own skip reasons; the
+  # number here is only a drift alarm, and it is a measurement (2026-09-14, 667 tests
+  # collected, 20 reference-dependent skips), not a target. The collected count moves when
+  # tests are added; this number does not, because it counts one specific cause.
+  REFERENCE_SKIP_BASELINE: "20"
+
+  # Exact, to the patch. This is not caution for its own sake: the figure renderer
+  # records the interpreter it ran under in site/src/generated/figures/manifest.json
+  # ("node": "v24.14.0"), so that committed file is a function of this value. A different
+  # patch release would make the drift check in site-release fail for a reason that has
+  # nothing to do with the figures. Raising it means regenerating the figures and
+  # reviewing the diff, which is the correct amount of friction.
+  #
+  # Measured, not assumed: on Node 24.14.0 a fresh `node scripts/render-figures.mjs`
+  # reproduced all 25 files under site/src/generated/figures byte for byte, and a fresh
+  # `node src/scripts/emit-public-data.mjs` reproduced all 38 published downloads.
+  NODE_VERSION: "24.14.0"
+
+  # The skip policy is NOT restated here. It lives in site/tests/skip-policy.json and it
+  # is enforced by scripts/check_skip_policy.py, which the browser leg below calls and
+  # which tests/test_skip_policy.py exercises on every rule it has. This file and
+  # pages.yml used to each carry their own inline copy that matched whole English
+  # sentences, so rewording a message in a test quietly turned a declared skip into an
+  # undeclared one -- in two places, neither of which anyone edits when a test changes.
+  # One gate, one policy, run locally and here by the same command.
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Stage 1: can this tree be published at all, and is the source in order.
+  # ---------------------------------------------------------------------------
+  source-policy:
+    name: source and data policy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ env.PRIMARY_PYTHON }}
+
+      - name: Refuse to proceed without a lock file
+        run: |
+          if [ ! -f "${LOCK_FILE}" ]; then
+            echo "::error::${LOCK_FILE} is missing. Verification jobs install tools only"
+            echo "::error::from a lock file. Falling back to an unpinned install would mean"
+            echo "::error::the linter and type checker that gate this repository are whatever"
+            echo "::error::the index served today, which is not a gate."
+            exit 1
+          fi
+          # Every requirement line must be an exact == pin. No >=, no bare names, no
+          # "latest": a verification job that resolves its own tools is not reproducible.
+          # awk, not `grep | grep || true`: grep exits non-zero when it finds nothing,
+          # and swallowing that with `|| true` is the same keystroke as swallowing a
+          # real failure. awk returns 0 either way and the emptiness test does the work.
+          unpinned="$(awk '
+            /^[[:space:]]*(#|$)/ { next }
+            !/^[A-Za-z0-9._-]+==[A-Za-z0-9._+!-]+$/ { print }
+          ' "${LOCK_FILE}")"
+          if [ -n "${unpinned}" ]; then
+            echo "::error::${LOCK_FILE} contains requirements that are not exact pins:"
+            printf '%s\n' "${unpinned}"
+            exit 1
+          fi
+          echo "lock file ${LOCK_FILE}: every requirement is an exact pin"
+
+      - name: Install the locked development toolchain
+        run: |
+          # --no-deps because the lock is a full freeze: pip must install exactly what is
+          # written and resolve nothing. `pip check` then proves the set is complete, so
+          # a missing transitive dependency fails here rather than silently later.
+          #
+          # Known limitation, stated rather than papered over: requirements-dev.lock was
+          # resolved on macOS/arm64 and carries no hashes, so --require-hashes cannot be
+          # used and a platform-specific wheel may be absent on Linux. If `pip check`
+          # fails on this runner, the fix is to regenerate the lock on Linux, not to
+          # relax the install.
+          python -m pip install --no-deps --disable-pip-version-check -r "${LOCK_FILE}"
+          python -m pip check
+          python -m pip freeze
+
+      - name: Data policy for a published tree
+        # Owned by the data-policy stream. It decides what may appear in a published
+        # tree: restricted extracts, local paths, secrets, oversized payloads. Every
+        # verification job below depends on this one, so a policy failure stops the
+        # pipeline before anything claims to have verified a tree that must not ship.
+        run: python3 scripts/check_public_release.py
+
+      - name: Repository hygiene
+        run: python3 scripts/check_repository.py
+
+      - name: Reference manifest policy
+        # Validates the manifest as a provenance record: required fields, a recorded
+        # citation obligation, a well-formed sha256 per declared table. It deliberately
+        # hashes nothing. The three NIST tables are absent from a public tree on purpose,
+        # so a digest check here would fail by design and would tell a reader nothing.
+        # The digests themselves are checked by the external-reference profile, against
+        # a copy the operator supplies.
+        run: python3 scripts/verify.py --profile public-core --policy-only
+
+      - name: Lint
+        run: python -m ruff check .
+
+      - name: Format
+        run: python -m ruff format --check .
+
+      - name: Types
+        # Scope is src/reservoir_lab only. That is what [tool.mypy] files declares in
+        # pyproject.toml, and it is stated here so nobody reads a green check as "the
+        # repository is typed". tests/, scripts/ and cases/ are not type checked.
+        run: python -m mypy
+
+  # ---------------------------------------------------------------------------
+  # Stage 2a: the suite under the standard-library runner, across the matrix.
+  # ---------------------------------------------------------------------------
+  public-core-tests:
+    name: public-core (stdlib runner, py${{ matrix.python-version }})
+    needs: source-policy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        # pyproject.toml declares requires-python >=3.11 and classifies 3.11, 3.12 and
+        # 3.13, so those are the versions claimed as supported and those are the ones
+        # run here. Honest caveat: only CPython 3.13.2 has actually been exercised, on
+        # macOS, by hand. This matrix has never run, because there is no remote. Until
+        # it does, "supported" means declared, not demonstrated.
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Confirm nothing is installed
+        # This job deliberately installs no packages. The library declares no runtime
+        # dependencies and the stdlib runner needs none, so running the whole profile on
+        # a bare interpreter is itself a check on that claim: if anything under src/ or
+        # scripts/ grows an import outside the standard library, this job fails.
+        run: python -m pip freeze
+
+      - name: public-core profile
+        run: |
+          python3 scripts/verify.py \
+            --profile public-core \
+            --cases none \
+            --expect-reference-skips "${REFERENCE_SKIP_BASELINE}" \
+            --json "${RUNNER_TEMP}/verify-public-core-py${{ matrix.python-version }}.json"
+
+      - name: Machine-readable report
+        if: always()
+        run: |
+          report="${RUNNER_TEMP}/verify-public-core-py${{ matrix.python-version }}.json"
+          if [ -f "${report}" ]; then
+            cat "${report}"
+          else
+            echo "no JSON report at ${report}: the profile did not reach the point of"
+            echo "writing one. The failure is in the step above, not here."
+          fi
+
+  # ---------------------------------------------------------------------------
+  # Stage 2b: the same suite under pytest, to keep the two runners honest.
+  # ---------------------------------------------------------------------------
+  pytest-parity:
+    name: public-core (pytest runner)
+    needs: source-policy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ env.PRIMARY_PYTHON }}
+
+      - name: Install the locked development toolchain
+        run: |
+          test -f "${LOCK_FILE}" || { echo "::error::${LOCK_FILE} is missing"; exit 1; }
+          python -m pip install --no-deps --disable-pip-version-check -r "${LOCK_FILE}"
+          python -m pip check
+
+      - name: pytest
+        # pyproject.toml's filterwarnings policy promotes RangeWarning to an error, and
+        # scripts/check.py reads that same list so the stdlib runner applies it too.
+        # tests/test_runner_policy.py fails if either runner drops it. Running both here
+        # means a divergence shows up as a red job rather than as a green suite under
+        # whichever runner the reader happened to pick.
+        run: python -m pytest -ra
+
+  # ---------------------------------------------------------------------------
+  # Stage 2c: every reference-independent case, re-run into a fresh directory.
+  # ---------------------------------------------------------------------------
+  synthetic-cases:
+    name: synthetic case reproduction
+    needs: source-policy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ env.PRIMARY_PYTHON }}
+
+      - name: Re-run each case and diff its committed snapshot
+        run: |
+          set -uo pipefail
+          fresh="${RUNNER_TEMP}/cases"
+          mkdir -p "${fresh}"
+          reproduced=0
+          status=0
+
+          for case_dir in cases/*/; do
+            name="$(basename "${case_dir}")"
+            snapshot="${case_dir}results/summary.json"
+
+            # The split between reproducible and reference-dependent cases is derived
+            # from the tree, not listed here: a case ships a committed summary.json
+            # exactly when a reader is meant to be able to re-derive its numbers.
+            if [ ! -f "${snapshot}" ]; then
+              echo "NOT RUN  ${name}: no committed results/summary.json."
+              echo "         This case reads the restricted NIST extract, which a public"
+              echo "         checkout does not hold, so it exits non-zero by design."
+              continue
+            fi
+
+            out="${fresh}/${name}"
+            echo "::group::${name}"
+            if ! PYTHONPATH=src python3 "${case_dir}run.py" --out "${out}"; then
+              echo "::error::${name}: run.py failed"
+              status=1
+              echo "::endgroup::"
+              continue
+            fi
+            if diff -u "${snapshot}" "${out}/summary.json"; then
+              echo "OK       ${name}: reproduces its committed snapshot byte for byte"
+              reproduced=$((reproduced + 1))
+            else
+              echo "::error::${name}: a fresh run disagrees with results/summary.json."
+              echo "::error::Either the code changed the numbers or the snapshot is stale."
+              status=1
+            fi
+            echo "::endgroup::"
+          done
+
+          # Zero reproduced cases is a failure, not a quiet pass: it means the loop found
+          # nothing, which is what a broken path or a renamed directory looks like.
+          if [ "${reproduced}" -eq 0 ]; then
+            echo "::error::no case was reproduced. An empty reproduction pass is a failure."
+            status=1
+          fi
+          echo "cases reproduced: ${reproduced}"
+          exit "${status}"
+
+  # ---------------------------------------------------------------------------
+  # Stage 3: the figure data the site reads, and the contract that describes it.
+  # ---------------------------------------------------------------------------
+  figure-contract:
+    name: figure export and contract
+    needs: [public-core-tests, synthetic-cases]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ env.PRIMARY_PYTHON }}
+
+      - name: Re-export the figure data into a scratch directory
+        run: |
+          PYTHONPATH=src python3 scripts/export_presentation_data.py \
+            --out "${RUNNER_TEMP}/export" \
+            --site-data "${RUNNER_TEMP}/figures"
+
+      - name: Committed figure data matches a fresh export
+        # The exporter reconciles every value it writes against the audited case summary
+        # and refuses to write on a disagreement. This step checks the separate claim
+        # that what is committed under site/src/data/figures is what the exporter
+        # currently produces, so the site cannot drift away from the case it cites.
+        run: diff -ru site/src/data/figures "${RUNNER_TEMP}/figures"
+
+      - name: Contract is internally consistent
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import sys
+          from pathlib import Path
+
+          figures = Path("site/src/data/figures")
+          contract = json.loads((figures / "contract.json").read_text(encoding="utf-8"))
+          problems = []
+
+          # Every figure file the contract names must exist and must hash to the digest
+          # the contract records. A contract that describes files nobody can verify is
+          # decoration.
+          for entry in contract["files"]:
+              path = figures / entry["path"]
+              if not path.is_file():
+                  problems.append(f"{entry['path']}: named by the contract but absent")
+                  continue
+              actual = hashlib.sha256(path.read_bytes()).hexdigest()
+              if actual != entry["sha256"]:
+                  problems.append(f"{entry['path']}: sha256 {actual} != {entry['sha256']}")
+
+          # The numerical source must be the committed case summary, byte for byte.
+          baseline = Path(contract["numerical_source"]["baseline_summary_path"])
+          if not baseline.is_file():
+              problems.append(f"{baseline}: the contract's numerical source is absent")
+          else:
+              actual = hashlib.sha256(baseline.read_bytes()).hexdigest()
+              expected = contract["numerical_source"]["baseline_summary_sha256"]
+              if actual != expected:
+                  problems.append(f"{baseline}: sha256 {actual} != {expected}")
+
+          passed = contract["export"]["reconciliation_checks_passed"]
+          if not isinstance(passed, int) or passed <= 0:
+              problems.append(
+                  f"reconciliation_checks_passed is {passed!r}. Zero reconciliation checks "
+                  f"is not a clean export, it is an export that checked nothing."
+              )
+
+          if problems:
+              for problem in problems:
+                  print(f"::error::{problem}")
+              sys.exit(1)
+          print(
+              f"contract {contract['contract_version']}: {len(contract['files'])} figure "
+              f"files verified, {passed} reconciliation checks recorded, numerical source "
+              f"{baseline} matches its digest"
+          )
+          PY
+
+  # ---------------------------------------------------------------------------
+  # Stage 4a: decide which bases to build and test.
+  #
+  # Two fixture bases always. A GitHub project site is served from a subdirectory and a
+  # user site or a custom domain is served from the root, and the two exercise different
+  # code paths in every URL the site emits, so both are non-negotiable. A third base can
+  # be passed in to dry-run a real deployment target without deploying anything.
+  # ---------------------------------------------------------------------------
+  qa-plan:
+    name: plan the base matrix
+    needs: figure-contract
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      legs: ${{ steps.plan.outputs.legs }}
+    steps:
+      - name: Build the matrix
+        id: plan
+        env:
+          ADDITIONAL_BASE: ${{ inputs.additional_base }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY' >> "${GITHUB_OUTPUT}"
+          import json
+          import os
+          import sys
+
+          # Each leg gets its own port and its own output directory. On GitHub these legs
+          # land on separate runners, so the isolation is free; naming them apart anyway
+          # is what makes the same commands safe to run side by side on one machine,
+          # which is how they get reproduced locally. Two builds must never share
+          # site/dist: the second would overwrite the first and the browser suite would
+          # then report on a directory built for a base it is not testing.
+          # scripts/build_release.py takes --out-dir for the same reason.
+          legs = [
+              {
+                  "name": "project base",
+                  "base": "/reservoir-engineering-workbench-public/",
+                  "port": "4321",
+                  "dist": "dist-project",
+              },
+              {
+                  "name": "root base",
+                  "base": "/",
+                  "port": "4322",
+                  "dist": "dist-root",
+              },
+          ]
+
+          extra = (os.environ.get("ADDITIONAL_BASE") or "").strip()
+          if extra:
+              if not extra.startswith("/") or not extra.endswith("/"):
+                  print(
+                      f"::error::additional_base is {extra!r}. A base path must begin and "
+                      f"end with '/': Astro joins it to every route, and the static server "
+                      f"the QA suite runs against matches on the exact prefix.",
+                      file=sys.stderr,
+                  )
+                  raise SystemExit(1)
+              if extra not in {leg["base"] for leg in legs}:
+                  legs.append(
+                      {"name": "requested base", "base": extra, "port": "4323", "dist": "dist-extra"}
+                  )
+
+          print(f"legs={json.dumps(legs)}")
+          PY
+          echo "matrix:"
+          cat "${GITHUB_OUTPUT}"
+
+  # ---------------------------------------------------------------------------
+  # Stage 4b: the canonical release sequence, once per base, then the browser suite
+  # against the directory that sequence produced.
+  #
+  # The build steps are not written out here. scripts/build_release.py is the single
+  # canonical sequence -- policy, verification prerequisites, figure-data reconciliation,
+  # figure rendering, download emission, download/source identity, type checks, the site
+  # build, and required-output validation -- and this job calls it. Restating those steps
+  # as a second list in YAML is how the two lists start disagreeing, and the one in YAML
+  # is the one nobody runs locally.
+  #
+  # It deliberately re-runs the public-source policy and the verification prerequisites
+  # that source-policy and public-core-tests already ran in this same workflow. That
+  # duplication is the script's decision, not this file's: it refuses to build a tree it
+  # has not just checked itself, so that a local invocation is worth exactly as much as a
+  # hosted one. Carving it up here to save two minutes would give the local and the
+  # hosted sequence different meanings.
+  # ---------------------------------------------------------------------------
+  site-release:
+    name: site build and browser QA (${{ matrix.leg.name }})
+    needs: qa-plan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        leg: ${{ fromJSON(needs.qa-plan.outputs.legs) }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: A build output must not be committed
+        run: |
+          if [ -e site/dist ] || [ -e "site/${{ matrix.leg.dist }}" ]; then
+            echo "::error::a build directory exists in a fresh checkout. It is a build"
+            echo "::error::product and must not be committed: a committed directory cannot"
+            echo "::error::be shown to have been built from the figure data the jobs above"
+            echo "::error::just checked, which is the whole reason it is built here."
+            exit 1
+          fi
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ env.PRIMARY_PYTHON }}
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          # No dependency cache. A cache is a second source of truth for what "npm ci
+          # installed the lock file" means, and the lock file is part of what is being
+          # verified. The install is about thirty seconds; the ambiguity is permanent.
+
+      - name: Install the locked site toolchain
+        # npm ci, never npm install. It installs exactly package-lock.json, deletes any
+        # pre-existing node_modules first, and exits non-zero if the lock and
+        # package.json disagree, which is the check this step is really making.
+        # build_release.py treats a missing site/node_modules as BLOCKED, not as a step
+        # it can skip, so this has to succeed before the sequence will run at all.
+        run: |
+          if [ ! -f site/package-lock.json ]; then
+            echo "::error::site/package-lock.json is missing. The site toolchain is"
+            echo "::error::installed with npm ci and nothing else: npm install would"
+            echo "::error::resolve versions at run time, and a type check against a"
+            echo "::error::toolchain chosen by today's registry is not a check."
+            exit 1
+          fi
+          node --version
+          npm --version
+          npm ci --prefix site
+
+      - name: Install the browser engines
+        working-directory: site
+        # The version installed is whatever @playwright/test resolves to from the lock,
+        # so the binaries match the runner library that drives them. All three engines,
+        # by name: an engine that fails to install must fail this step, not quietly
+        # reduce the suite to the two that did.
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: Canonical release sequence for ${{ matrix.leg.base }}
+        # --verify-cases fast, deliberately and visibly. The full synthetic case
+        # reproduction is the synthetic-cases job above, which is an ancestor of this one
+        # in the same run, so every case has already been re-run and diffed against its
+        # committed snapshot before this job starts. The reduction is recorded in the
+        # script's own summary and the next step refuses to let any other reduction pass
+        # unnoticed. pages.yml, whose output ships, passes --verify-cases all instead.
+        run: |
+          python3 scripts/build_release.py \
+            --base-path "${{ matrix.leg.base }}" \
+            --out-dir "site/${{ matrix.leg.dist }}" \
+            --json "${RUNNER_TEMP}/build-release.json" \
+            --log-dir "${RUNNER_TEMP}/build-release-logs" \
+            --verify-cases fast
+
+      - name: Every step of the sequence passed, and no unannounced narrowing
+        # The script already exits non-zero on a failure, so this is not a second opinion
+        # on the result. It is a check on the shape of the result: that no step reported
+        # BLOCKED, and that the only coverage reduction in the summary is the one this
+        # workflow asked for. A narrowing that arrives later, from a changed default or a
+        # new flag, would otherwise turn a green job into a quieter green job.
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          summary = json.loads(Path(os.environ["RUNNER_TEMP"], "build-release.json").read_text())
+          allowed = {
+              "--cases fast: not every synthetic case was re-run. A pass here is narrower "
+              "than a pass with --cases all."
+          }
+
+          problems = []
+          if not summary["steps"]:
+              problems.append("the sequence recorded no steps at all.")
+          for step in summary["steps"]:
+              print(f"{step['status'].upper():<8} {step['step']:<26} {step['title']}")
+              if step["status"] != "passed":
+                  problems.append(f"{step['step']}: {step['status']} -- {step['detail']}")
+
+          for note in summary.get("coverage_reductions") or []:
+              print(f"REDUCED  {note}")
+              if note not in allowed:
+                  problems.append(
+                      f"undeclared coverage reduction: {note!r}. A green run that quietly "
+                      f"checked less than the last one is the failure this gate exists for."
+                  )
+
+          for problem in problems:
+              print(f"::error::{problem}")
+          raise SystemExit(1 if problems else 0)
+          PY
+
+      - name: The committed figures and downloads did not drift
+        # Not part of the canonical sequence, and not a restatement of it. The sequence
+        # REGENERATES site/src/generated/figures and site/public/data in place and then
+        # checks that the published downloads are byte-identical to what it just
+        # rendered. That is a statement about the files after the run. This step is the
+        # separate statement that the files committed to git were already those bytes,
+        # which is what lets a reader trust site/public/data/index.json's claim that each
+        # published SVG is byte-identical to the file the page inlines without running
+        # anything. It is the check that closes finding F4.
+        #
+        # Scoped `git status`, not a bare one: the build directory this job creates is
+        # untracked by design, and a bare status would flag it and turn this into noise
+        # that someone eventually deletes.
+        run: |
+          set -euo pipefail
+          drift="$(git status --porcelain -- site/src/generated site/public/data)"
+          if [ -n "${drift}" ]; then
+            echo "::error::running the canonical sequence changed files that are committed:"
+            printf '%s\n' "${drift}"
+            echo "::error::Either the renderer or the emitter is not deterministic, or the"
+            echo "::error::committed figures and downloads were not produced by the tools in"
+            echo "::error::this tree. Re-run scripts/build_release.py locally and review the"
+            echo "::error::diff before committing."
+            git --no-pager diff --stat -- site/src/generated site/public/data
+            exit 1
+          fi
+          echo "committed figures and downloads are byte for byte what the sequence produces"
+
+      - name: Fingerprint the build
+        working-directory: site
+        # The digest of every file, and a digest over that listing. It is recorded before
+        # the suite runs and checked after, so "the tests passed" is a statement about
+        # these bytes and not about a directory something rewrote halfway through.
+        run: |
+          set -euo pipefail
+          dist="${{ matrix.leg.dist }}"
+          test -d "${dist}" || { echo "::error::${dist} was not produced"; exit 1; }
+          if [ -z "$(ls -A "${dist}")" ]; then
+            echo "::error::${dist} is empty. An empty build is not a passing build."
+            exit 1
+          fi
+          ( cd "${dist}" && find . -type f -print0 | sort -z \
+            | xargs -0 sha256sum ) > "${RUNNER_TEMP}/before.sha256"
+          files="$(wc -l < "${RUNNER_TEMP}/before.sha256")"
+          root="$(sha256sum "${RUNNER_TEMP}/before.sha256" | cut -d' ' -f1)"
+          echo "files=${files} fingerprint=${root}"
+          echo "${root}" > "${RUNNER_TEMP}/fingerprint.txt"
+          {
+            echo "### ${{ matrix.leg.name }}"
+            echo ""
+            echo "- base: \`${{ matrix.leg.base }}\`"
+            echo "- files built: ${files}"
+            echo "- fingerprint: \`${root}\`"
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Serve the build and run the browser suite
+        working-directory: site
+        # One step, so the server is a child of the process that needs it and cannot
+        # outlive the step. tests/serve.mjs is the same static server the local runs use
+        # and it refuses to serve a dist built for a different base than the one under
+        # test, which is a second, independent check that this leg is testing what it
+        # says it is.
+        #
+        # QA_RELEASE=1 leaves the Playwright config with NO webServer of its own. The
+        # previous QA_REUSE=1 was weaker than it looked: `reuseExistingServer` chooses
+        # between this server and Playwright's own by probing a URL, so a server that dies
+        # after the readiness check below hands the suite to a fallback that runs
+        # `astro build` into site/dist and tests that instead. The candidate directory then
+        # passes its after-fingerprint unchanged -- unchanged because nothing read it.
+        # With no fallback configured, an absent server is a connection refused on every
+        # test. tests/release-mode.spec.ts closes the loop from the other end by comparing
+        # what the browser received with the candidate's bytes on disk.
+        env:
+          QA_BASE: ${{ matrix.leg.base }}
+          QA_PORT: ${{ matrix.leg.port }}
+          QA_DIST: ${{ matrix.leg.dist }}
+          QA_RELEASE: "1"
+          QA_WORKERS: "4"
+        run: |
+          set -uo pipefail
+          # Teardown, not a check: the server is a child of this step and must go away
+          # when the step ends however it ends. It is written as a function returning 0
+          # so no failure-swallowing idiom appears anywhere in this file.
+          cleanup() { kill "${server}" 2>/dev/null; return 0; }
+          node tests/serve.mjs &
+          server=$!
+          trap cleanup EXIT
+
+          url="http://127.0.0.1:${QA_PORT}${QA_BASE}"
+          ready=0
+          for _ in $(seq 1 60); do
+            if curl -fsS -o /dev/null "${url}"; then ready=1; break; fi
+            if ! kill -0 "${server}" 2>/dev/null; then break; fi
+            sleep 1
+          done
+          if [ "${ready}" -ne 1 ]; then
+            echo "::error::the static server never answered ${url}. It refuses to serve a"
+            echo "::error::build made for a different base, so check the build step above."
+            exit 1
+          fi
+
+          set -e
+          npx playwright test
+
+      - name: Skip policy
+        if: always()
+        working-directory: site
+        # One gate, shared with the deployment workflow and with the local release path,
+        # exercised by tests/test_skip_policy.py. It fails an empty suite, an engine that
+        # produced nothing or produced only skips, a skip with no reason, a reason that is
+        # not a declared capability id, a skip on an engine the policy does not permit it
+        # on, a probe-backed skip with no measurement or with a measurement that
+        # contradicts it, and any check that ended up skipped on every engine.
+        #
+        # It does NOT compare the skip count against a baseline. macOS took 14; a Linux
+        # runner may legitimately take a different number because a capability is a
+        # property of the engine build and the platform under it. What is recorded is
+        # which capability was unavailable on which engine, measured in this run.
+        env:
+          QA_PORT: ${{ matrix.leg.port }}
+        run: |
+          set -euo pipefail
+          python3 "${GITHUB_WORKSPACE}/scripts/check_skip_policy.py" \
+            --report "test-results/report-${QA_PORT}.json" \
+            --engines chromium,firefox,webkit \
+            --json "test-results/skip-policy-${QA_PORT}.json" \
+            --github
+
+      - name: The build is the build that was tested
+        if: always()
+        working-directory: site
+        # Nothing in the suite is supposed to write into the built site. If anything did,
+        # the QA report describes a directory that no longer exists and the result is
+        # worthless. This is cheap and it is the only thing standing between "we tested
+        # it" and "we tested something".
+        run: |
+          set -euo pipefail
+          dist="${{ matrix.leg.dist }}"
+          ( cd "${dist}" && find . -type f -print0 | sort -z \
+            | xargs -0 sha256sum ) > "${RUNNER_TEMP}/after.sha256"
+          if ! diff -u "${RUNNER_TEMP}/before.sha256" "${RUNNER_TEMP}/after.sha256"; then
+            echo "::error::${dist} changed while the browser suite was running. The QA"
+            echo "::error::report is about bytes that are no longer on disk."
+            exit 1
+          fi
+          echo "fingerprint unchanged: $(cat "${RUNNER_TEMP}/fingerprint.txt")"
+
+      - name: Gather the evidence into one directory
+        if: always()
+        # One root, so the uploaded artifact has a predictable layout. Mixing a
+        # workspace-relative path with an absolute RUNNER_TEMP path in a single upload
+        # leaves the action to pick a common ancestor and the result is a tree nobody can
+        # guess from the artifact name. The manifest records what was actually found, so
+        # an artifact that is missing the Playwright report says so in writing rather than
+        # by absence.
+        run: |
+          set -euo pipefail
+          dest="${RUNNER_TEMP}/evidence"
+          mkdir -p "${dest}"
+          if [ -d site/test-results ]; then cp -R site/test-results "${dest}/test-results"; fi
+          if [ -f "${RUNNER_TEMP}/build-release.json" ]; then
+            cp "${RUNNER_TEMP}/build-release.json" "${dest}/build-release.json"
+          fi
+          if [ -d "${RUNNER_TEMP}/build-release-logs" ]; then
+            cp -R "${RUNNER_TEMP}/build-release-logs" "${dest}/build-release-logs"
+          fi
+          ( cd "${dest}" && find . -type f | sort ) > "${dest}/MANIFEST.txt"
+          cat "${dest}/MANIFEST.txt"
+
+      - name: Keep the evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: evidence-${{ matrix.leg.dist }}
+          path: ${{ runner.temp }}/evidence/
+          if-no-files-found: error
+          retention-days: 14

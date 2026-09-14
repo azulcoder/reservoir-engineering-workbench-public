@@ -1,0 +1,114 @@
+# Local hooks only. Nothing here downloads a third-party hook repository and nothing
+# here reaches the network at all, so what runs on a developer's machine is the same
+# code that runs in CI and is reviewable in this repository. A hook that fetched
+# anything would make a commit depend on an index being up, and would make the check
+# itself unreviewable.
+#
+# Hooks are a convenience, not a control. `git commit --no-verify` bypasses them,
+# `git push --no-verify` bypasses them, and a contributor who never ran
+# `pre-commit install` never had them. That is precisely why .github/workflows/ci.yml
+# repeats every mandatory check: the hooks are there to give fast feedback, and CI is
+# there to be the gate. docs/release/VERIFICATION.md says the same thing at length.
+#
+# Split of work:
+#   pre-commit  hygiene, data policy, manifest schema, lint and format. Under two
+#               seconds in total, because a hook that is slow gets bypassed.
+#   pre-push    the public verification subset: the whole test suite under the
+#               standard-library runner, one case reproduction, and the type check.
+#               About fifteen seconds, which is the right price at push time.
+#
+# Install both hook types once:
+#     pre-commit install --hook-type pre-commit --hook-type pre-push
+#
+# ruff and mypy come from requirements-dev.lock at the versions pinned there. If they
+# are not on PATH the hook fails loudly rather than passing quietly; install them with
+#     python3 -m pip install -r requirements-dev.lock
+
+default_install_hook_types: [pre-commit, pre-push]
+default_stages: [pre-commit]
+fail_fast: false
+
+repos:
+  - repo: local
+    hooks:
+      # ------------------------------------------------------------------
+      # pre-commit: fast hygiene, schema and lint
+      # ------------------------------------------------------------------
+      - id: repository-hygiene
+        name: repository hygiene (secrets, data policy, authorship, size)
+        entry: python3 scripts/check_repository.py --staged
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+      - id: public-release-policy
+        name: published-tree data policy
+        # The gate that decides what may appear in a published tree: restricted
+        # extracts, absolute local paths, secrets, oversized payloads. CI runs the same
+        # script in the job every verification job depends on.
+        entry: python3 scripts/check_public_release.py
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+      - id: reference-manifest-policy
+        name: reference manifest is a complete provenance record
+        # Structure and provenance only, and deliberately no digests. The three NIST
+        # tables are absent from a public tree on purpose, so hashing them would fail by
+        # design; their digests are checked by the external-reference profile against a
+        # copy the operator supplies. This replaces the old reference-digests hook,
+        # which verified the stored digests of the extract and therefore failed on
+        # every push from a public checkout, for a reason that was not a defect. A hook
+        # that always fails is a hook people learn to bypass.
+        #
+        # It re-runs the data-policy gate above as its own prerequisite, which costs
+        # about half a second. Left as is rather than adding a flag to suppress it: two
+        # cheap checks are easier to reason about than one check with a mode.
+        entry: python3 scripts/verify.py --profile public-core --policy-only
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+      - id: ruff-lint
+        name: ruff lint
+        entry: ruff check --force-exclude
+        language: system
+        types_or: [python, pyi]
+        require_serial: true
+        stages: [pre-commit]
+
+      - id: ruff-format
+        name: ruff format
+        entry: ruff format --check --force-exclude
+        language: system
+        types_or: [python, pyi]
+        require_serial: true
+        stages: [pre-commit]
+
+      # ------------------------------------------------------------------
+      # pre-push: the public verification subset
+      # ------------------------------------------------------------------
+      - id: public-core-verification
+        name: public-core profile (suite under the stdlib runner, plus one case)
+        # --cases fast reproduces A1 only. A3 and A4 take about fifteen and twelve
+        # seconds each and are left to CI, which runs every one of them. This hook is
+        # the subset that catches a real regression in the time someone will tolerate
+        # before a push.
+        entry: python3 scripts/verify.py --profile public-core --cases fast
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]
+
+      - id: type-check
+        name: "mypy (scope: src/reservoir_lab only)"
+        # Scope is what [tool.mypy] files declares in pyproject.toml. tests/, scripts/
+        # and cases/ are not type checked, and a green run here does not say they are.
+        entry: mypy
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]

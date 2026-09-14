@@ -1,0 +1,18 @@
+experiment,replicates,pressure_sigma_psi,detection_rate_water_drive,detection_rate_volumetric_null
+pre-registered noise sweep,400,1,1,0.0675
+pre-registered noise sweep,400,2,1,0.0675
+pre-registered noise sweep,400,5,0.9775,0.0675
+pre-registered noise sweep,400,10,0.555,0.0675
+pre-registered noise sweep,400,20,0.21,0.0675
+pre-registered noise sweep,400,40,0.085,0.0675
+pre-registered noise sweep,400,80,0.0725,0.0675
+post-review power curve,4000,8,0.75375,
+post-review power curve,4000,9,0.66375,
+post-review power curve,4000,10,0.58975,
+post-review power curve,4000,11,0.51625,
+post-review power curve,4000,11.5,0.48075,
+post-review power curve,4000,12,0.4555,
+post-review power curve,4000,12.5,0.43175,
+post-review power curve,4000,13,0.4055,
+post-review power curve,4000,14,0.36125,
+post-review power curve,4000,16,0.297,

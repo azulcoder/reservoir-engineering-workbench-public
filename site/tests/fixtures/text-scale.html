@@ -1,0 +1,130 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Text-scale control fixture</title>
+<!--
+  A control fixture for the chart-text measurement helper.
+
+  Every text node below carries data-truth: the size, in CSS pixels, at which that glyph
+  is actually painted on screen. The numbers are not measured, they are arithmetic on the
+  authored font-size and the transform chain above the element, which is why this file can
+  be used to judge a measuring helper rather than the other way round.
+
+  Nothing here uses a web font, a percentage font-size or a relative unit, so the expected
+  values do not move with the root font size or with the engine's default.
+-->
+<style>
+  html { font-size: 16px; }
+  body { margin: 0; font-family: system-ui, sans-serif; }
+  .halfscale { transform: scale(0.5); transform-origin: 0 0; }
+  .visually-hidden {
+    position: absolute; width: 1px; height: 1px; margin: -1px;
+    clip-path: inset(50%); overflow: hidden; white-space: nowrap;
+  }
+  .invisible { visibility: hidden; }
+  .transparent { opacity: 0; }
+  svg text { font-family: system-ui, sans-serif; }
+</style>
+
+<!-- 1. Plain HTML text, no SVG involved. -->
+<p id="html-13" style="font-size: 13px" data-truth="13">html thirteen</p>
+<p id="html-20" style="font-size: 20px" data-truth="20">html twenty</p>
+
+<!-- 2. An SVG drawn at its authored size: viewBox width equals the element width, so the
+     user unit is one CSS pixel and the authored font-size is the painted size. -->
+<svg id="svg-unscaled" width="1000" height="200" viewBox="0 0 1000 200">
+  <text x="10" y="40" font-size="13" data-truth="13">unscaled thirteen</text>
+  <text x="10" y="90" font-size="26" data-truth="26">unscaled twenty-six</text>
+</svg>
+
+<!-- 3. The same drawing at half size: the element is 500 CSS px wide over a 1000-unit
+     viewBox, so every painted length is halved. -->
+<svg id="svg-halved" width="500" height="100" viewBox="0 0 1000 200">
+  <text x="10" y="40" font-size="13" data-truth="6.5">halved thirteen</text>
+</svg>
+
+<!-- 4. A scaled group inside an otherwise unscaled drawing. The element is not scaled;
+     the transform is. A helper that only looks at element width over viewBox width
+     cannot see this one. -->
+<svg id="svg-group-scaled" width="1000" height="200" viewBox="0 0 1000 200">
+  <g transform="scale(0.5)">
+    <text x="10" y="40" font-size="13" data-truth="6.5">group-halved thirteen</text>
+  </g>
+  <g transform="translate(400 20) scale(2)">
+    <text x="0" y="40" font-size="13" data-truth="26">group-doubled thirteen</text>
+  </g>
+</svg>
+
+<!-- 5. Rotated text. Rotation changes orientation, not size: an axis-aligned bounding box
+     of rotated text is the wrong measurement and this case catches it. -->
+<svg id="svg-rotated" width="400" height="200" viewBox="0 0 400 200">
+  <text x="20" y="180" font-size="13" transform="rotate(-90 20 180)" data-truth="13">rotated thirteen</text>
+</svg>
+
+<!-- 6. A viewBox coarser than the element: two user units per CSS pixel means a 26-unit
+     font paints at 13. -->
+<svg id="svg-coarse-viewbox" width="500" height="100" viewBox="0 0 1000 200">
+  <text x="10" y="60" font-size="26" data-truth="13">coarse-viewbox thirteen</text>
+</svg>
+
+<!-- 7. A nested SVG with its own viewBox, which restarts the coordinate system. -->
+<svg id="svg-nested" width="1000" height="200" viewBox="0 0 1000 200">
+  <svg x="0" y="0" width="500" height="200" viewBox="0 0 1000 400">
+    <text x="10" y="60" font-size="26" data-truth="13">nested thirteen</text>
+  </svg>
+</svg>
+
+<!-- 8. A tspan with its own font-size inside a text element with a larger one. The
+     smallest painted glyph on a chart is often a superscript or a unit in a tspan, so the
+     tspan and not only its parent has to be measured. -->
+<svg id="svg-tspan" width="1000" height="200" viewBox="0 0 1000 200">
+  <text x="10" y="60" font-size="26" data-truth="26">tspan parent twenty-six<tspan font-size="13" data-truth="13"> child thirteen</tspan></text>
+</svg>
+
+<!-- 9. An HTML ancestor carrying a CSS transform. The SVG is authored at its natural size
+     and painted at half of it, and nothing inside the SVG says so. -->
+<div class="halfscale">
+  <svg id="svg-css-transformed" width="1000" height="200" viewBox="0 0 1000 200">
+    <text x="10" y="40" font-size="13" data-truth="6.5">css-halved thirteen</text>
+  </svg>
+</div>
+
+<!-- 10. The same for plain HTML text: a 26px paragraph inside a halved ancestor paints
+     at 13, and the computed font-size on its own says 26. -->
+<div class="halfscale">
+  <p id="html-transformed" style="font-size: 26px" data-truth="13">css-halved twenty-six</p>
+</div>
+
+<!-- 11. Text that is NOT painted. A helper that takes a minimum over everything in the DOM
+     will report one of these, and every one of them is smaller than the floor. None of
+     them carries data-truth, because none of them has a painted size. -->
+<div hidden>
+  <svg width="1000" height="100" viewBox="0 0 1000 100">
+    <text x="10" y="40" font-size="4" data-hidden="hidden attribute">hidden attribute four</text>
+  </svg>
+</div>
+<div style="display: none">
+  <svg width="1000" height="100" viewBox="0 0 1000 100">
+    <text x="10" y="40" font-size="5" data-hidden="display none">display-none five</text>
+  </svg>
+</div>
+<div class="invisible">
+  <svg width="1000" height="100" viewBox="0 0 1000 100">
+    <text x="10" y="40" font-size="6" data-hidden="visibility hidden">visibility-hidden six</text>
+  </svg>
+</div>
+<div class="transparent">
+  <svg width="1000" height="100" viewBox="0 0 1000 100">
+    <text x="10" y="40" font-size="7" data-hidden="opacity zero">opacity-zero seven</text>
+  </svg>
+</div>
+<div class="visually-hidden">
+  <svg width="1000" height="100" viewBox="0 0 1000 100">
+    <text x="10" y="40" font-size="8" data-hidden="clipped to 1px">clipped eight</text>
+  </svg>
+</div>
+<svg id="svg-empty-text" width="1000" height="100" viewBox="0 0 1000 100">
+  <title>A title is metadata, not a painted label</title>
+  <desc>A desc is metadata too</desc>
+  <text x="10" y="40" font-size="9" data-hidden="empty string"> </text>
+  <text x="10" y="80" font-size="10" display="none" data-hidden="display attribute">display-attribute ten</text>
+</svg>

@@ -1,0 +1,10 @@
+node_modules/
+dist/
+# The canonical sequence builds each base path into its own directory so two runs
+# never mutate the same tree. They are build products, never committed.
+dist-*/
+.astro/
+test-results/
+playwright-report/
+blob-report/
+.playwright-cache/

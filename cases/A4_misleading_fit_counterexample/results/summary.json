@@ -1,0 +1,1058 @@
+{
+  "case_id": "A4_misleading_fit_counterexample",
+  "case_type": "synthetic_structural_counterexample",
+  "true_gas_in_place_scf": 100000000000.0,
+  "strength_sweep": [
+    {
+      "productivity_index_bbl_per_day_psi": 0.0,
+      "aquifer_time_constant_days": null,
+      "timestep_over_time_constant": 0.0,
+      "terminal_water_influx_bbl": 0.0,
+      "invaded_pore_volume_fraction": 0.0,
+      "terminal_pressure_psia": 1714.7840620766247,
+      "r_squared": 1.0,
+      "fitted_gas_in_place_scf": 99999999999.99042,
+      "relative_gas_in_place_error": -9.581224702515101e-14,
+      "fitted_stderr_scf": 0.004640951610355664,
+      "bias_over_stderr": -2.0647747134160777,
+      "relative_remaining_gas_error": -2.1294077612310502e-13,
+      "max_abs_residual_psia": 9.263203537557274e-10,
+      "rms_residual_psia": 3.014935479748979e-10,
+      "depletion_fraction_observed": 0.5500000000000511,
+      "max_solver_residual_p_over_z_psia": 2.0368133846204728e-09,
+      "generator_warnings": []
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.05,
+      "aquifer_time_constant_days": 360000.0,
+      "timestep_over_time_constant": 8.454861111111111e-05,
+      "terminal_water_influx_bbl": 266425.0189358899,
+      "invaded_pore_volume_fraction": 0.0035923277277131603,
+      "terminal_pressure_psia": 1720.5656690203348,
+      "r_squared": 0.9999998914951487,
+      "fitted_gas_in_place_scf": 100315765091.05914,
+      "relative_gas_in_place_error": 0.003157650910591503,
+      "fitted_stderr_scf": 3584242.844302163,
+      "bias_over_stderr": 88.09812972385838,
+      "relative_remaining_gas_error": 0.0070170020235365005,
+      "max_abs_residual_psia": 0.7493511601787759,
+      "rms_residual_psia": 0.23111403576752676,
+      "depletion_fraction_observed": 0.5482687586549827,
+      "max_solver_residual_p_over_z_psia": 3.3633114071562886e-09,
+      "generator_warnings": []
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.2,
+      "aquifer_time_constant_days": 90000.0,
+      "timestep_over_time_constant": 0.00033819444444444446,
+      "terminal_water_influx_bbl": 1045165.0791509782,
+      "invaded_pore_volume_fraction": 0.014092428364526254,
+      "terminal_pressure_psia": 1737.7102096260069,
+      "r_squared": 0.9999982833200116,
+      "fitted_gas_in_place_scf": 101263666423.24516,
+      "relative_gas_in_place_error": 0.012636664232451578,
+      "fitted_stderr_scf": 14433549.03342677,
+      "bias_over_stderr": 87.55063777582548,
+      "relative_remaining_gas_error": 0.02808147607211464,
+      "max_abs_residual_psia": 2.9587881860497873,
+      "rms_residual_psia": 0.9102094336408779,
+      "depletion_fraction_observed": 0.5431365655882922,
+      "max_solver_residual_p_over_z_psia": 2.1259438653942198e-09,
+      "generator_warnings": []
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.6,
+      "aquifer_time_constant_days": 30000.0,
+      "timestep_over_time_constant": 0.0010145833333333333,
+      "terminal_water_influx_bbl": 2978769.357506155,
+      "invaded_pore_volume_fraction": 0.04016407993577585,
+      "terminal_pressure_psia": 1781.9342734267161,
+      "r_squared": 0.9999850702490228,
+      "fitted_gas_in_place_scf": 103791853630.81464,
+      "relative_gas_in_place_error": 0.037918536308146455,
+      "fitted_stderr_scf": 43958281.667659864,
+      "bias_over_stderr": 86.26027876800073,
+      "relative_remaining_gas_error": 0.08426341401810267,
+      "max_abs_residual_psia": 8.558436816805624,
+      "rms_residual_psia": 2.6155055386805746,
+      "depletion_fraction_observed": 0.5299067130608693,
+      "max_solver_residual_p_over_z_psia": 1.873559085652232e-09,
+      "generator_warnings": []
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 2.0,
+      "aquifer_time_constant_days": 9000.0,
+      "timestep_over_time_constant": 0.0033819444444444444,
+      "terminal_water_influx_bbl": 8359648.259782059,
+      "invaded_pore_volume_fraction": 0.11271687755709779,
+      "terminal_pressure_psia": 1919.14466773094,
+      "r_squared": 0.9998594933759798,
+      "fitted_gas_in_place_scf": 112502550610.8015,
+      "relative_gas_in_place_error": 0.125025506108015,
+      "fitted_stderr_scf": 149628214.3819527,
+      "bias_over_stderr": 83.55744043624358,
+      "relative_remaining_gas_error": 0.27783445801781004,
+      "max_abs_residual_psia": 24.634282565062676,
+      "rms_residual_psia": 7.375519999154669,
+      "depletion_fraction_observed": 0.4888778050043536,
+      "max_solver_residual_p_over_z_psia": 3.049990482395515e-09,
+      "generator_warnings": []
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 6.0,
+      "aquifer_time_constant_days": 3000.0,
+      "timestep_over_time_constant": 0.010145833333333333,
+      "terminal_water_influx_bbl": 16424367.107391022,
+      "invaded_pore_volume_fraction": 0.22145708989972296,
+      "terminal_pressure_psia": 2176.0193935896523,
+      "r_squared": 0.9993518747138217,
+      "fitted_gas_in_place_scf": 133590344150.70267,
+      "relative_gas_in_place_error": 0.3359034415070268,
+      "fitted_stderr_scf": 398662258.4916214,
+      "bias_over_stderr": 84.25764775876979,
+      "relative_remaining_gas_error": 0.7464520922378342,
+      "max_abs_residual_psia": 43.779161030438445,
+      "rms_residual_psia": 13.284406907391306,
+      "depletion_fraction_observed": 0.41170640250731433,
+      "max_solver_residual_p_over_z_psia": 3.334207576699555e-09,
+      "generator_warnings": []
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 20.0,
+      "aquifer_time_constant_days": 900.0,
+      "timestep_over_time_constant": 0.033819444444444444,
+      "terminal_water_influx_bbl": 22526068.418208163,
+      "invaded_pore_volume_fraction": 0.30372905854823273,
+      "terminal_pressure_psia": 2430.577752729145,
+      "r_squared": 0.9974513496598766,
+      "fitted_gas_in_place_scf": 162735068393.67444,
+      "relative_gas_in_place_error": 0.6273506839367444,
+      "fitted_stderr_scf": 1004257987.9254925,
+      "bias_over_stderr": 62.46907582310299,
+      "relative_remaining_gas_error": 1.3941126309705378,
+      "max_abs_residual_psia": 56.89725578862863,
+      "rms_residual_psia": 21.77936726472769,
+      "depletion_fraction_observed": 0.3379726357870736,
+      "max_solver_residual_p_over_z_psia": 3.0713636078871787e-09,
+      "generator_warnings": []
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 60.0,
+      "aquifer_time_constant_days": 300.0,
+      "timestep_over_time_constant": 0.10145833333333333,
+      "terminal_water_influx_bbl": 24500098.549250454,
+      "invaded_pore_volume_fraction": 0.3303457899776142,
+      "terminal_pressure_psia": 2528.7637760096122,
+      "r_squared": 0.9952071514867221,
+      "fitted_gas_in_place_scf": 174005125694.43335,
+      "relative_gas_in_place_error": 0.7400512569443336,
+      "fitted_stderr_scf": 1492053688.5729477,
+      "bias_over_stderr": 49.599505876503976,
+      "relative_remaining_gas_error": 1.6445583487651794,
+      "max_abs_residual_psia": 68.45401824943292,
+      "rms_residual_psia": 28.232443113554574,
+      "depletion_fraction_observed": 0.316082642856074,
+      "max_solver_residual_p_over_z_psia": 3.428340278333053e-09,
+      "generator_warnings": []
+    }
+  ],
+  "progressive_fits": [
+    {
+      "productivity_index_bbl_per_day_psi": 0.0,
+      "history_fraction": 0.2,
+      "n_points": 11,
+      "years_observed": 2.4,
+      "r_squared": 1.0,
+      "relative_gas_in_place_error": 6.328271240363392e-14,
+      "relative_stderr": 6.686993175236865e-13,
+      "depletion_fraction_observed": 0.11458333333332613
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.0,
+      "history_fraction": 0.4,
+      "n_points": 20,
+      "years_observed": 4.8,
+      "r_squared": 1.0,
+      "relative_gas_in_place_error": -2.760014439218139e-13,
+      "relative_stderr": 2.3629042695223085e-13,
+      "depletion_fraction_observed": 0.2177083333333933
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.0,
+      "history_fraction": 0.6,
+      "n_points": 30,
+      "years_observed": 7.199999999999999,
+      "r_squared": 1.0,
+      "relative_gas_in_place_error": -1.7719159473017498e-13,
+      "relative_stderr": 1.2848929306771684e-13,
+      "depletion_fraction_observed": 0.3322916666667249
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.0,
+      "history_fraction": 0.8,
+      "n_points": 39,
+      "years_observed": 9.6,
+      "r_squared": 1.0,
+      "relative_gas_in_place_error": -1.0502709812953981e-13,
+      "relative_stderr": 7.219558966727044e-14,
+      "depletion_fraction_observed": 0.4354166666667113
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.0,
+      "history_fraction": 1.0,
+      "n_points": 49,
+      "years_observed": 12.0,
+      "r_squared": 1.0,
+      "relative_gas_in_place_error": -9.581224702515101e-14,
+      "relative_stderr": 4.640951610356109e-14,
+      "depletion_fraction_observed": 0.5500000000000511
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.05,
+      "history_fraction": 0.2,
+      "n_points": 11,
+      "years_observed": 2.4,
+      "r_squared": 0.9999998741419661,
+      "relative_gas_in_place_error": 0.001391437744272972,
+      "relative_stderr": 0.00011157140151801719,
+      "depletion_fraction_observed": 0.11442411929489125
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.05,
+      "history_fraction": 0.4,
+      "n_points": 20,
+      "years_observed": 4.8,
+      "r_squared": 0.9999997536155009,
+      "relative_gas_in_place_error": 0.0022500729272072473,
+      "relative_stderr": 0.00010457377869707515,
+      "depletion_fraction_observed": 0.21721957345184967
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.05,
+      "history_fraction": 0.6,
+      "n_points": 30,
+      "years_observed": 7.199999999999999,
+      "r_squared": 0.9999997311866261,
+      "relative_gas_in_place_error": 0.002845069387742427,
+      "relative_stderr": 8.232120817854358e-05,
+      "depletion_fraction_observed": 0.33134895589558705
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.05,
+      "history_fraction": 0.8,
+      "n_points": 39,
+      "years_observed": 9.6,
+      "r_squared": 0.9999998007424988,
+      "relative_gas_in_place_error": 0.003111288953057567,
+      "relative_stderr": 5.822730670702923e-05,
+      "depletion_fraction_observed": 0.4340661614137628
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.05,
+      "history_fraction": 1.0,
+      "n_points": 49,
+      "years_observed": 12.0,
+      "r_squared": 0.9999998914951487,
+      "relative_gas_in_place_error": 0.003157650910591503,
+      "relative_stderr": 3.5729606817519217e-05,
+      "depletion_fraction_observed": 0.5482687586549827
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.2,
+      "history_fraction": 0.2,
+      "n_points": 11,
+      "years_observed": 2.4,
+      "r_squared": 0.9999979984832046,
+      "relative_gas_in_place_error": 0.005564336155111649,
+      "relative_stderr": 0.00044503994367753845,
+      "depletion_fraction_observed": 0.11394928122794772
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.2,
+      "history_fraction": 0.4,
+      "n_points": 20,
+      "years_observed": 4.8,
+      "r_squared": 0.9999960951406771,
+      "relative_gas_in_place_error": 0.008998922752106564,
+      "relative_stderr": 0.00041663499551631173,
+      "depletion_fraction_observed": 0.21576666577553952
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.2,
+      "history_fraction": 0.6,
+      "n_points": 30,
+      "years_observed": 7.199999999999999,
+      "r_squared": 0.9999957477283148,
+      "relative_gas_in_place_error": 0.011380934010431831,
+      "relative_stderr": 0.0003279173759202478,
+      "depletion_fraction_observed": 0.328552433106514
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.2,
+      "history_fraction": 0.8,
+      "n_points": 39,
+      "years_observed": 9.6,
+      "r_squared": 0.999996847994494,
+      "relative_gas_in_place_error": 0.0124485141170112,
+      "relative_stderr": 0.00023210745695755717,
+      "depletion_fraction_observed": 0.43006302107757693
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.2,
+      "history_fraction": 1.0,
+      "n_points": 49,
+      "years_observed": 12.0,
+      "r_squared": 0.9999982833200116,
+      "relative_gas_in_place_error": 0.012636664232451578,
+      "relative_stderr": 0.0001425343318411937,
+      "depletion_fraction_observed": 0.5431365655882922
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.6,
+      "history_fraction": 0.2,
+      "n_points": 11,
+      "years_observed": 2.4,
+      "r_squared": 0.9999822797630229,
+      "relative_gas_in_place_error": 0.01668052499998307,
+      "relative_stderr": 0.0013250645914659129,
+      "depletion_fraction_observed": 0.11270338175636371
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.6,
+      "history_fraction": 0.4,
+      "n_points": 20,
+      "years_observed": 4.8,
+      "r_squared": 0.999965763965043,
+      "relative_gas_in_place_error": 0.026979545778795355,
+      "relative_stderr": 0.0012361602516165837,
+      "depletion_fraction_observed": 0.2119889672858452
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.6,
+      "history_fraction": 0.6,
+      "n_points": 30,
+      "years_observed": 7.199999999999999,
+      "r_squared": 0.9999629530224694,
+      "relative_gas_in_place_error": 0.03413142233092681,
+      "relative_stderr": 0.0009717595957958649,
+      "depletion_fraction_observed": 0.32132440760544956
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.6,
+      "history_fraction": 0.8,
+      "n_points": 39,
+      "years_observed": 9.6,
+      "r_squared": 0.9999725852566169,
+      "relative_gas_in_place_error": 0.03734432046421765,
+      "relative_stderr": 0.0006885021406032269,
+      "depletion_fraction_observed": 0.4197416981777218
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.6,
+      "history_fraction": 1.0,
+      "n_points": 49,
+      "years_observed": 12.0,
+      "r_squared": 0.9999850702490228,
+      "relative_gas_in_place_error": 0.037918536308146455,
+      "relative_stderr": 0.00042352342818751954,
+      "depletion_fraction_observed": 0.5299067130608693
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 2.0,
+      "history_fraction": 0.2,
+      "n_points": 11,
+      "years_observed": 2.4,
+      "r_squared": 0.9998145221963677,
+      "relative_gas_in_place_error": 0.055412518226251484,
+      "relative_stderr": 0.00429647086162696,
+      "depletion_fraction_observed": 0.1085673434363888
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 2.0,
+      "history_fraction": 0.4,
+      "n_points": 20,
+      "years_observed": 4.8,
+      "r_squared": 0.9996559833801304,
+      "relative_gas_in_place_error": 0.08949806785480918,
+      "relative_stderr": 0.003944541777117835,
+      "depletion_fraction_observed": 0.19982443269678737
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 2.0,
+      "history_fraction": 0.6,
+      "n_points": 30,
+      "years_observed": 7.199999999999999,
+      "r_squared": 0.9996408205575404,
+      "relative_gas_in_place_error": 0.11302414269485417,
+      "relative_stderr": 0.0030641751753113875,
+      "depletion_fraction_observed": 0.29854848059460903
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 2.0,
+      "history_fraction": 0.8,
+      "n_points": 39,
+      "years_observed": 9.6,
+      "r_squared": 0.9997404951364083,
+      "relative_gas_in_place_error": 0.12343156487866547,
+      "relative_stderr": 0.0021569262286775088,
+      "depletion_fraction_observed": 0.38757738368664413
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 2.0,
+      "history_fraction": 1.0,
+      "n_points": 49,
+      "years_observed": 12.0,
+      "r_squared": 0.9998594933759798,
+      "relative_gas_in_place_error": 0.125025506108015,
+      "relative_stderr": 0.0013299984184321839,
+      "depletion_fraction_observed": 0.4888778050043536
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 6.0,
+      "history_fraction": 0.2,
+      "n_points": 11,
+      "years_observed": 2.4,
+      "r_squared": 0.998616620943815,
+      "relative_gas_in_place_error": 0.16357457455060787,
+      "relative_stderr": 0.011801976739890262,
+      "depletion_fraction_observed": 0.09847528112032476
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 6.0,
+      "history_fraction": 0.4,
+      "n_points": 20,
+      "years_observed": 4.8,
+      "r_squared": 0.9978220555866532,
+      "relative_gas_in_place_error": 0.2595138508646677,
+      "relative_stderr": 0.010076723345808405,
+      "depletion_fraction_observed": 0.17285108312534592
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 6.0,
+      "history_fraction": 0.6,
+      "n_points": 30,
+      "years_observed": 7.199999999999999,
+      "r_squared": 0.9981209404736894,
+      "relative_gas_in_place_error": 0.31964455830831673,
+      "relative_stderr": 0.0071938132358157604,
+      "depletion_fraction_observed": 0.25180391536084423
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 6.0,
+      "history_fraction": 0.8,
+      "n_points": 39,
+      "years_observed": 9.6,
+      "r_squared": 0.9988554438393193,
+      "relative_gas_in_place_error": 0.3406358995423653,
+      "relative_stderr": 0.004691939861459754,
+      "depletion_fraction_observed": 0.3247836842317126
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 6.0,
+      "history_fraction": 1.0,
+      "n_points": 49,
+      "years_observed": 12.0,
+      "r_squared": 0.9993518747138217,
+      "relative_gas_in_place_error": 0.3359034415070268,
+      "relative_stderr": 0.002984214622891399,
+      "depletion_fraction_observed": 0.41170640250731433
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 20.0,
+      "history_fraction": 0.2,
+      "n_points": 11,
+      "years_observed": 2.4,
+      "r_squared": 0.9930024916278127,
+      "relative_gas_in_place_error": 0.4865802425932684,
+      "relative_stderr": 0.026912024502758113,
+      "depletion_fraction_observed": 0.07707847181760483
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 20.0,
+      "history_fraction": 0.4,
+      "n_points": 20,
+      "years_observed": 4.8,
+      "r_squared": 0.994941841547007,
+      "relative_gas_in_place_error": 0.670433323287799,
+      "relative_stderr": 0.015724772365362388,
+      "depletion_fraction_observed": 0.13033045395959467
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 20.0,
+      "history_fraction": 0.6,
+      "n_points": 30,
+      "years_observed": 7.199999999999999,
+      "r_squared": 0.9980397422323611,
+      "relative_gas_in_place_error": 0.7156151902260044,
+      "relative_stderr": 0.007579744742553654,
+      "depletion_fraction_observed": 0.19368659624824844
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 20.0,
+      "history_fraction": 0.8,
+      "n_points": 39,
+      "years_observed": 9.6,
+      "r_squared": 0.9987761908034399,
+      "relative_gas_in_place_error": 0.6897167218091662,
+      "relative_stderr": 0.005032439385784501,
+      "depletion_fraction_observed": 0.2576861914466162
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 20.0,
+      "history_fraction": 1.0,
+      "n_points": 49,
+      "years_observed": 12.0,
+      "r_squared": 0.9974513496598766,
+      "relative_gas_in_place_error": 0.6273506839367444,
+      "relative_stderr": 0.006171122167080051,
+      "depletion_fraction_observed": 0.3379726357870736
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 60.0,
+      "history_fraction": 0.2,
+      "n_points": 11,
+      "years_observed": 2.4,
+      "r_squared": 0.9934772224392434,
+      "relative_gas_in_place_error": 0.918432879576409,
+      "relative_stderr": 0.026207831096603247,
+      "depletion_fraction_observed": 0.05972756959765694
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 60.0,
+      "history_fraction": 0.4,
+      "n_points": 20,
+      "years_observed": 4.8,
+      "r_squared": 0.998597815513752,
+      "relative_gas_in_place_error": 0.9765367425969504,
+      "relative_stderr": 0.008351044232216744,
+      "depletion_fraction_observed": 0.11014636289902133
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 60.0,
+      "history_fraction": 0.6,
+      "n_points": 30,
+      "years_observed": 7.199999999999999,
+      "r_squared": 0.9989248792545858,
+      "relative_gas_in_place_error": 0.9163508024641134,
+      "relative_stderr": 0.0056714386427392195,
+      "depletion_fraction_observed": 0.17339814100810422
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 60.0,
+      "history_fraction": 0.8,
+      "n_points": 39,
+      "years_observed": 9.6,
+      "r_squared": 0.997677876285676,
+      "relative_gas_in_place_error": 0.8370391325783166,
+      "relative_stderr": 0.007013529633359948,
+      "depletion_fraction_observed": 0.2370208989808239
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 60.0,
+      "history_fraction": 1.0,
+      "n_points": 49,
+      "years_observed": 12.0,
+      "r_squared": 0.9952071514867221,
+      "relative_gas_in_place_error": 0.7400512569443336,
+      "relative_stderr": 0.008574768603041677,
+      "depletion_fraction_observed": 0.316082642856074
+    }
+  ],
+  "zero_aquifer_reduction": {
+    "series_comparisons": {
+      "true_pressures_psia": {
+        "bitwise_identical": true,
+        "max_absolute_difference": 0.0
+      },
+      "true_z_factors": {
+        "bitwise_identical": true,
+        "max_absolute_difference": 0.0
+      },
+      "true_cumulative_gas_scf": {
+        "bitwise_identical": true,
+        "max_absolute_difference": 0.0
+      },
+      "residual_p_over_z_psia": {
+        "bitwise_identical": true,
+        "max_absolute_difference": 0.0
+      },
+      "water_influx_bbl": {
+        "bitwise_identical": true,
+        "max_absolute_difference": 0.0
+      },
+      "cumulative_water_stb": {
+        "bitwise_identical": true,
+        "max_absolute_difference": 0.0
+      }
+    },
+    "all_series_bitwise_identical": true,
+    "fitted_gas_in_place_scf": 99999999999.99042,
+    "relative_gas_in_place_error": -9.581224702515101e-14,
+    "r_squared": 1.0,
+    "max_abs_residual_psia": 9.263203537557274e-10,
+    "a1_passed": true,
+    "a2_passed": true
+  },
+  "known_influx_oracle": {
+    "per_strength": [
+      {
+        "productivity_index_bbl_per_day_psi": 0.0,
+        "max_relative_error": 1.2453815756430231e-11,
+        "terminal_relative_error": 3.802513859341161e-13
+      },
+      {
+        "productivity_index_bbl_per_day_psi": 0.05,
+        "max_relative_error": 6.405542762877303e-12,
+        "terminal_relative_error": 1.1102230246251565e-16
+      },
+      {
+        "productivity_index_bbl_per_day_psi": 0.2,
+        "max_relative_error": 1.2837952922950535e-11,
+        "terminal_relative_error": 1.1102230246251565e-16
+      },
+      {
+        "productivity_index_bbl_per_day_psi": 0.6,
+        "max_relative_error": 7.441380844852574e-12,
+        "terminal_relative_error": 3.0242475190789264e-13
+      },
+      {
+        "productivity_index_bbl_per_day_psi": 2.0,
+        "max_relative_error": 1.999866938717787e-11,
+        "terminal_relative_error": 1.4477308241112041e-13
+      },
+      {
+        "productivity_index_bbl_per_day_psi": 6.0,
+        "max_relative_error": 3.599776032814361e-11,
+        "terminal_relative_error": 3.3306690738754696e-16
+      },
+      {
+        "productivity_index_bbl_per_day_psi": 20.0,
+        "max_relative_error": 1.9749646362754447e-11,
+        "terminal_relative_error": 3.6637359812630166e-15
+      },
+      {
+        "productivity_index_bbl_per_day_psi": 60.0,
+        "max_relative_error": 7.472023000332229e-12,
+        "terminal_relative_error": 3.3306690738754696e-16
+      }
+    ],
+    "worst_relative_error": 3.599776032814361e-11,
+    "a5_passed": true
+  },
+  "timestep_refinement": {
+    "J_2": {
+      "levels": [
+        {
+          "timestep_days": 30.4375,
+          "steps": 144,
+          "terminal_water_influx_bbl": 8359648.259782059,
+          "relative_gas_in_place_error": 0.125025506108015,
+          "max_solver_residual_p_over_z_psia": 3.049990482395515e-09
+        },
+        {
+          "timestep_days": 15.21875,
+          "steps": 288,
+          "terminal_water_influx_bbl": 8359681.594085301,
+          "relative_gas_in_place_error": 0.1250260956003295,
+          "max_solver_residual_p_over_z_psia": 2.2323547455016524e-09
+        },
+        {
+          "timestep_days": 7.609375,
+          "steps": 576,
+          "terminal_water_influx_bbl": 8359689.927612976,
+          "relative_gas_in_place_error": 0.12502624297302622,
+          "max_solver_residual_p_over_z_psia": 3.4356162359472364e-09
+        },
+        {
+          "timestep_days": 3.8046875,
+          "steps": 1152,
+          "terminal_water_influx_bbl": 8359692.010992094,
+          "relative_gas_in_place_error": 0.1250262798163433,
+          "max_solver_residual_p_over_z_psia": 3.218701749574393e-09
+        }
+      ],
+      "error_span_over_refinement": 7.737083282943757e-07
+    },
+    "J_60": {
+      "levels": [
+        {
+          "timestep_days": 30.4375,
+          "steps": 144,
+          "terminal_water_influx_bbl": 24500098.549250454,
+          "relative_gas_in_place_error": 0.7400512569443336,
+          "max_solver_residual_p_over_z_psia": 3.428340278333053e-09
+        },
+        {
+          "timestep_days": 15.21875,
+          "steps": 288,
+          "terminal_water_influx_bbl": 24500740.082147714,
+          "relative_gas_in_place_error": 0.7400663999101724,
+          "max_solver_residual_p_over_z_psia": 3.0850060284137726e-09
+        },
+        {
+          "timestep_days": 7.609375,
+          "steps": 576,
+          "terminal_water_influx_bbl": 24500900.492650982,
+          "relative_gas_in_place_error": 0.7400702034704669,
+          "max_solver_residual_p_over_z_psia": 3.030436346307397e-09
+        },
+        {
+          "timestep_days": 3.8046875,
+          "steps": 1152,
+          "terminal_water_influx_bbl": 24500940.596983116,
+          "relative_gas_in_place_error": 0.7400711554686725,
+          "max_solver_residual_p_over_z_psia": 3.331479092594236e-09
+        }
+      ],
+      "error_span_over_refinement": 1.9898524338923806e-05
+    },
+    "a4_passed": true
+  },
+  "residuals_and_detectability": {
+    "base_productivity_index_bbl_per_day_psi": 2.0,
+    "n_observations": 49,
+    "r_squared": 0.9998594933759798,
+    "relative_gas_in_place_error": 0.125025506108015,
+    "max_abs_residual_psia": 24.634282565062676,
+    "max_abs_residual_fraction_of_initial_p_over_z": 0.0056706199204601656,
+    "rms_residual_psia": 7.375519999154669,
+    "curvature_coefficient_psia": 174.05538837132315,
+    "critical_t": 2.0128955989194295,
+    "noise_free_curvature_t_statistic": 4.51228689301369,
+    "sigma_p_over_z_at_expected_t_equals_critical_psia": 14.207267313287351,
+    "sigma_pressure_at_expected_t_equals_critical_psi": 12.492799837518593,
+    "mean_z_factor": 0.879324613385341,
+    "residual_table": [
+      {
+        "years": 0.0,
+        "cumulative_gas_scf": 0.0,
+        "cumulative_gas_fraction_of_true_g": 0.0,
+        "observed_p_over_z_psia": 4344.1956806485505,
+        "fitted_p_over_z_psia": 4319.561398083488,
+        "residual_psia": 24.634282565062676
+      },
+      {
+        "years": 1.5,
+        "cumulative_gas_scf": 6875000000.000003,
+        "cumulative_gas_fraction_of_true_g": 0.06875000000000003,
+        "observed_p_over_z_psia": 4055.8331122170785,
+        "fitted_p_over_z_psia": 4055.594186223913,
+        "residual_psia": 0.23892599316559426
+      },
+      {
+        "years": 3.0,
+        "cumulative_gas_scf": 13750000000.000006,
+        "cumulative_gas_fraction_of_true_g": 0.13750000000000007,
+        "observed_p_over_z_psia": 3782.8068821869997,
+        "fitted_p_over_z_psia": 3791.626974364338,
+        "residual_psia": -8.82009217733821
+      },
+      {
+        "years": 4.5,
+        "cumulative_gas_scf": 20624999999.999992,
+        "cumulative_gas_fraction_of_true_g": 0.20624999999999993,
+        "observed_p_over_z_psia": 3518.9710042678107,
+        "fitted_p_over_z_psia": 3527.6597625047634,
+        "residual_psia": -8.688758236952708
+      },
+      {
+        "years": 6.0,
+        "cumulative_gas_scf": 27499999999.99996,
+        "cumulative_gas_fraction_of_true_g": 0.27499999999999963,
+        "observed_p_over_z_psia": 3259.742404650064,
+        "fitted_p_over_z_psia": 3263.69255064519,
+        "residual_psia": -3.9501459951256948
+      },
+      {
+        "years": 7.5,
+        "cumulative_gas_scf": 34374999999.99993,
+        "cumulative_gas_fraction_of_true_g": 0.34374999999999933,
+        "observed_p_over_z_psia": 3001.4833913168404,
+        "fitted_p_over_z_psia": 2999.7253387856163,
+        "residual_psia": 1.7580525312241662
+      },
+      {
+        "years": 9.0,
+        "cumulative_gas_scf": 41249999999.9999,
+        "cumulative_gas_fraction_of_true_g": 0.41249999999999903,
+        "observed_p_over_z_psia": 2741.1252814169898,
+        "fitted_p_over_z_psia": 2735.7581269260427,
+        "residual_psia": 5.367154490947087
+      },
+      {
+        "years": 10.5,
+        "cumulative_gas_scf": 48124999999.99987,
+        "cumulative_gas_fraction_of_true_g": 0.4812499999999987,
+        "observed_p_over_z_psia": 2475.915937194926,
+        "fitted_p_over_z_psia": 2471.790915066469,
+        "residual_psia": 4.125022128456749
+      },
+      {
+        "years": 12.0,
+        "cumulative_gas_scf": 54999999999.99984,
+        "cumulative_gas_fraction_of_true_g": 0.5499999999999984,
+        "observed_p_over_z_psia": 2203.2291687339566,
+        "fitted_p_over_z_psia": 2207.8237032068955,
+        "residual_psia": -4.5945344729389035
+      }
+    ],
+    "noise_sweep": [
+      {
+        "pressure_sigma_psi": 1.0,
+        "detection_rate_water_drive": 1.0,
+        "detection_rate_volumetric_null": 0.0675
+      },
+      {
+        "pressure_sigma_psi": 2.0,
+        "detection_rate_water_drive": 1.0,
+        "detection_rate_volumetric_null": 0.0675
+      },
+      {
+        "pressure_sigma_psi": 5.0,
+        "detection_rate_water_drive": 0.9775,
+        "detection_rate_volumetric_null": 0.0675
+      },
+      {
+        "pressure_sigma_psi": 10.0,
+        "detection_rate_water_drive": 0.555,
+        "detection_rate_volumetric_null": 0.0675
+      },
+      {
+        "pressure_sigma_psi": 20.0,
+        "detection_rate_water_drive": 0.21,
+        "detection_rate_volumetric_null": 0.0675
+      },
+      {
+        "pressure_sigma_psi": 40.0,
+        "detection_rate_water_drive": 0.085,
+        "detection_rate_volumetric_null": 0.0675
+      },
+      {
+        "pressure_sigma_psi": 80.0,
+        "detection_rate_water_drive": 0.0725,
+        "detection_rate_volumetric_null": 0.0675
+      }
+    ],
+    "a10_positive_control_rate": 1.0,
+    "a10_passed": true,
+    "a9_negative_control_rate": 0.0675,
+    "a9_passed": true
+  },
+  "holdout": {
+    "calibration_points": 30,
+    "calibration_years": 7.25,
+    "holdout_points": 19,
+    "calibration_relative_gas_in_place_error": 0.11302414269485417,
+    "calibration_r_squared": 0.9996408205575404,
+    "holdout_rmse_p_over_z_psia": 18.1166733403757,
+    "holdout_rmse_pressure_psia": 15.706950636762556,
+    "holdout_rmse_fraction_of_initial_pressure": 0.003926737659190639,
+    "plan_section_12_holdout_gate": 0.01,
+    "passes_plan_holdout_gate": true,
+    "relative_remaining_gas_error_at_calibration_end": 0.16927172696889214
+  },
+  "water_production": {
+    "produced_water_fraction": 0.3,
+    "r_squared": 0.9999376648001536,
+    "relative_gas_in_place_error": 0.08408037389645973,
+    "samples": [
+      {
+        "years": 3.0,
+        "cumulative_water_stb": 214017.69667401628,
+        "cumulative_gas_scf": 13750000000.000006,
+        "water_gas_ratio_stb_per_mmscf": 15.564923394473904
+      },
+      {
+        "years": 6.0,
+        "cumulative_water_stb": 767343.7559231444,
+        "cumulative_gas_scf": 27499999999.99996,
+        "water_gas_ratio_stb_per_mmscf": 27.903409306296197
+      },
+      {
+        "years": 9.0,
+        "cumulative_water_stb": 1571417.1691631894,
+        "cumulative_gas_scf": 41249999999.9999,
+        "water_gas_ratio_stb_per_mmscf": 38.094961676683475
+      },
+      {
+        "years": 12.0,
+        "cumulative_water_stb": 2576327.456667052,
+        "cumulative_gas_scf": 54999999999.99984,
+        "water_gas_ratio_stb_per_mmscf": 46.84231739394654
+      }
+    ],
+    "note": "produced_water_fraction is a declared bookkeeping fraction of the incremental influx, not a relative-permeability or saturation calculation. The water-gas ratio it produces is indicative of the order of magnitude only."
+  },
+  "post_review_sensitivities": {
+    "status": "post-review sensitivities, added after the referee pass and after the pre-registered experiments were run. Not pre-registered; no acceptance criterion depends on them.",
+    "power_curve": {
+      "replicates_per_level": 4000,
+      "seed": 20260914,
+      "levels": [
+        {
+          "pressure_sigma_psi": 8.0,
+          "detection_rate": 0.75375
+        },
+        {
+          "pressure_sigma_psi": 9.0,
+          "detection_rate": 0.66375
+        },
+        {
+          "pressure_sigma_psi": 10.0,
+          "detection_rate": 0.58975
+        },
+        {
+          "pressure_sigma_psi": 11.0,
+          "detection_rate": 0.51625
+        },
+        {
+          "pressure_sigma_psi": 11.5,
+          "detection_rate": 0.48075
+        },
+        {
+          "pressure_sigma_psi": 12.0,
+          "detection_rate": 0.4555
+        },
+        {
+          "pressure_sigma_psi": 12.5,
+          "detection_rate": 0.43175
+        },
+        {
+          "pressure_sigma_psi": 13.0,
+          "detection_rate": 0.4055
+        },
+        {
+          "pressure_sigma_psi": 14.0,
+          "detection_rate": 0.36125
+        },
+        {
+          "pressure_sigma_psi": 16.0,
+          "detection_rate": 0.297
+        }
+      ],
+      "half_power_sigma_pressure_psi": 11.22887323943662,
+      "monte_carlo_standard_error_at_half_power": 0.007905694150420948,
+      "note": "The closed-form sigma reported by E6 is the level at which the EXPECTED statistic equals the critical value. It is not the 50 percent-power point, because the statistic is a ratio with a random denominator. This curve measures the 50 percent-power point directly."
+    },
+    "seed_sensitivity": {
+      "pressure_sigma_psi": 5.0,
+      "replicates_per_seed": 400,
+      "levels": [
+        {
+          "seed": 20260913,
+          "detection_rate_water_drive": 0.9775,
+          "detection_rate_volumetric_null": 0.0675
+        },
+        {
+          "seed": 20260915,
+          "detection_rate_water_drive": 0.985,
+          "detection_rate_volumetric_null": 0.0475
+        },
+        {
+          "seed": 20260916,
+          "detection_rate_water_drive": 0.9675,
+          "detection_rate_volumetric_null": 0.0525
+        },
+        {
+          "seed": 20260917,
+          "detection_rate_water_drive": 0.9775,
+          "detection_rate_volumetric_null": 0.0575
+        },
+        {
+          "seed": 20260918,
+          "detection_rate_water_drive": 0.98,
+          "detection_rate_volumetric_null": 0.0425
+        },
+        {
+          "seed": 20260919,
+          "detection_rate_water_drive": 0.9775,
+          "detection_rate_volumetric_null": 0.0525
+        },
+        {
+          "seed": 20260920,
+          "detection_rate_water_drive": 0.975,
+          "detection_rate_volumetric_null": 0.0575
+        },
+        {
+          "seed": 20260921,
+          "detection_rate_water_drive": 0.9575,
+          "detection_rate_volumetric_null": 0.045
+        }
+      ],
+      "null_rate_min": 0.0425,
+      "null_rate_max": 0.0675,
+      "null_rate_mean": 0.0528125,
+      "pooled_null_rate": 0.0473,
+      "pooled_null_replicates": 20000,
+      "pooled_null_seed": 20260922,
+      "binomial_standard_error_at_nominal_400": 0.010897247358851688,
+      "derived_three_sigma_band": [
+        0.01730825792344498,
+        0.08269174207655511
+      ],
+      "declared_a9_band": [
+        0.01,
+        0.12
+      ],
+      "note": "The pre-registered A9 band was declared without a binomial derivation and is loose: its upper limit sits about 6.4 standard errors above nominal. The band is reported here as derived, alongside the declared one; the declared band is the one the run was scored against and it has not been changed."
+    },
+    "z_ordinate_handling": {
+      "seed": 20260913,
+      "replicates_per_level": 400,
+      "levels": [
+        {
+          "pressure_sigma_psi": 5.0,
+          "detection_rate_z_at_true_pressure": 0.9775,
+          "detection_rate_z_at_measured_pressure": 0.9875
+        },
+        {
+          "pressure_sigma_psi": 10.0,
+          "detection_rate_z_at_true_pressure": 0.555,
+          "detection_rate_z_at_measured_pressure": 0.65
+        },
+        {
+          "pressure_sigma_psi": 20.0,
+          "detection_rate_z_at_true_pressure": 0.21,
+          "detection_rate_z_at_measured_pressure": 0.235
+        },
+        {
+          "pressure_sigma_psi": 40.0,
+          "detection_rate_z_at_true_pressure": 0.085,
+          "detection_rate_z_at_measured_pressure": 0.1
+        }
+      ],
+      "note": "E6 divides the noisy pressure by the noise-free true deviation factor. Re-evaluating the correlation at the measured pressure is what an engineer does, and it raises the detection rate at every level tested, so the pre-registered sweep understates detectability slightly."
+    },
+    "z_correlation_sensitivity": {
+      "max_relative_difference_dak_vs_hall_yarborough": 0.003099773114209836,
+      "base_case_matched_relative_gas_in_place_error": 0.125025506108015,
+      "base_case_mismatched_relative_gas_in_place_error": 0.12218588455516732,
+      "base_case_consistent_hall_yarborough_relative_gas_in_place_error": 0.1254256047758211,
+      "base_case_matched_curvature_t": 4.51228689301369,
+      "base_case_mismatched_curvature_t": 3.5445754791716872,
+      "null_mismatched_relative_gas_in_place_error": -0.0026494644416269475,
+      "null_mismatched_curvature_t": -9.04618093690231,
+      "null_mismatched_max_abs_residual_psia": 3.9863714007460658,
+      "critical_t": 2.0128955989194295,
+      "note": "Matched means the analyst uses the correlation the history was generated with; mismatched means the history is DAK and the analyst reads Z from Hall-Yarborough, which is the realistic case since nature uses neither. The gas-in-place bias is insensitive to the choice. The curvature detector is not: a mismatched correlation on a strictly volumetric history produces a curvature statistic larger than the aquifer's own, with the opposite sign."
+    }
+  },
+  "acceptance": {
+    "A1_zero_aquifer_bitwise_reduction": true,
+    "A2_zero_aquifer_gas_in_place": true,
+    "A3_worst_solver_residual_psia": 3.428340278333053e-09,
+    "A3_smallest_quoted_misfit_psia": 24.634282565062676,
+    "A3_orders_of_magnitude_below_signal": 9.856455997558799,
+    "A3_passed": true,
+    "A4_timestep_refinement": true,
+    "A5_known_influx_oracle": true,
+    "A6_counterexample_count": 2,
+    "A6_passed": true,
+    "A7_monotone_in_productivity_index": true,
+    "A8_drift_fraction_of_true_g": 0.06961298788176351,
+    "A8_passed": true,
+    "A9_negative_control": true,
+    "A10_positive_control": true
+  },
+  "verdict": "ESTABLISHED: high-R-squared volumetric fits with material, drifting gas-in-place bias"
+}

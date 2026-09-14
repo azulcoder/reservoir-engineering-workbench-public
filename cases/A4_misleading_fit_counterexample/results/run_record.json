@@ -1,0 +1,189 @@
+{
+  "schema_version": 1,
+  "label": "A4 misleading p/Z fit counterexample",
+  "status": "completed",
+  "started_utc": "2026-09-13T09:21:05Z",
+  "elapsed_seconds": 11.325894833993516,
+  "seed": 20260913,
+  "config": {
+    "case_id": "A4_misleading_fit_counterexample",
+    "gas_in_place_scf": 100000000000.0,
+    "initial_pressure_psia": 4000.0,
+    "temperature_degf": 180.0,
+    "specific_gravity": 0.65,
+    "z_correlation": "dranchuk-abou-kassem on standing dry-gas pseudocriticals",
+    "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+    "minimum_pressure_psia": 250.0,
+    "horizon_days": 4383.0,
+    "recovery_fraction_of_g": 0.55,
+    "base_steps": 144,
+    "observation_stride": 3,
+    "aquifer_initial_pressure_psia": 4000.0,
+    "aquifer_water_volume_bbl": 3000000000.0,
+    "aquifer_total_compressibility_per_psi": 6e-06,
+    "productivity_indices_bbl_per_day_psi": [
+      0.0,
+      0.05,
+      0.2,
+      0.6,
+      2.0,
+      6.0,
+      20.0,
+      60.0
+    ],
+    "base_productivity_index_bbl_per_day_psi": 2.0,
+    "history_fractions": [
+      0.2,
+      0.4,
+      0.6,
+      0.8,
+      1.0
+    ],
+    "refinement_multipliers": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "holdout_calibration_fraction": 0.6,
+    "produced_water_fraction_variant": 0.3,
+    "noise_sigmas_psi": [
+      1.0,
+      2.0,
+      5.0,
+      10.0,
+      20.0,
+      40.0,
+      80.0
+    ],
+    "noise_replicates": 400,
+    "noise_seed": 20260913,
+    "confidence": 0.95,
+    "acceptance_thresholds": {
+      "A2_max_relative_error_zero_aquifer": 1e-09,
+      "A3_max_solver_residual_psia": 1e-05,
+      "A3_min_orders_below_signal": 6.0,
+      "A4_max_refinement_change": 0.001,
+      "A5_max_relative_error_known_influx": 1e-08,
+      "A6_min_r_squared": 0.999,
+      "A6_min_relative_bias": 0.1,
+      "A8_min_drift_fraction_of_g": 0.03,
+      "A9_negative_control_sigma_psi": 5.0,
+      "A9_detection_rate_low": 0.01,
+      "A9_detection_rate_high": 0.12,
+      "A10_positive_control_sigma_psi": 1.0,
+      "A10_min_detection_rate": 0.95
+    },
+    "post_review_power_curve_sigmas_psi": [
+      8.0,
+      9.0,
+      10.0,
+      11.0,
+      11.5,
+      12.0,
+      12.5,
+      13.0,
+      14.0,
+      16.0
+    ],
+    "post_review_power_curve_replicates": 4000,
+    "post_review_power_curve_seed": 20260914,
+    "post_review_seed_sensitivity_seeds": [
+      20260913,
+      20260915,
+      20260916,
+      20260917,
+      20260918,
+      20260919,
+      20260920,
+      20260921
+    ],
+    "post_review_seed_sensitivity_sigma_psi": 5.0,
+    "post_review_pooled_null_replicates": 20000,
+    "post_review_pooled_null_seed": 20260922,
+    "post_review_z_handling_sigmas_psi": [
+      5.0,
+      10.0,
+      20.0,
+      40.0
+    ],
+    "post_review_alternative_z_correlation": "hall-yarborough"
+  },
+  "config_sha256": "d8e29f65b326e400674b4bb4766354843347702e6b0950f1661fd20a98ef2f5a",
+  "settings": {
+    "solver_tolerance": 1e-12,
+    "max_iterations": 200
+  },
+  "settings_sha256": "d1f2da892bb02ff1b46026a7f22a9bb13410f30b9989076307ad4076b61af4d5",
+  "source_revision": {
+    "repo_root": ".",
+    "commit": "855fe5447b5f2a87ea006727dd893204a18a2832",
+    "branch": "main",
+    "describe": "855fe54-dirty",
+    "dirty": true,
+    "dirty_paths": [
+      ".gitignore",
+      "CHANGELOG.md",
+      "cases/"
+    ]
+  },
+  "environment": {
+    "python_version": "3.13.2",
+    "python_implementation": "CPython",
+    "python_executable": "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "imported_package_versions": {
+      "argparse": "1.1",
+      "decimal": "1.70",
+      "json": "2.0.9",
+      "platform": "1.0.8",
+      "re": "2.2.1",
+      "reservoir_lab": "0.2.0",
+      "zlib": "1.0"
+    }
+  },
+  "files": [
+    {
+      "role": "output",
+      "path": "artifacts/A4_misleading_fit_counterexample/run-006/summary.json",
+      "sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "bytes": 39279
+    },
+    {
+      "role": "output",
+      "path": "artifacts/A4_misleading_fit_counterexample/run-006/summary.txt",
+      "sha256": "1b2c1af7b01b876498926a44b504fbed7f61755ba0a080f8a18a4c8be390a977",
+      "bytes": 5339
+    }
+  ],
+  "metrics": {
+    "verdict": "ESTABLISHED: high-R-squared volumetric fits with material, drifting gas-in-place bias",
+    "base_r_squared": 0.9998594933759798,
+    "base_relative_gas_in_place_error": 0.125025506108015,
+    "worst_relative_gas_in_place_error": 0.7400512569443336,
+    "worst_solver_residual_p_over_z_psia": 3.428340278333053e-09,
+    "known_influx_oracle_worst_relative_error": 3.599776032814361e-11,
+    "sigma_pressure_at_expected_t_equals_critical_psi": 12.492799837518593,
+    "half_power_sigma_pressure_psi": 11.22887323943662,
+    "holdout_rmse_fraction_of_initial_pressure": 0.003926737659190639
+  },
+  "notes": [
+    "Synthetic throughout. The generator is a coupled Fetkovich water-drive tank; the estimator is the volumetric p/Z x-intercept. They are structurally different models in separate library modules and share no balance or fitting code.",
+    "The J = 0 member of the sweep uses a duck-typed four-field aquifer because FetkovichAquifer refuses a zero productivity index."
+  ],
+  "limitations": [
+    "No field data. Synthetic self-consistency of a generator with a known answer is not field validation, and the size of the bias reported here is a property of these declared aquifer parameters, not a general figure.",
+    "Trapped gas behind the water front is not modelled. Including it would reduce the true recoverable gas further, so the recovery consequences reported here are optimistic relative to a real water-drive gas reservoir.",
+    "Rock and connate-water expansion, condensate dropout, gas dissolved in water, and any areal or vertical pressure gradient within the tank are excluded.",
+    "The detectability result is conditional on the declared detector (t-test on the quadratic term of a second-order fit), on 49 quarterly observations, and on independent Gaussian pressure error. A correlated or systematically biased pressure error would behave differently and was not tested.",
+    "produced_water_fraction in E8 is a declared bookkeeping fraction, not a relative-permeability calculation; the water-gas ratios are indicative only.",
+    "The E6 noise sweep forms the ordinate by dividing the noisy pressure by the noise-free true deviation factor, not by Z re-evaluated at the measured pressure. E9 shows the second choice raises the detection rate at every level tested, so the pre-registered sweep understates detectability slightly.",
+    "The E6 sweep uses one seed, reset identically at every noise level and for both series, so its seven levels are rescalings of one draw set rather than seven independent experiments. E9 reports the spread over eight seeds and a pooled null rate; the declared seed's 0.0675 is a high draw.",
+    "The curvature detector was characterised under independent Gaussian pressure error with the deviation-factor correlation held identical between generator and analyst. E9 shows a correlation mismatch alone -- DAK history read with Hall-Yarborough -- produces a larger curvature statistic than the aquifer does, of the opposite sign, on a strictly volumetric history. The curvature test is therefore not a clean aquifer diagnostic in the presence of correlation error.",
+    "The average reservoir pressure is assumed to exist and to be unbiased. In a real water-drive reservoir the surviving wells are the ones the water has not reached, so the sampled average is biased high -- the same sign as the effect demonstrated here, which makes these bias figures conservative rather than pessimistic.",
+    "Constant offtake for twelve years, 49 clean quarterly observations, no shut-ins, no rate or well-count changes, no gaps and no outliers. Real rate variation imprints pressure transients that are themselves a diagnostic, and no real history is this clean in either direction.",
+    "The aquifer starts at equilibrium with the reservoir and is instantly pseudosteady. The smoothness of the influx that makes the misfit hard to detect is therefore partly a consequence of the model choice, not a demonstrated property of aquifers; a transient van Everdingen-Hurst aquifer is not implemented in this library and was not tested.",
+    "Pre-registration rests on the author's word. The cases tree is untracked in git, so no commit timestamp separates protocol.md from the runs, and protocol.md's own mtime is later than both runs because of the disclosed run-001 amendment."
+  ]
+}

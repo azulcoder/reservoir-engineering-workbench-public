@@ -1,0 +1,129 @@
+---
+/**
+ * A table of checks and what each one actually did.
+ *
+ * Five states, and all five are first-class. NOT RUN, BLOCKED and NOT APPLICABLE are
+ * not degraded forms of PASS; they are the honest outcome for a check whose
+ * preconditions are absent, and the case this site documents depends on them being
+ * shown. Three NIST reference extracts are deliberately not in this repository, so
+ * twenty tests in tests/test_gas_properties.py skip, cases/A2_pvt_independent_check
+ * exits 1, and scripts/fetch_nist_reference.py --verify-only exits 1 reporting 3 files
+ * MISSING. A component that could only render green and red would have no way to say
+ * that (docs/design/decisions.md, D16).
+ *
+ * Two rules this component enforces rather than suggests:
+ *
+ *  1. The state is a word. It is spelled out in the cell — PASS, FAIL, NOT RUN,
+ *     BLOCKED, NOT APPLICABLE — and the styling is border weight and border style, not
+ *     hue. The contrast colour in tokens.css is reserved for the mismatched model and
+ *     is never used to mean "bad" in a UI sense, and there is no green in the palette
+ *     at all. A greyscale printout of this table loses nothing.
+ *  2. There is no summary. No composite score, no percentage, no "N of M passing"
+ *     badge. A single number over a set of checks invites exactly the substitution the
+ *     case is about: reading one aggregate statistic as if it answered a question about
+ *     a quantity it does not measure.
+ *
+ * Every row states where it ran. A check that passed in one environment is not evidence
+ * about another, and no claim of hosted continuous integration is made anywhere on this
+ * site (D17).
+ */
+import { assetHref, pageHref, type SitePath } from "../lib/urls";
+
+export type StatusState = "PASS" | "FAIL" | "NOT RUN" | "BLOCKED" | "NOT APPLICABLE";
+
+export interface Evidence {
+  label: string;
+  /** Internal route or file. Built through src/lib/urls.ts. */
+  path?: SitePath;
+  /** Fully-qualified external URL. Used verbatim. */
+  external?: string;
+}
+
+export interface StatusRow {
+  /** What was checked. */
+  check: string;
+  /** What the check covers, and what it does not. */
+  scope: string;
+  /** Where it ran: the interpreter, the machine, or "not run anywhere". */
+  environment: string;
+  state: StatusState;
+  /** Why, for any state other than PASS. Required reading for BLOCKED and NOT RUN. */
+  note?: string;
+  evidence?: Evidence;
+}
+
+export interface Props {
+  caption: string;
+  captionTitle?: string;
+  rows: StatusRow[];
+  id?: string;
+}
+
+const { caption, captionTitle, rows, id } = Astro.props;
+
+const MODIFIER: Record<StatusState, string> = {
+  PASS: "status--pass",
+  FAIL: "status--fail",
+  "NOT RUN": "status--not-run",
+  BLOCKED: "status--blocked",
+  "NOT APPLICABLE": "status--not-applicable",
+};
+
+const regionId = id ?? "status-table";
+const captionId = `${regionId}-caption`;
+
+function evidenceHref(e: Evidence): string | undefined {
+  if (e.external) return e.external;
+  if (!e.path) return undefined;
+  return /\.[a-z0-9]{2,5}$/i.test(e.path.replace(/[?#].*$/, ""))
+    ? assetHref(e.path)
+    : pageHref(e.path);
+}
+---
+
+<div class="scroll-region" role="region" aria-labelledby={captionId} tabindex="0">
+  <table class="status-table" id={id}>
+    <caption id={captionId}>
+      {captionTitle && <span class="caption__title">{captionTitle}</span>}
+      {caption}
+    </caption>
+    <thead>
+      <tr>
+        <th scope="col">Check</th>
+        <th scope="col">Scope</th>
+        <th scope="col">Environment</th>
+        <th scope="col">Result</th>
+        <th scope="col">Evidence</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((row) => {
+          const href = row.evidence ? evidenceHref(row.evidence) : undefined;
+          return (
+            <tr>
+              <th scope="row">{row.check}</th>
+              <td>{row.scope}</td>
+              <td>{row.environment}</td>
+              <td>
+                <span class={`status ${MODIFIER[row.state]}`}>{row.state}</span>
+                {row.note && <span class="status-note">{row.note}</span>}
+              </td>
+              <td>
+                {href ? (
+                  <a href={href}>{row.evidence?.label}</a>
+                ) : (
+                  <span class="status-note">
+                    {row.evidence?.label ?? "no committed artifact"}
+                  </span>
+                )}
+              </td>
+            </tr>
+          );
+        })
+      }
+    </tbody>
+  </table>
+</div>
+
+<slot name="footnote" />

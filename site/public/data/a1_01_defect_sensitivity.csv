@@ -1,0 +1,15 @@
+name,defect_class,magnitude,recovery_relative_error,detected_at_A1_gate
+baseline_uncorrupted,none,-,0,false
+standard_pressure_x1.5,standard-volume basis,+50 percent,0,false
+standard_temperature_x1.5,standard-volume basis,+50 percent,0,false
+standard_z_factor_x1.5,standard-volume basis,+50 percent,0,false
+reservoir_temperature_640_to_900_degr,reservoir temperature,+40.6 percent,0,false
+ordinate_scaled_by_1_plus_1e-10,ordinate multiplicative,+1.0e-10 relative,0,false
+ordinate_scaled_by_1_plus_0.001,ordinate multiplicative,+1.0e-03 relative,0,false
+ordinate_scaled_by_1_plus_0.5,ordinate multiplicative,+5.0e-01 relative,2.22044604925e-16,false
+analyst_divides_by_z_0.8_not_0.9,ordinate multiplicative,-11.1 percent relative,2.22044604925e-16,false
+cumulative_gas_scaled_by_1_plus_0.001,abscissa multiplicative,+1.0e-03 relative,0.001,true
+cumulative_gas_scaled_by_1_plus_0.01,abscissa multiplicative,+1.0e-02 relative,0.01,true
+first_point_ordinate_plus_0.01_psia,ordinate point-wise,0.01 psia of p/Z on one point,-0.00000132954273502,true
+middle_point_ordinate_plus_0.01_psia,ordinate point-wise,0.01 psia of p/Z on one point,2.04545454796e-7,true
+last_point_ordinate_plus_0.01_psia,ordinate point-wise,0.01 psia of p/Z on one point,0.00000173863992026,true

@@ -1,0 +1,159 @@
+---
+/**
+ * Home.
+ *
+ * What the project is, the scope line, the flagship finding and its figure, and one main
+ * action. The distinction between numerical verification, conditional reconstruction,
+ * physical interpretation and decision adequacy belongs on the methods page, which states
+ * all four in full; repeating it here made the first thing a reader met an argument about
+ * evidence rather than a description of the work.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Figure from "../components/Figure.astro";
+import Callout from "../components/Callout.astro";
+import { checkedExhibit } from "../scripts/exhibits";
+import { baseScenario, truth } from "../scripts/scenarios";
+import { download } from "../scripts/public-data";
+import { NAV, NOT_RUN, VERIFICATION, SITE_NAME } from "../scripts/site";
+import { href } from "../lib/urls";
+
+const f01 = await checkedExhibit("F01");
+const base = await baseScenario();
+const trueG = await truth();
+const f01Csv = await download("f01_f02_scenarios_all.csv");
+
+const description =
+  "Reproducible studies of gas-reservoir material balance and gas-in-place estimation, using synthetic depletion histories to examine how aquifer support and modelling assumptions affect the results.";
+---
+
+<BaseLayout
+  title={SITE_NAME}
+  description={description}
+  canonicalPath="/"
+  nav={NAV}
+  bareTitle={true}
+  ogType="website"
+>
+  <h1>{SITE_NAME}</h1>
+
+  <p class="lede">
+    Reproducible studies of gas-reservoir material balance and gas-in-place estimation.
+    Synthetic depletion histories are used to examine how aquifer support and modelling
+    assumptions affect the results. Each published study includes calculations, visual
+    evidence, and interpretation.
+  </p>
+
+  <p class="home__scope">Synthetic case studies; not field-validated.</p>
+
+  <p class="home__actions">
+    <a class="home__cta" href={href("/studies/a4/")}>
+      Read the flagship case — when a straight p/Z line is convincing and wrong
+    </a>
+    <a class="home__secondary" href={href("/methods/")}>
+      How to check any of it
+    </a>
+  </p>
+
+  <h2>The finding, in one figure</h2>
+
+  <p>
+    In an aquifer-supported synthetic case, a volumetric p/Z fit achieves
+    R-squared = {base.rSquared.toFixed(6)} but estimates {base.fittedBscf.toFixed(1)} Bscf
+    against a known {trueG.bscf.toFixed(1)} Bscf: a {base.errorPct.toFixed(1)} percent
+    overestimate. A close fit does not, by itself, establish that the volumetric assumption
+    is appropriate. The full-precision values are on the
+    {" "}<a href={href("/studies/a4/")}>case page</a>.
+  </p>
+
+  <Figure
+    id={f01.id}
+    number={f01.number}
+    title={f01.title}
+    svg={f01.svg}
+    units={f01.units}
+    interpretation="The observed points and the fitted line are visually indistinguishable over the observed interval, and the line's extrapolated x-intercept lands 12.5 Bscf to the right of the truth."
+    caveat={f01.caveat}
+    longDescription={f01.longDescription}
+    evidenceClass={f01.evidenceClass}
+    tableLabel="Where the numbers behind this figure are"
+    svgDownload={f01.svgDownload}
+    dataDownload={f01Csv.path}
+    dataDownloadLabel={f01Csv.name}
+  >
+    <p>
+      The full table of all {base.observations} observations, the other seven computed
+      aquifer strengths and the residual structure are on the
+      {" "}<a href={href("/studies/a4/")}>case page</a>. The complete export is the CSV linked
+      below this figure.
+    </p>
+  </Figure>
+
+  <h2>What is here, and what is deliberately not</h2>
+
+  <Callout kind="note" title="Synthetic throughout">
+    <p>{NOT_RUN.fieldData}</p>
+  </Callout>
+
+  <ul class="home__facts">
+    <li>
+      <strong>Three studies with committed results</strong>, each re-run from scratch and
+      compared against its snapshot byte for byte. A fourth is described but cannot ship its
+      exhibits, because its inputs are someone else's data.
+    </li>
+    <li>
+      <strong>{VERIFICATION.testsCollected} tests collected, {VERIFICATION.testsPassed} passed,
+      {" "}{VERIFICATION.testsSkipped} skipped</strong> on {VERIFICATION.date}. The skips are
+      expected and are named on the <a href={href("/methods/")}>methods page</a>: they are the
+      tests that need a reference extract this repository does not redistribute.
+    </li>
+    <li>
+      <strong>No hosted continuous integration behind these numbers.</strong>
+      {" "}{NOT_RUN.hostedCi}
+    </li>
+    <li>
+      <strong>No external validation claimed.</strong> {NOT_RUN.externalValidation}
+    </li>
+    <li>
+      <strong>No peer review.</strong> {NOT_RUN.peerReview}
+    </li>
+  </ul>
+
+  <style>
+    .home__actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+      align-items: center;
+      margin-block: var(--space-6);
+    }
+    .home__cta {
+      display: inline-flex;
+      align-items: center;
+      min-height: var(--target-min, 2.75rem);
+      padding: var(--space-3) var(--space-4);
+      border: 2px solid var(--c-blue-strong);
+      border-radius: var(--radius-sm);
+      background: var(--c-blue-tint);
+      font-weight: var(--weight-semibold);
+      text-decoration: none;
+    }
+    .home__cta:hover {
+      text-decoration: underline;
+    }
+    .home__secondary {
+      display: inline-flex;
+      align-items: center;
+      min-height: var(--target-min, 2.75rem);
+    }
+    .home__facts {
+      padding-inline-start: var(--space-5);
+    }
+    .home__facts li + li {
+      margin-block-start: var(--space-3);
+    }
+    .home__scope {
+      font-style: italic;
+      color: var(--c-ink-muted, inherit);
+    }
+  </style>
+</BaseLayout>

@@ -1,0 +1,70 @@
+{
+  "source_pointer": "/timestep_refinement",
+  "J_2": {
+    "levels": [
+      {
+        "timestep_days": 30.4375,
+        "steps": 144,
+        "terminal_water_influx_bbl": 8359648.259782059,
+        "relative_gas_in_place_error": 0.125025506108015,
+        "max_solver_residual_p_over_z_psia": 3.049990482395515e-09
+      },
+      {
+        "timestep_days": 15.21875,
+        "steps": 288,
+        "terminal_water_influx_bbl": 8359681.594085301,
+        "relative_gas_in_place_error": 0.1250260956003295,
+        "max_solver_residual_p_over_z_psia": 2.2323547455016524e-09
+      },
+      {
+        "timestep_days": 7.609375,
+        "steps": 576,
+        "terminal_water_influx_bbl": 8359689.927612976,
+        "relative_gas_in_place_error": 0.12502624297302622,
+        "max_solver_residual_p_over_z_psia": 3.4356162359472364e-09
+      },
+      {
+        "timestep_days": 3.8046875,
+        "steps": 1152,
+        "terminal_water_influx_bbl": 8359692.010992094,
+        "relative_gas_in_place_error": 0.1250262798163433,
+        "max_solver_residual_p_over_z_psia": 3.218701749574393e-09
+      }
+    ],
+    "error_span_over_refinement": 7.737083282943757e-07
+  },
+  "J_60": {
+    "levels": [
+      {
+        "timestep_days": 30.4375,
+        "steps": 144,
+        "terminal_water_influx_bbl": 24500098.549250454,
+        "relative_gas_in_place_error": 0.7400512569443336,
+        "max_solver_residual_p_over_z_psia": 3.428340278333053e-09
+      },
+      {
+        "timestep_days": 15.21875,
+        "steps": 288,
+        "terminal_water_influx_bbl": 24500740.082147714,
+        "relative_gas_in_place_error": 0.7400663999101724,
+        "max_solver_residual_p_over_z_psia": 3.0850060284137726e-09
+      },
+      {
+        "timestep_days": 7.609375,
+        "steps": 576,
+        "terminal_water_influx_bbl": 24500900.492650982,
+        "relative_gas_in_place_error": 0.7400702034704669,
+        "max_solver_residual_p_over_z_psia": 3.030436346307397e-09
+      },
+      {
+        "timestep_days": 3.8046875,
+        "steps": 1152,
+        "terminal_water_influx_bbl": 24500940.596983116,
+        "relative_gas_in_place_error": 0.7400711554686725,
+        "max_solver_residual_p_over_z_psia": 3.331479092594236e-09
+      }
+    ],
+    "error_span_over_refinement": 1.9898524338923806e-05
+  },
+  "note": "The finest computation is a numerical comparator, not an exact solution."
+}

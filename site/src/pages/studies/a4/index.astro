@@ -1,0 +1,1037 @@
+---
+/**
+ * A4 — the flagship case.
+ *
+ * Every number on this page is read at build time from the committed export through
+ * `src/lib/figures.ts`, which re-hashes each data file against `contract.json`, or from
+ * the generated manifest through `src/scripts/exhibits.ts`. The prose states findings;
+ * it does not restate numbers that the tables and figures carry, except where the case's
+ * own argument requires two quantities in one sentence.
+ */
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Figure from "../../../components/Figure.astro";
+import DataTable from "../../../components/DataTable.astro";
+import Callout from "../../../components/Callout.astro";
+import ExplorerScenarios from "../../../components/ExplorerScenarios.astro";
+import { checkedExhibit } from "../../../scripts/exhibits";
+import { baseScenario, truth } from "../../../scripts/scenarios";
+import { download, downloads } from "../../../scripts/public-data";
+import { NAV, GATE, FOUR_STATEMENTS, NOT_RUN } from "../../../scripts/site";
+import { loadFigureData } from "../../../lib/figures";
+import { href, pageHref } from "../../../lib/urls";
+
+const f01 = await checkedExhibit("F01");
+const f01b = await checkedExhibit("F01b");
+const f02 = await checkedExhibit("F02");
+const f03 = await checkedExhibit("F03");
+const f04 = await checkedExhibit("F04");
+const f05 = await checkedExhibit("F05");
+const f06 = await checkedExhibit("F06");
+const f07 = await checkedExhibit("F07");
+const f08 = await checkedExhibit("F08");
+
+const base = await baseScenario();
+const trueG = await truth();
+
+/* ---- F01 / F02: the base case's own 49 observations ---- */
+const baseRows = base.years.map((t, i) => ({
+  i,
+  years: t.toFixed(2),
+  frac: (base.gBscf[i] as number / base.trueBscf).toFixed(4),
+  g: (base.gBscf[i] as number).toFixed(3),
+  p: (base.pressurePsia[i] as number).toFixed(2),
+  z: (base.zFactor[i] as number).toFixed(5),
+  pz: (base.pz[i] as number).toFixed(2),
+  fit: (base.fittedPz[i] as number).toFixed(2),
+  res: (base.residual[i] as number).toFixed(2),
+}));
+
+const BASE_COLUMNS = [
+  { key: "i", label: "Observation", numeric: true, rowHeader: true },
+  { key: "years", label: "Time", unit: "years", numeric: true },
+  { key: "g", label: "Cumulative gas", unit: "Bscf", numeric: true },
+  { key: "frac", label: "G_p / G_true", unit: "fraction", numeric: true },
+  { key: "p", label: "Pressure", unit: "psia", numeric: true },
+  { key: "z", label: "Deviation factor", unit: "dimensionless", numeric: true },
+  { key: "pz", label: "Observed p/Z", unit: "psia", numeric: true },
+  { key: "fit", label: "Fitted p/Z", unit: "psia", numeric: true },
+  { key: "res", label: "Residual", unit: "psia", numeric: true },
+];
+
+/* ---- F03 ---- */
+interface F03Row {
+  productivity_index_bbl_per_day_psi: number;
+  aquifer_time_constant_days: number | null;
+  invaded_pore_volume_fraction: number;
+  terminal_pressure_psia: number;
+  r_squared: number;
+  relative_gas_in_place_error: number;
+  relative_remaining_gas_error: number;
+  bias_over_stderr: number;
+  max_abs_residual_psia: number;
+}
+const f03Data = await loadFigureData<{ rows: F03Row[]; note: string }>("f03_bias_sweep.json");
+const f03Rows = f03Data.rows.map((r) => ({
+  j: String(Number(r.productivity_index_bbl_per_day_psi.toPrecision(6))),
+  tau: r.aquifer_time_constant_days === null ? null : r.aquifer_time_constant_days.toFixed(0),
+  we: (r.invaded_pore_volume_fraction * 100).toFixed(2),
+  pend: r.terminal_pressure_psia.toFixed(1),
+  r2: r.r_squared.toFixed(6),
+  err: `${r.relative_gas_in_place_error >= 0 ? "+" : ""}${(r.relative_gas_in_place_error * 100).toFixed(2)}`,
+  rem: `${r.relative_remaining_gas_error >= 0 ? "+" : ""}${(r.relative_remaining_gas_error * 100).toFixed(2)}`,
+  bse: r.bias_over_stderr.toFixed(1),
+  resid: r.max_abs_residual_psia.toPrecision(3),
+}));
+
+/* ---- F04 ---- */
+interface F04Row {
+  productivity_index_bbl_per_day_psi: number;
+  history_fraction: number;
+  relative_gas_in_place_error: number;
+}
+const f04Data = await loadFigureData<{ rows: F04Row[]; note: string }>("f04_progressive.json");
+const fractions = [...new Set(f04Data.rows.map((r) => r.history_fraction))].sort((a, b) => a - b);
+const f04Rows = [...new Set(f04Data.rows.map((r) => r.productivity_index_bbl_per_day_psi))]
+  .sort((a, b) => a - b)
+  .map((j) => {
+    const row: Record<string, string> = { j: String(Number(j.toPrecision(6))) };
+    for (const f of fractions) {
+      const hit = f04Data.rows.find(
+        (r) => r.productivity_index_bbl_per_day_psi === j && r.history_fraction === f,
+      );
+      const v = hit ? hit.relative_gas_in_place_error * 100 : undefined;
+      row[`f${Math.round(f * 100)}`] = v === undefined ? "" : `${v >= 0 ? "+" : ""}${v.toFixed(2)}`;
+    }
+    return row;
+  });
+const F04_COLUMNS = [
+  { key: "j", label: "J", unit: "bbl/day/psi", numeric: true, rowHeader: true },
+  ...fractions.map((f) => ({
+    key: `f${Math.round(f * 100)}`,
+    label: `${Math.round(f * 100)}% of history`,
+    unit: "% error in G",
+    numeric: true,
+  })),
+];
+
+/* ---- F05 ---- */
+interface F05 {
+  calibration_points: number;
+  holdout_points: number;
+  split_index: number;
+  split_cumulative_gas_bscf: number;
+  times_years: number[];
+  cumulative_gas_bscf: number[];
+  observed_pressure_psia: number[];
+  reconstructed_pressure_psia_conditional: Array<number | null>;
+  future_synthetic_z_used: Array<number | null>;
+  metrics: {
+    calibration_relative_gas_in_place_error: number;
+    calibration_r_squared: number;
+    holdout_rmse_pressure_psia: number;
+    holdout_rmse_fraction_of_initial_pressure: number;
+    initial_pressure_psia_denominator: number;
+    borrowed_demonstration_gate: number;
+  };
+}
+const f05Data = await loadFigureData<F05>("f05_holdout.json");
+const m5 = f05Data.metrics;
+const f05Rows = f05Data.times_years
+  .map((t, i) => ({ t, i }))
+  .filter(({ i }) => i >= f05Data.split_index - 1 && (i % 3 === 0 || i === f05Data.times_years.length - 1))
+  .map(({ t, i }) => {
+    const rec = f05Data.reconstructed_pressure_psia_conditional[i];
+    const obs = f05Data.observed_pressure_psia[i] as number;
+    return {
+      i,
+      region: i < f05Data.split_index ? "calibration" : "held out",
+      years: t.toFixed(2),
+      g: (f05Data.cumulative_gas_bscf[i] as number).toFixed(3),
+      obs: obs.toFixed(2),
+      rec: rec === null ? null : rec.toFixed(2),
+      diff: rec === null ? null : (rec - obs).toFixed(2),
+      z: f05Data.future_synthetic_z_used[i] === null ? null : (f05Data.future_synthetic_z_used[i] as number).toFixed(5),
+    };
+  });
+
+/* ---- F06 ---- */
+interface F06 {
+  original: {
+    rows: Array<{
+      pressure_sigma_psi: number;
+      detection_rate_water_drive: number;
+      detection_rate_volumetric_null: number;
+    }>;
+    replicates: number;
+    seed_note: string;
+  };
+  post_review_power_curve: {
+    rows: Array<{ pressure_sigma_psi: number; detection_rate: number }>;
+    replicates: number;
+    note: string;
+  };
+}
+const f06Data = await loadFigureData<F06>("f06_detection.json");
+const f06Rows = f06Data.original.rows.map((r) => ({
+  sigma: r.pressure_sigma_psi.toFixed(0),
+  wd: r.detection_rate_water_drive.toFixed(4),
+  nul: r.detection_rate_volumetric_null.toFixed(4),
+}));
+const f06Power = f06Data.post_review_power_curve.rows.map((r) => ({
+  sigma: r.pressure_sigma_psi.toFixed(1),
+  rate: r.detection_rate.toFixed(5),
+}));
+
+/* ---- F07 ---- */
+interface F07 {
+  values: Record<string, number | string>;
+  critical_t: number;
+  note: string;
+}
+const f07Data = await loadFigureData<F07>("f07_z_mismatch.json");
+const f07Rows = Object.entries(f07Data.values)
+  .filter(([, v]) => typeof v === "number")
+  .map(([k, v]) => ({
+    q: k.replace(/_/g, " "),
+    v: Math.abs(v as number) < 1 ? (v as number).toFixed(6) : (v as number).toFixed(4),
+  }));
+
+/* ---- F08 ---- */
+interface F08Level {
+  timestep_days: number;
+  steps: number;
+  terminal_water_influx_bbl: number;
+  relative_gas_in_place_error: number;
+  max_solver_residual_p_over_z_psia: number;
+}
+interface F08 {
+  J_2: { levels: F08Level[]; error_span_over_refinement: number };
+  J_60: { levels: F08Level[]; error_span_over_refinement: number };
+  note: string;
+}
+const f08Data = await loadFigureData<F08>("f08_refinement.json");
+const f08Rows = (["J_2", "J_60"] as const).flatMap((k) =>
+  f08Data[k].levels.map((l) => ({
+    j: k === "J_2" ? "2" : "60",
+    dt: l.timestep_days.toFixed(4),
+    steps: String(l.steps),
+    we: l.terminal_water_influx_bbl.toFixed(0),
+    err: `${(l.relative_gas_in_place_error * 100).toFixed(6)}`,
+    res: l.max_solver_residual_p_over_z_psia.toExponential(2),
+  })),
+);
+
+/* ---- Downloads ---- */
+const evidenceDownloads = await downloads(
+  "f03_bias_sweep.csv",
+  "f04_progressive.csv",
+  "f05_holdout.csv",
+  "f06_detection.csv",
+  "f07_z_mismatch.csv",
+  "f08_refinement.csv",
+);
+const f01Csv = await download("f01_f02_scenarios_all.csv");
+const f03Json = await download("f03_bias_sweep.json");
+
+const contents = [
+  { id: "overview", label: "Overview" },
+  { id: "model", label: "Model and assumptions" },
+  { id: "evidence", label: "Evidence" },
+  { id: "explorer", label: "Scenario explorer" },
+  { id: "limits", label: "What this does not establish" },
+  { id: "memo", label: "Decision memo" },
+  { id: "reproduce", label: "Reproduce and download" },
+  { id: "references", label: "References" },
+];
+
+const description =
+  "A synthetic counterexample: a volumetric p/Z fit to an aquifer-supported gas reservoir returns R-squared 0.999859 and a gas in place 12.5 percent too high, so a close fit does not by itself establish that the volumetric assumption is appropriate.";
+---
+
+<BaseLayout
+  title="A4 — when a straight p/Z line is convincing and wrong"
+  description={description}
+  canonicalPath="/studies/a4/"
+  nav={NAV}
+  contents={contents}
+>
+  <p class="eyebrow">Study A4 — flagship case</p>
+  <h1>When a straight p/Z line is convincing and wrong</h1>
+
+  <p class="lede">
+    In an aquifer-supported synthetic case, a volumetric p/Z fit achieves
+    R-squared = {base.rSquared.toFixed(6)} but estimates {base.fittedBscf.toFixed(1)} Bscf
+    against a known {base.trueBscf.toFixed(1)} Bscf: a {base.errorPct.toFixed(1)} percent
+    overestimate. A close fit does not, by itself, establish that the volumetric assumption
+    is appropriate. Full-precision values are in the tables below and in the CSV export.
+  </p>
+
+  <p>
+    <strong>Synthetic throughout.</strong> {NOT_RUN.fieldData}
+  </p>
+
+  <section id="overview" aria-labelledby="overview-h">
+    <h2 id="overview-h">Overview</h2>
+
+    <p>
+      A dry-gas reservoir is supported by an aquifer and is being interpreted with the
+      volumetric p/Z model. How good does the fit look, how wrong is the recovered gas in
+      place, and could anyone have told from the data alone? The fit looks excellent, the
+      answer is badly wrong, and over most of the range the quality of the fit does not
+      indicate the size of the error.
+    </p>
+
+    <p>
+      The straight-line fit is not useless. It is exact when the reservoir is volumetric —
+      the volumetric control in the sweep below recovers the inventory to rounding — and at
+      negligible aquifer strength its error is small. What it stops doing, once any
+      meaningful influx is present, is carrying the information people read from it: the
+      x-intercept stops being gas in place, and the fit statistic stops warning them.
+    </p>
+
+    <p>
+      This effect is not new and the study does not claim it is. What it adds is the attack
+      on it: a pre-registered protocol, a bitwise reduction to the volumetric limit, a
+      timestep-refinement check, an estimator-free oracle, a matched pair of detector
+      controls, and a measured power curve for the detectability question. The{" "}
+      <a href={pageHref("/studies/a4/") + "#references"}>references section</a> records where
+      it sits against prior work.
+    </p>
+
+    <Callout kind="note" title="Four statements, kept apart" id="four-statements">
+      <p>
+        This study reaches the first two and does not reach the last two. Clearing a
+        project demonstration gate is evidence about the first two only.
+      </p>
+      <ol>
+        {FOUR_STATEMENTS.map((s) => (
+          <li>
+            <strong>{s.name}</strong> — {s.text}.
+          </li>
+        ))}
+      </ol>
+      <p>
+        Quantities are kept apart too. <em>G</em> and <em>G − G_p</em> here are inventory in
+        place. Recoverable gas is smaller by whatever the drive mechanism and the
+        abandonment condition leave behind, and reserves are a further commercial and
+        regulatory classification of a recoverable quantity. Nothing on this page is a
+        recoverable volume or a reserve.
+      </p>
+    </Callout>
+  </section>
+
+  <section id="model" aria-labelledby="model-h">
+    <h2 id="model-h">Model and assumptions</h2>
+
+    <p>
+      The histories come from a reservoir tank coupled to a Fetkovich aquifer, solved
+      implicitly at every step. The estimator is a constant-pore-volume inventory balance
+      with no influx term. They are separate modules and share no balance or fitting code,
+      so the bias reported here is a model-structure error and not algebra applied twice in
+      the same direction.
+    </p>
+
+    <p>
+      Reservoir: G = 1.0e11 scf, initial pressure 4000 psia, 180 degF, gas gravity 0.65,
+      deviation factor from Dranchuk-Abou-Kassem on Standing dry-gas pseudocriticals, SPE
+      standard conditions. Constant offtake of 0.55 G over 12.0 years, 144 monthly
+      timesteps, observations every third step. Aquifer: initial aquifer pressure 4000 psia,
+      W_i = 3.0e9 bbl, c_t = 6.0e-6 1/psi, so c_t·W_i = 18000 bbl/psi.
+      <strong>Only the productivity index is varied.</strong>
+    </p>
+
+    <Callout kind="note" title="Where the true inventory comes from">
+      <p>
+        The known inventory is evaluation-only information that no field measurement
+        provides, and it is not a field of the exported data. It is derived on this page as
+        {" "}<code>fit.gas_in_place_scf / (1 + relative_gas_in_place_error)</code>, evaluated
+        independently for each of the eight cases; the eight agree to better than 1e-9
+        relative, and the build stops if they do not. The value is
+        {" "}{trueG.bscf.toFixed(6)} Bscf. It is not typed into this page.
+      </p>
+    </Callout>
+  </section>
+
+  <section id="evidence" aria-labelledby="evidence-h">
+    <h2 id="evidence-h">Evidence</h2>
+
+    <p>
+      Nine exhibits, in the order of the study's own argument: what the fit looks like,
+      whether the residuals gave it away, how the bias scales, how it drifts with history
+      length, whether a chronological split catches it, whether a detector catches it under
+      noise, whether that detector survives a correlation mismatch, and whether the
+      generator's own numerics are trustworthy.
+    </p>
+
+    <Figure
+      id={f01.id}
+      number={f01.number}
+      title={f01.title}
+      svg={f01.svg}
+      units={f01.units}
+      interpretation="The observed points and the fitted line are visually indistinguishable over the observed interval, and the line's extrapolated x-intercept lands 12.5 Bscf to the right of the truth."
+      caveat={f01.caveat}
+      longDescription={f01.longDescription}
+      evidenceClass={f01.evidenceClass}
+      tableLabel="Data table — all 49 observations of the base case"
+      svgDownload={f01.svgDownload}
+      dataDownload={f01Csv.path}
+      dataDownloadLabel={f01Csv.name}
+    >
+      <DataTable
+        caption={`All ${base.observations} observations of the base case, J = ${base.key} bbl/day/psi, with the fitted ordinate and the residual. This table is the long description of F01, F01b and F02.`}
+        captionTitle="Table F01"
+        columns={BASE_COLUMNS}
+        rows={baseRows}
+        id="t-f01"
+      />
+    </Figure>
+
+    <p>
+      The estimation error is {Math.abs(base.biasOverStderr).toFixed(1)} times the fit's
+      reported standard error. That standard error is conditional on the fitted model; it
+      does not include uncertainty from the omitted support mechanism. A narrower interval
+      computed inside the volumetric model would not have contained the truth, because the
+      quantity it describes is the precision of a fit, not the accuracy of the inventory.
+    </p>
+
+    <Figure
+      id={f01b.id}
+      number={f01b.number}
+      title={f01b.title}
+      svg={f01b.svg}
+      units={f01b.units}
+      interpretation="The same fit with the vertical axis restricted to the observed range, so that departures of a few psia are inspectable; the observations lie above the fit at both ends and below it in the middle."
+      caveat={f01b.caveat}
+      longDescription={f01b.longDescription}
+      evidenceClass={f01b.evidenceClass}
+      tableLabel="Data table — see Table F01 above"
+      svgDownload={f01b.svgDownload}
+      dataDownload={f01Csv.path}
+      dataDownloadLabel={f01Csv.name}
+    >
+      <p>
+        F01b is drawn from the same {base.observations} observations as F01. The values are
+        in <a href={pageHref("/studies/a4/") + "#t-f01"}>Table F01</a> above rather than
+        repeated here.
+      </p>
+    </Figure>
+
+    <Figure
+      id={f02.id}
+      number={f02.number}
+      title={f02.title}
+      svg={f02.svg}
+      units={f02.units}
+      interpretation={`The residuals sweep down, back up and down again rather than scattering: they run from ${base.residualMin.toFixed(2)} to ${base.residualMax.toFixed(2)} psia with a root-mean-square of ${base.residualRms.toFixed(2)} psia, and the largest excursion sits at zero cumulative production.`}
+      caveat={f02.caveat}
+      longDescription={f02.longDescription}
+      evidenceClass={f02.evidenceClass}
+      tableLabel="Data table — see Table F01 above"
+      svgDownload={f02.svgDownload}
+      dataDownload={f01Csv.path}
+      dataDownloadLabel={f01Csv.name}
+    >
+      <p>
+        The residual column of <a href={pageHref("/studies/a4/") + "#t-f01"}>Table F01</a> is
+        this figure's data. The 10 to 50 psia band drawn on it is the study author's
+        engineering judgement about the achievable error on a volume-averaged reservoir
+        pressure, not a retrieved figure, and the detectability conclusion depends on it.
+      </p>
+    </Figure>
+
+    <Figure
+      id={f03.id}
+      number={f03.number}
+      title={f03.title}
+      svg={f03.svg}
+      units={f03.units}
+      interpretation="The inventory error rises monotonically with aquifer strength across the whole sweep while R-squared stays at or above 0.995, so the fit statistic does not track the error it is being read as evidence against."
+      caveat={f03.caveat}
+      longDescription={f03.longDescription}
+      evidenceClass={f03.evidenceClass}
+      tableLabel="Data table — the eight computed cases"
+      tableOpen={true}
+      svgDownload={f03.svgDownload}
+      dataDownload={f03Json.path}
+      dataDownloadLabel={f03Json.name}
+    >
+      <DataTable
+        caption="Aquifer strength against recovered gas in place, for the eight computed cases. The volumetric control has an infinite aquifer time constant, printed as not applicable."
+        captionTitle="Table F03"
+        columns={[
+          { key: "j", label: "J", unit: "bbl/day/psi", numeric: true, rowHeader: true },
+          { key: "tau", label: "Time constant", unit: "days", numeric: true },
+          { key: "we", label: "Terminal influx", unit: "% of initial HCPV", numeric: true },
+          { key: "pend", label: "Terminal pressure", unit: "psia", numeric: true },
+          { key: "r2", label: "R-squared", unit: "dimensionless", numeric: true },
+          { key: "err", label: "Error in G", unit: "%", numeric: true },
+          { key: "rem", label: "Error in G − G_p", unit: "%", numeric: true },
+          { key: "bse", label: "Bias / stderr", unit: "ratio", numeric: true },
+          { key: "resid", label: "Largest residual", unit: "psia", numeric: true },
+        ]}
+        rows={f03Rows}
+        naText="not applicable, infinite"
+        id="t-f03"
+      />
+      <Fragment slot="footnote">
+        <p>
+          Two columns matter more than the headline. The bias-over-standard-error column
+          runs from about 50 to 88 across the water-drive rows: a narrower confidence
+          interval does not help, it makes the answer more confidently wrong, because
+          model-structure error is not represented anywhere in the regression's
+          uncertainty. The volumetric row is excluded from that reading — its residuals are
+          at the 1e-10 level, so its standard error is a rounding artefact and the ratio is
+          meaningless. And the quantity an engineer acts on is not G but G − G_p, where the
+          same absolute error is expressed against a much smaller denominator.
+        </p>
+      </Fragment>
+    </Figure>
+
+    <Figure
+      id={f04.id}
+      number={f04.number}
+      title={f04.title}
+      svg={f04.svg}
+      units={f04.units}
+      interpretation="Every water-drive row drifts as history accumulates while each individual fit still looks like a clean straight line; the volumetric row is flat at machine precision, as it must be."
+      caveat={f04.caveat}
+      longDescription={f04.longDescription}
+      evidenceClass={f04.evidenceClass}
+      tableLabel="Data table — all eight cases at five history fractions"
+      tableOpen={true}
+      svgDownload={f04.svgDownload}
+      dataDownload={evidenceDownloads[1]?.path}
+      dataDownloadLabel={evidenceDownloads[1]?.name}
+    >
+      <DataTable
+        caption="Recovered gas in place as a percentage error, from volumetric fits to nested prefixes of one noise-free history at each aquifer setting. The figure draws four of these eight rows; all eight are here."
+        captionTitle="Table F04"
+        columns={F04_COLUMNS}
+        rows={f04Rows}
+        id="t-f04"
+      />
+      <Fragment slot="footnote">
+        <p>
+          {f04Data.note} The drift is not always upward: for the two strongest aquifers the
+          estimate peaks and then falls back as the aquifer itself depletes and its support
+          fades, so a stabilising estimate is not evidence that the estimate is right. The
+          diagnostic to look for is a material move in <em>either</em> direction while each
+          fit remains visually straight.
+        </p>
+      </Fragment>
+    </Figure>
+
+    <Callout kind="note" title="F05, F06 and F07 are fixed-base experiments" id="fixed-base">
+      <p>
+        The next three exhibits are their own experiments at their own settings. F05 is a
+        chronological split of the base case; F06 is two Monte-Carlo noise studies with
+        different seeds and replicate counts; F07 is a post-review correlation-mismatch
+        check. <strong>None of them responds to the scenario selector below, and the
+        selector does not reach them.</strong> They are shown here at the settings their own
+        runs used, and a different selection elsewhere on this page does not change them.
+      </p>
+    </Callout>
+
+    <Figure
+      id={f05.id}
+      number={f05.number}
+      title={f05.title}
+      svg={f05.svg}
+      units={f05.units}
+      interpretation={`Calibrated on the first ${f05Data.calibration_points} of ${f05Data.times_years.length} observations and used to reconstruct the remaining ${f05Data.holdout_points}, a model whose gas in place is ${(m5.calibration_relative_gas_in_place_error * 100).toFixed(2)} percent wrong reconstructs the held-out pressures to ${m5.holdout_rmse_pressure_psia.toFixed(2)} psia, which is ${(m5.holdout_rmse_fraction_of_initial_pressure * 100).toFixed(3)} percent of the initial pressure.`}
+      caveat={f05.caveat}
+      longDescription={f05.longDescription}
+      evidenceClass={f05.evidenceClass}
+      tableLabel="Data table — the held-out region"
+      svgDownload={f05.svgDownload}
+      dataDownload={evidenceDownloads[2]?.path}
+      dataDownloadLabel={evidenceDownloads[2]?.name}
+    >
+      <DataTable
+        caption="The split point and the held-out region, every third observation and the last. The calibration region carries no reconstruction and prints as not applicable rather than blank."
+        captionTitle="Table F05"
+        columns={[
+          { key: "i", label: "Observation", numeric: true, rowHeader: true },
+          { key: "region", label: "Region" },
+          { key: "years", label: "Time", unit: "years", numeric: true },
+          { key: "g", label: "Cumulative gas", unit: "Bscf", numeric: true },
+          { key: "obs", label: "Observed pressure", unit: "psia", numeric: true },
+          { key: "rec", label: "Reconstructed pressure", unit: "psia", numeric: true },
+          { key: "diff", label: "Reconstructed minus observed", unit: "psia", numeric: true },
+          { key: "z", label: "Held-out state's synthetic Z", unit: "dimensionless", numeric: true },
+        ]}
+        rows={f05Rows}
+        naText="not applicable, calibration region"
+        id="t-f05"
+      />
+      <Fragment slot="footnote">
+        <p>
+          <strong>This is a conditional reconstruction, not a blind forecast.</strong> The
+          predicted pressure is formed by multiplying a predicted p/Z by the noise-free
+          deviation factor of the held-out state, evaluated at the true future pressure — the
+          last column of the table. Future truth therefore enters the predictor, and an
+          analyst holding only the calibration data could not supply it. The chronological
+          discipline is real: no tuning of any kind touches the held-out points, and the
+          calculation has deliberately not been changed to improve the claim. Only the label
+          is corrected.
+        </p>
+      </Fragment>
+    </Figure>
+
+    <Callout kind="superseded" title="The gate this row is scored against" id="gate">
+      <p>
+        <strong>[SUPERSEDED]</strong> An earlier version of this study's report listed both
+        J = 0.05 at +0.32 percent and J = 0.2 at +1.26 percent as rows inside a 1 percent
+        gate. <strong>+1.26 percent is above a 1 percent gate, not inside it.</strong> Only
+        J = 0.05, at +0.32 percent, is below it, and the conclusion is about conditions on
+        one row rather than two. The correction runs against the study's own earlier
+        conclusion, which is why it is shown rather than quietly applied.
+      </p>
+      <p>
+        The gate itself is also narrower than it was used as. {GATE.scope} {GATE.meaning} The
+        reconstruction above clears it at
+        {" "}{(m5.holdout_rmse_fraction_of_initial_pressure * 100).toFixed(3)} percent of
+        initial pressure against {GATE.value}; that is a project demonstration result and
+        nothing more.
+      </p>
+    </Callout>
+
+    <Figure
+      id={f06.id}
+      number={f06.number}
+      title={f06.title}
+      svg={f06.svg}
+      units={f06.units}
+      interpretation="The curvature detector finds the aquifer in every realisation at 1 psi of pressure error and is effectively blind by 40 psi; the measured power curve crosses one half at about 11.2 psi on this design."
+      caveat={f06.caveat}
+      longDescription={f06.longDescription}
+      evidenceClass={f06.evidenceClass}
+      tableLabel="Data tables — two experiments, kept apart"
+      tableOpen={true}
+      svgDownload={f06.svgDownload}
+      dataDownload={evidenceDownloads[3]?.path}
+      dataDownloadLabel={evidenceDownloads[3]?.name}
+    >
+      <DataTable
+        caption={`Pre-registered noise sweep, ${f06Data.original.replicates} realisations per level. ${f06Data.original.seed_note}`}
+        captionTitle="Table F06a"
+        columns={[
+          { key: "sigma", label: "Pressure sigma", unit: "psi", numeric: true, rowHeader: true },
+          { key: "wd", label: "Detection rate, water drive", unit: "fraction", numeric: true },
+          { key: "nul", label: "Detection rate, volumetric null", unit: "fraction", numeric: true },
+        ]}
+        rows={f06Rows}
+        id="t-f06a"
+      />
+      <DataTable
+        caption={`Post-review power curve, ${f06Data.post_review_power_curve.replicates} realisations per level, on a different seed. A separate experiment, never spliced with the sweep above.`}
+        captionTitle="Table F06b"
+        columns={[
+          { key: "sigma", label: "Pressure sigma", unit: "psi", numeric: true, rowHeader: true },
+          { key: "rate", label: "Detection rate", unit: "fraction", numeric: true },
+        ]}
+        rows={f06Power}
+        id="t-f06b"
+      />
+      <Fragment slot="footnote">
+        <p>
+          The null rate is identical at every noise level because the null p/Z series is
+          exactly linear, so scaling the noise scales the fitted coefficient and its
+          standard error equally. With one seed reset identically at every level, that is
+          also the only thing that could have happened: the seven levels are rescalings of
+          one draw set rather than seven independent experiments, and the same limitation
+          applies to the ten levels of the power curve. The 0.0675 null rate is a high draw
+          of the declared seed, not the detector's size; over eight seeds the null rate runs
+          0.0425 to 0.0675 and pools to 0.0473 at 20000 replicates.
+        </p>
+      </Fragment>
+    </Figure>
+
+    <Figure
+      id={f07.id}
+      number={f07.number}
+      title={f07.title}
+      svg={f07.svg}
+      units={f07.units}
+      interpretation="Reading a strictly volumetric history with the wrong deviation-factor correlation produces a curvature statistic of −9.05 against a critical value of 2.01 — twice the aquifer's own +4.51 and opposite in sign — while the gas-in-place bias barely moves."
+      caveat={f07.caveat}
+      longDescription={f07.longDescription}
+      evidenceClass={f07.evidenceClass}
+      tableLabel="Data table — the correlation-mismatch values"
+      tableOpen={true}
+      svgDownload={f07.svgDownload}
+      dataDownload={evidenceDownloads[4]?.path}
+      dataDownloadLabel={evidenceDownloads[4]?.name}
+    >
+      <DataTable
+        caption="Post-review correlation-mismatch check. Signed statistics are kept signed; the sign is the point."
+        captionTitle="Table F07"
+        columns={[
+          { key: "q", label: "Quantity", rowHeader: true },
+          { key: "v", label: "Value", unit: "as declared", numeric: true },
+        ]}
+        rows={f07Rows}
+        id="t-f07"
+      />
+      <Fragment slot="footnote">
+        <p>
+          Two different questions with two different answers. The gas-in-place bias is
+          insensitive to the correlation: a constant multiplicative error in Z scales the
+          whole ordinate and leaves the x-intercept untouched, so the headline result
+          survives the correlation choice to within 0.3 percentage points. The curvature
+          detector does not survive it. Its false-positive rate of about 0.05 is conditional
+          on the analyst using exactly the correlation that generated the history, and no
+          field analysis can meet that condition.
+        </p>
+      </Fragment>
+    </Figure>
+
+    <Figure
+      id={f08.id}
+      number={f08.number}
+      title={f08.title}
+      svg={f08.svg}
+      units={f08.units}
+      interpretation={`Halving the timestep three times moves the recovered gas-in-place error by ${f08Data.J_2.error_span_over_refinement.toExponential(1)} at the base case and ${f08Data.J_60.error_span_over_refinement.toExponential(1)} at the strongest aquifer, against a pre-registered threshold of 1e-3: the bias is resolved in time and is not a timestep artefact.`}
+      caveat={f08.caveat}
+      longDescription={f08.longDescription}
+      evidenceClass={f08.evidenceClass}
+      tableLabel="Data table — four refinement levels at two aquifer strengths"
+      tableOpen={true}
+      svgDownload={f08.svgDownload}
+      dataDownload={evidenceDownloads[5]?.path}
+      dataDownloadLabel={evidenceDownloads[5]?.name}
+    >
+      <DataTable
+        caption="Timestep refinement. The finest computation is a numerical comparator, not an exact solution."
+        captionTitle="Table F08"
+        columns={[
+          { key: "j", label: "J", unit: "bbl/day/psi", numeric: true, rowHeader: true },
+          { key: "dt", label: "Timestep", unit: "days", numeric: true },
+          { key: "steps", label: "Steps", unit: "count", numeric: true },
+          { key: "we", label: "Terminal water influx", unit: "bbl", numeric: true },
+          { key: "err", label: "Error in G", unit: "%", numeric: true },
+          { key: "res", label: "Worst solver residual", unit: "psia of p/Z", numeric: true },
+        ]}
+        rows={f08Rows}
+        id="t-f08"
+      />
+      <Fragment slot="footnote">
+        <p>{f08Data.note} Convergence of this quantity does not establish that the formulation is right.</p>
+      </Fragment>
+    </Figure>
+  </section>
+
+  <ExplorerScenarios />
+
+  <section id="limits" aria-labelledby="limits-h">
+    <h2 id="limits-h">What this study does not establish</h2>
+
+    <p>
+      These are not footnotes and they are not behind a disclosure. Several of them are the
+      study's own retractions.
+    </p>
+
+    <Callout kind="limitation" title="It is not field validation">
+      <p>
+        Both the generator and the estimator are models. A known-answer study with a
+        synthetic generator establishes the behaviour of an estimator under a stated
+        structural violation. It says nothing about how often that violation occurs in any
+        real field, or about the size of the bias in one.
+      </p>
+    </Callout>
+
+    <Callout kind="limitation" title="The numbers are not general">
+      <p>
+        The {base.errorPct.toFixed(2)} percent at the base case is a property of these
+        declared aquifer parameters, this offtake schedule and this twelve-year window. Only
+        the aquifer productivity index is swept; pore volume, compressibility, rate and
+        horizon are fixed, so the sweep is one line through a parameter space and not a
+        mapped sensitivity surface.
+      </p>
+    </Callout>
+
+    <Callout kind="limitation" title="Detectability is the weaker half">
+      <p>
+        It rests on one pre-registered detector, one sampling cadence, independent Gaussian
+        pressure error only, a single seed in the pre-registered sweep and a single draw set
+        behind the power curve that was introduced to correct it, an uncited 10-to-50-psi
+        premise, and a false-positive rate that F07 shows is conditional on the analyst using
+        the same deviation-factor correlation as the generator — a condition no field
+        analysis meets. If the true band on average-pressure error is 1 to 5 psi rather than
+        10 to 50, the detectability conclusion reverses.
+      </p>
+    </Callout>
+
+    <Callout kind="limitation" title="Excluded mechanisms">
+      <p>
+        Trapped gas behind the advancing water front is not modelled. Rock and connate-water
+        expansion, retrograde condensation, gas dissolved in water, and any areal or
+        vertical pressure gradient within the tank are all absent. A geopressured reservoir
+        produces a superficially similar p/Z curvature from a completely different mechanism
+        and is not distinguished here. The Fetkovich aquifer is itself a model: it is
+        pseudosteady from the first timestep and starts in equilibrium with the reservoir, so
+        the smooth influx that makes the misfit hard to see is partly assumed rather than
+        demonstrated.
+      </p>
+    </Callout>
+
+    <Callout kind="limitation" title="The history is unrealistically clean">
+      <p>
+        Constant offtake for twelve years, no shut-ins, no rate or well-count changes, no
+        plateau, {base.observations} evenly spaced quarterly points, no gaps and no outliers.
+        That cuts both ways: a facilities-constrained plateau carries less curvature
+        information and would make the aquifer harder to detect, while real rate variation
+        imprints pressure transients that are themselves a diagnostic and would make it
+        easier.
+      </p>
+    </Callout>
+
+    <Callout kind="superseded" title="The average reservoir pressure is assumed unbiased">
+      <p>
+        <strong>[SUPERSEDED]</strong> An earlier version of this limitation asserted a
+        direction: that surviving-well sampling makes a real reservoir worse, not better.
+        That sign is not established by anything in this study. The argument for it is that
+        the wells surviving to be surveyed are the ones the water has not reached, biasing
+        the sample toward the un-swept, higher-pressure part of the tank. The
+        counter-argument is that wells shut in long enough to give a usable build-up are not
+        a random sample either. <strong>The tank model here has no areal gradient at all, so
+        nothing in this study can decide between them.</strong> It is recorded as an untested
+        mechanism, and the "the figures are conservative" framing that rested on it is
+        withdrawn.
+      </p>
+    </Callout>
+
+    <Callout kind="superseded" title="An independent reimplementation was claimed and does not exist here">
+      <p>
+        <strong>[SUPERSEDED]</strong> An earlier version of the report presented a separately
+        implemented tank as an independent check of the formulation and quoted its digits.
+        No script, no output, no digest, no command and no log for it exists in this
+        repository, so none of its figures can be checked from here and the quoted digits are
+        withdrawn. What the study's own evidence establishes stops at the solve: the
+        estimator-free oracle tests that the implicit coupled step converges to a state
+        satisfying the balance, and it does not test the formulation, because an equation
+        mis-transcribed identically in the generator and in the oracle would still close.
+      </p>
+    </Callout>
+
+    <Callout kind="limitation" title="Pre-registration rests on the author's word">
+      <p>
+        This study's run script declares no inputs in its run record, so nothing
+        machine-written pins the protocol to the runs, and every file entered version control
+        in a single commit, so no commit timestamp separates the protocol from the runs
+        either. <strong>A4's prospective ordering is therefore unverified.</strong> Studies A2
+        and A3 do pin their protocol by SHA-256 inside a record the run itself wrote, which
+        is internal content linkage as recorded — not an independent trusted timestamp and
+        not proof against retrospective construction.
+      </p>
+    </Callout>
+
+    <Callout kind="limitation" title="No peer review">
+      <p>{NOT_RUN.peerReview}</p>
+    </Callout>
+  </section>
+
+  <section id="memo" aria-labelledby="memo-h">
+    <h2 id="memo-h">Decision memo</h2>
+
+    <p>
+      The memo asks one question: whether a p/Z x-intercept may be used as the gas-in-place
+      basis for a depletion or development decision, when the only evidence for the
+      volumetric assumption is the quality of the straight line.
+    </p>
+
+    <blockquote>
+      <p>
+        <strong>Recommendation, conditional: do not adopt a p/Z x-intercept as a volumetric
+        gas-in-place basis until the drive mechanism has been established from an
+        observation other than the p/Z line itself.</strong>
+      </p>
+    </blockquote>
+
+    <p>
+      On the evidence of this study, the fit statistic and the chronological reconstruction
+      error are both incapable of distinguishing a closed tank from an aquifer-supported
+      reservoir whose gas in place is overstated by {base.errorPct.toFixed(1)} percent and
+      whose remaining gas in place is overstated by {base.remainingErrorPct.toFixed(1)}
+      percent. The recommendation is not "p/Z is unreliable": the method is exact under its
+      stated assumptions, and the finding is about the conditions under which a straight line
+      stops carrying the information people read from it.
+    </p>
+
+    <h3>The mechanism</h3>
+    <p>
+      It is a pore-volume bookkeeping error, not a statistical one. The volumetric balance
+      assumes the gas occupies a fixed hydrocarbon pore volume. When water encroaches, part
+      of that pore volume is no longer available to gas, pressure is held up relative to the
+      volumetric expectation, the p/Z line is flatter than it should be, and a flatter line
+      has its x-intercept further to the right. The regression absorbs the gentle curvature
+      into the slope, which is precisely the parameter that sets the x-intercept. R-squared
+      measures the part the regression could not absorb, so it cannot report the part it
+      did.
+    </p>
+
+    <h3>The required extra evidence</h3>
+    <p>
+      A <strong>metered water-production record</strong>. That is the new observation. A Cole
+      or pot-aquifer plot is not: both are re-plots of the same pressure and production
+      history the p/Z fit already uses, so they add information only to the extent that
+      produced water is separately measured and entered into them. Neither plot was run in
+      this study. The conversion from a water record to an influx is two steps, not one:
+      cumulative produced water W_p is a standard-condition volume, its reservoir-volume
+      equivalent is W_p·B_w, and total influx W_e follows only through an aquifer model or a
+      closed balance.
+    </p>
+
+    <h3>Non-uniqueness is practical, not structural</h3>
+    <p>
+      The estimator fits two parameters — a free intercept and a free slope — and G = −a/b is
+      derived from both. Adding an influx term gives a two-parameter physical fit in (G, J)
+      that is identifiable in principle on noise-free data: a direct least-squares
+      minimisation over (G, J) against the base-case history, with no influx observation
+      supplied at all, returns G within 1.0e-11 relative of the truth. What defeats it in the
+      field is conditioning. Profiling the noise-free base history over J at fixed G gives a
+      best-fit misfit of about 20.3 psia of p/Z at the +12.5 percent in G the volumetric fit
+      actually returns — inside the 10-to-50-psi band this study assumes — so at field
+      accuracy the aquifer parameter absorbs a large error in G at no detectable cost. The
+      honest statement is practical, noise-limited ambiguity, and the reason to measure water
+      is that it breaks the conditioning.
+    </p>
+    <p class="provenance">
+      Provenance: that joint fit and that profile were computed during a claims-audit
+      correction pass by calling the committed generator directly. Neither is pre-registered,
+      neither is in the shipped run summary, and neither is a gated result.
+    </p>
+
+    <h3>The methodological lesson</h3>
+    <p>
+      A fit statistic is a test of the residuals. A conditional holdout reconstruction is a
+      test of the reconstructed series over the horizon it covers. Neither is a test of an
+      extrapolated quantity that lives outside the data, neither is a physical interpretation
+      of the drive mechanism, and neither establishes that a number is adequate to carry a
+      development decision. A gas-in-place estimate from an x-intercept should be quoted with
+      the observed depletion fraction attached — here
+      {" "}{(base.depletionFractionObserved * 100).toFixed(1)} percent — should be labelled as
+      inventory in place rather than as a recoverable volume or a reserve, and should never
+      be quoted with a confidence interval as its only statement of uncertainty.
+    </p>
+  </section>
+
+  <section id="reproduce" aria-labelledby="reproduce-h">
+    <h2 id="reproduce-h">Reproduce, and download the numbers</h2>
+
+    <p>
+      Every figure on this page is drawn from one of seven exported JSON files whose SHA-256
+      digests are declared in <code>contract.json</code> and re-checked during this site's
+      build. The exporter re-runs the study's own functions and reconciles 43 quantities
+      against the audited run summary at a relative tolerance of 1e-12 before writing
+      anything. The digests and the verification profiles are on the
+      {" "}<a href={href("/methods/")}>methods page</a>.
+    </p>
+
+    <h3>Run the study</h3>
+    <pre><code>PYTHONPATH=src python3 cases/A4_misleading_fit_counterexample/run.py \
+    --out artifacts/A4_misleading_fit_counterexample/run-008</code></pre>
+    <p>
+      Python standard library only. The shipped run is <code>run-006</code>; five runs of the
+      same computation produced a byte-identical summary, which is this study's determinism
+      check. The written record of the run — source revision, configuration hash,
+      environment and seed — is in the study's own <code>results/run_record.json</code>.
+    </p>
+
+    <h3>Downloads</h3>
+    <p>
+      Every file below is generated from the committed export by
+      {" "}<code>site/src/scripts/emit-public-data.mjs</code> and verified against its recorded
+      SHA-256 during this build. Per-case files are in the
+      {" "}<a href={pageHref("/studies/a4/") + "#explorer"}>scenario explorer</a>; these carry
+      the other exhibits.
+    </p>
+    <ul class="downloads">
+      {
+        evidenceDownloads.map((d) => (
+          <li>
+            <a href={d.href} download>
+              {d.name}
+            </a>
+            <span class="downloads__meta">
+              {d.size} — {d.description}
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+
+    <Callout kind="note" title="What is not published">
+      <p>
+        No reference-derived value appears anywhere on this site. The NIST Chemistry WebBook
+        extract this project uses as an independent PVT oracle is not redistributed, and
+        nothing derived from it is published here. The
+        {" "}<a href={href("/studies/a2/")}>A2 availability page</a> sets out the decision and
+        what a reader would need to run that study themselves.
+      </p>
+    </Callout>
+  </section>
+
+  <section id="references" aria-labelledby="references-h">
+    <h2 id="references-h">Where this sits against prior work</h2>
+
+    <p>
+      The effect is documented in the literature and this study is a corroboration, not a
+      discovery. The repository's own evidence file records, from Pletcher (SPE 75354), a
+      two-cell weak water-drive simulation returning R-squared = 0.9998 over ten years while
+      the compressibility-corrected p/Z extrapolation was 8.2 percent high at 11 percent
+      recovery and still 4.0 percent high after 54 percent of the gas had been produced; the
+      same paper documents an Oklahoma Morrow sand field case where no water production and a
+      straight p/Z plot together suggested a closed tank while the conventional extrapolation
+      was about 16 percent too high. Dake states the mechanism directly: early material-balance
+      plots all appear linear, and extrapolating that early trend as a depletion reservoir
+      returns too large a gas in place.
+    </p>
+
+    <p>
+      The comparison is a corroboration and not a match. This study's
+      {" "}+{base.errorPct.toFixed(2)} percent at R-squared {base.rSquared.toFixed(5)} is at 55
+      percent recovery with an influx of {(base.invadedPoreVolumeFraction * 100).toFixed(1)}
+      {" "}percent of the hydrocarbon pore volume, while Pletcher's figures are at a different
+      aquifer size, recovery fraction and deviation-factor treatment. What agrees is the order
+      of magnitude and the qualitative shape. One difference matters for the drift diagnostic:
+      <strong> the direction of drift is opposite</strong>, because Pletcher's aquifer does not
+      deplete over his window while this study's does. Look for movement, not for a sign.
+    </p>
+
+    <p class="provenance">
+      The two percentages sometimes quoted for deviation-factor correlations against
+      laboratory-grade reference equations belong to study A2, which reads a reference extract
+      this repository does not redistribute. They cannot be reproduced from this checkout and
+      nothing on this page depends on them.
+    </p>
+  </section>
+
+  <style>
+    .downloads {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .downloads li {
+      padding-block: var(--space-2);
+      border-block-end: 1px solid var(--c-rule);
+    }
+    .downloads__meta {
+      display: block;
+      font-size: var(--text-sm);
+      color: var(--c-ink-2);
+    }
+    .provenance {
+      font-size: var(--text-sm);
+      color: var(--c-ink-2);
+      border-inline-start: 2px solid var(--c-rule);
+      padding-inline-start: var(--space-3);
+    }
+    blockquote {
+      margin-inline: 0;
+    }
+  </style>
+</BaseLayout>

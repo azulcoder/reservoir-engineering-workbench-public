@@ -1,0 +1,1080 @@
+{
+  "case_id": "A3_uncertainty_experiments",
+  "config": {
+    "case_id": "A3_uncertainty_experiments",
+    "case_type": "synthetic_measurement_error_budget",
+    "gas_in_place_scf": 100000000000.0,
+    "initial_pressure_psia": 4500.0,
+    "temperature_degf": 200.0,
+    "gas_specific_gravity": 0.65,
+    "pseudocritical_correlation": "sutton-1985",
+    "z_correlation": "dak",
+    "alternative_z_correlations": [
+      "hall-yarborough",
+      "dpr"
+    ],
+    "standard_basis": "SPE_STANDARD (14.696 psia, 60 degF)",
+    "alternative_standard_basis": "US_CONTRACTUAL_STANDARD (14.73 psia, 60 degF)",
+    "minimum_pressure_psia": 400.0,
+    "base_surveys": 12,
+    "base_depletion_fraction": 0.5,
+    "survey_interval_days": 365.0,
+    "pressure_sigma_psia": 45.0,
+    "calibration_bias_grid_psia": [
+      -50.0,
+      -25.0,
+      -14.696,
+      0.0,
+      25.0,
+      50.0
+    ],
+    "reference_calibration_bias_psia": 25.0,
+    "atmosphere_psia": 14.696,
+    "multiplicative_z_error_grid": [
+      -0.05,
+      -0.02,
+      -0.01,
+      0.01,
+      0.02,
+      0.05
+    ],
+    "z_profile_scan_points": 401,
+    "z_tilt_grid": [
+      -0.01,
+      -0.005,
+      0.005,
+      0.01
+    ],
+    "depletion_fraction_grid": [
+      0.1,
+      0.2,
+      0.35,
+      0.5
+    ],
+    "degraded_surveys": 6,
+    "degraded_depletion_fraction": 0.04,
+    "degraded_pressure_sigma_psia": 120.0,
+    "sigma_robustness_grid_psia": [
+      22.5,
+      45.0,
+      90.0
+    ],
+    "monte_carlo_replicates": 4000,
+    "sweep_monte_carlo_replicates": 2000,
+    "bootstrap_replicates": 4000,
+    "ar1_lag1_correlation": 0.8,
+    "holdout_training_surveys": 8,
+    "confidence": 0.95,
+    "seed": 20260913
+  },
+  "results": {
+    "E0_oracle": {
+      "initial_z_factor": 0.9740451420001954,
+      "initial_p_over_z_psia": 4619.909084253815,
+      "generator_max_residual_p_over_z_psia": 1.0527401173021644e-09,
+      "generator_warnings": [],
+      "pressures_psia": [
+        4500.0,
+        4223.260782551579,
+        3962.5373107092464,
+        3715.9099508667214,
+        3481.6504848812197,
+        3258.192224715344,
+        3044.1036007397797,
+        2838.065205192796,
+        2638.850176000411,
+        2445.307717701995,
+        2256.3494805508917,
+        2070.938460104194
+      ],
+      "cumulative_gas_scf": [
+        0.0,
+        4545454545.454545,
+        9090909090.90909,
+        13636363636.363636,
+        18181818181.81818,
+        22727272727.272724,
+        27272727272.72727,
+        31818181818.181812,
+        36363636363.63636,
+        40909090909.090904,
+        45454545454.54545,
+        49999999999.99999
+      ],
+      "p_over_z_psia": [
+        4619.909084253815,
+        4409.913216787026,
+        4199.917349320879,
+        3989.921481855568,
+        3779.925614389748,
+        3569.9297469223498,
+        3359.933879456486,
+        3149.9380119912357,
+        2939.94214452499,
+        2729.9462770590903,
+        2519.9504095929883,
+        2309.9545421269077
+      ],
+      "gas_in_place_scf": 100000000000.00719,
+      "relative_error": 7.194245199571014e-14,
+      "slope_psia_per_scf": -4.6199090842530105e-08,
+      "r_squared": 1.0,
+      "fieller_g": 1.5126989356923337e-25,
+      "depletion_fraction_observed": 0.499999999999964,
+      "pz_fit_warnings": [
+        "linearity_is_not_evidence_of_volumetric_drive: a high R-squared shows the points lie on a line, not that the line's x-intercept is gas in place. A documented weak-water-drive case gives R-squared 0.9998 with an 8 percent overestimate. Confirm the drive mechanism with a Cole or pot-aquifer plot before using this G."
+      ],
+      "stderr_scf": 0.01337512608827455,
+      "collapsed_stderr_scf": 0.013375126088274548,
+      "stderr_identity_relative_difference": 1.2969772879356788e-16,
+      "holdout_training_surveys": 8,
+      "holdout_gas_in_place_scf": 99999999999.98572,
+      "holdout_depletion_fraction": 0.3181818181818181,
+      "holdout_rmse_p_over_z_psia": 4.4709389540896366e-10,
+      "holdout_rmse_fraction_of_initial_p_over_z": 9.677547485356545e-14
+    },
+    "E1_random_noise": {
+      "pressure_sigma_psia": 45.0,
+      "holdout": {
+        "training_surveys": 8,
+        "training_depletion_fraction": 0.3181818181818181,
+        "gas_in_place_from_training_scf": 97247626482.98825,
+        "stderr_from_training_scf": 2152943480.2250156,
+        "gas_in_place_from_full_history_scf": 100372092735.09077,
+        "rmse_p_over_z_psia": 69.34953667816178,
+        "rmse_fraction_of_initial_p_over_z": 0.0150110176225173,
+        "residuals_p_over_z_psia": [
+          -63.75107911686882,
+          -41.69274977846135,
+          -50.38304955510603,
+          -104.38628164072088
+        ]
+      },
+      "named_realisation": {
+        "gas_in_place_scf": 100372092735.09077,
+        "relative_error": 0.003720927350907788,
+        "delta_stderr_scf": 1116061245.9305942,
+        "delta_interval_scf": [
+          97885353311.83661,
+          102858832158.34494
+        ],
+        "delta_warnings": [],
+        "r_squared": 0.9979029085726572,
+        "fieller": {
+          "kind": "bounded",
+          "bounded": true,
+          "lower_scf": 97961528727.69635,
+          "upper_scf": 102940093990.374,
+          "g": 0.0010433105029157563,
+          "discriminant": 6.183604958059037e+18
+        },
+        "suggested_block_length": 3,
+        "suggested_block_rule": "repository heuristic: max(ceil(n**(1/3)), ceil((1+rho)/(1-rho))), the Hall-Horowitz-Jing variance rate with unit constant against an AR(1) integrated autocorrelation floor. The combination is not a published rule.",
+        "estimated_lag1_correlation": 0.09758635496419647,
+        "bootstrap_iid": {
+          "block_length": 1,
+          "n_starts": 12,
+          "standard_error_scf": 1015966569.6682382,
+          "bias_scf": -10774931.911392212,
+          "percentile_low_scf": 98266785817.8038,
+          "percentile_high_scf": 102183951525.35304,
+          "replicates_used": 4000,
+          "replicates_failed": 0
+        },
+        "bootstrap_suggested": {
+          "block_length": 3,
+          "n_starts": 10,
+          "standard_error_scf": 2250900279.3635035,
+          "bias_scf": -142219254.4798584,
+          "percentile_low_scf": 94849292507.8917,
+          "percentile_high_scf": 105018079787.37231,
+          "replicates_used": 4000,
+          "replicates_failed": 0
+        }
+      },
+      "ensemble_n12": {
+        "replicates_requested": 4000,
+        "replicates_used": 4000,
+        "library_refusals": 0,
+        "mean_gas_in_place_scf": 100064504494.27876,
+        "median_gas_in_place_scf": 100043261627.97372,
+        "sampling_sd_scf": 1413175066.523484,
+        "robust_scale_scf": 1386679430.5513465,
+        "median_delta_stderr_scf": 1293881165.170503,
+        "delta_coverage": 0.9405,
+        "fieller_coverage": 0.941,
+        "unbounded_fraction": 0.0,
+        "fieller_kinds": {
+          "bounded": 4000
+        }
+      },
+      "ensemble_n24": {
+        "replicates_requested": 4000,
+        "replicates_used": 4000,
+        "library_refusals": 0,
+        "mean_gas_in_place_scf": 100004291579.91292,
+        "median_gas_in_place_scf": 100007677224.64102,
+        "sampling_sd_scf": 1011703082.0795692,
+        "robust_scale_scf": 1014118764.962409,
+        "median_delta_stderr_scf": 965913260.9776925,
+        "delta_coverage": 0.9445,
+        "fieller_coverage": 0.9455,
+        "unbounded_fraction": 0.0,
+        "fieller_kinds": {
+          "bounded": 4000
+        }
+      },
+      "sd_ratio_n24_over_n12": 0.7159078206555358,
+      "root_n_prediction": 0.7071067811865475
+    },
+    "E1b_correlated_noise": {
+      "lag1_correlation_imposed": 0.8,
+      "named_realisation": {
+        "gas_in_place_scf": 98998863229.66606,
+        "delta_stderr_scf": 656211599.6811255,
+        "estimated_lag1_correlation": 0.24105740584613575,
+        "integrated_autocorrelation_time": 1.6352454262101013,
+        "suggested_block_length": 3,
+        "bootstraps": {
+          "block_length_1": {
+            "block_length": 1,
+            "n_starts": 12,
+            "standard_error_scf": 863186163.5096614,
+            "bias_scf": -105279968.6794281,
+            "percentile_low_scf": 96961063332.39108,
+            "percentile_high_scf": 100279662604.08464,
+            "replicates_used": 4000,
+            "replicates_failed": 0
+          },
+          "block_length_3": {
+            "block_length": 3,
+            "n_starts": 10,
+            "standard_error_scf": 1208471951.4606216,
+            "bias_scf": -833519670.2990417,
+            "percentile_low_scf": 96367694683.917,
+            "percentile_high_scf": 100573447034.06668,
+            "replicates_used": 4000,
+            "replicates_failed": 0
+          },
+          "block_length_6": {
+            "block_length": 6,
+            "n_starts": 7,
+            "standard_error_scf": 1221757935.038218,
+            "bias_scf": -1013797075.752655,
+            "percentile_low_scf": 96489283066.25508,
+            "percentile_high_scf": 100573447034.06668,
+            "replicates_used": 4000,
+            "replicates_failed": 0
+          }
+        }
+      },
+      "ensemble": {
+        "replicates_requested": 4000,
+        "replicates_used": 4000,
+        "library_refusals": 0,
+        "mean_gas_in_place_scf": 100081931237.53685,
+        "median_gas_in_place_scf": 100043424344.81879,
+        "sampling_sd_scf": 2310176119.9492593,
+        "robust_scale_scf": 2292189997.3457737,
+        "median_delta_stderr_scf": 752403608.3335118,
+        "delta_coverage": 0.54375,
+        "fieller_coverage": 0.54375,
+        "unbounded_fraction": 0.0,
+        "fieller_kinds": {
+          "bounded": 4000
+        }
+      },
+      "sd_over_median_delta_stderr": 3.0703947912557674
+    },
+    "E2_shared_bias": {
+      "initial_p_over_z_psia": 4619.909084253815,
+      "grid": [
+        {
+          "offset_psia": -50.0,
+          "gas_in_place_z_recomputed_scf": 98296251448.38145,
+          "gas_in_place_z_held_scf": 98680346455.49466,
+          "relative_shift_z_recomputed": -0.017037485516185447,
+          "relative_shift_z_held": -0.013196535445053392,
+          "exact_prediction_z_recomputed_scf": 98296251448.38145,
+          "exact_prediction_z_held_scf": 98680346455.49464,
+          "prediction_error_z_recomputed": 0.0,
+          "prediction_error_z_held": 1.52587890625e-16,
+          "card_rule_of_thumb_scf": 98917727619.99979,
+          "card_rule_relative_shift": -0.010822723800002154,
+          "card_rule_understatement_factor_z_recomputed": 1.5742326821813648
+        },
+        {
+          "offset_psia": -25.0,
+          "gas_in_place_z_recomputed_scf": 99144625352.90811,
+          "gas_in_place_z_held_scf": 99339539892.54507,
+          "relative_shift_z_recomputed": -0.008553746470918888,
+          "relative_shift_z_held": -0.006604601074549299,
+          "exact_prediction_z_recomputed_scf": 99144625352.90811,
+          "exact_prediction_z_held_scf": 99339539892.54507,
+          "prediction_error_z_recomputed": 0.0,
+          "prediction_error_z_held": 0.0,
+          "card_rule_of_thumb_scf": 99458863809.9999,
+          "card_rule_relative_shift": -0.005411361900001022,
+          "card_rule_understatement_factor_z_recomputed": 1.5807012410160917
+        },
+        {
+          "offset_psia": -14.696,
+          "gas_in_place_z_recomputed_scf": 99496326979.45467,
+          "gas_in_place_z_held_scf": 99611601475.2904,
+          "relative_shift_z_recomputed": -0.005036730205453366,
+          "relative_shift_z_held": -0.003883985247095989,
+          "exact_prediction_z_recomputed_scf": 99496326979.45465,
+          "exact_prediction_z_held_scf": 99611601475.29039,
+          "prediction_error_z_recomputed": 1.52587890625e-16,
+          "prediction_error_z_held": 1.52587890625e-16,
+          "card_rule_of_thumb_scf": 99681898502.07033,
+          "card_rule_relative_shift": -0.0031810149792966813,
+          "card_rule_understatement_factor_z_recomputed": 1.583372048932284
+        },
+        {
+          "offset_psia": 0.0,
+          "gas_in_place_z_recomputed_scf": 100000000000.00719,
+          "gas_in_place_z_held_scf": 100000000000.00719,
+          "relative_shift_z_recomputed": 7.194245199571014e-14,
+          "relative_shift_z_held": 7.194245199571014e-14,
+          "exact_prediction_z_recomputed_scf": 100000000000.00719,
+          "exact_prediction_z_held_scf": 100000000000.00719,
+          "prediction_error_z_recomputed": 0.0,
+          "prediction_error_z_held": 0.0,
+          "card_rule_of_thumb_scf": 100000000000.0,
+          "card_rule_relative_shift": 0.0,
+          "card_rule_understatement_factor_z_recomputed": null
+        },
+        {
+          "offset_psia": 25.0,
+          "gas_in_place_z_recomputed_scf": 100862401217.35211,
+          "gas_in_place_z_held_scf": 100661730432.34007,
+          "relative_shift_z_recomputed": 0.008624012173521045,
+          "relative_shift_z_held": 0.006617304323400797,
+          "exact_prediction_z_recomputed_scf": 100862401217.3521,
+          "exact_prediction_z_held_scf": 100661730432.34007,
+          "prediction_error_z_recomputed": 1.52587890625e-16,
+          "prediction_error_z_held": 0.0,
+          "card_rule_of_thumb_scf": 100541136190.0001,
+          "card_rule_relative_shift": 0.005411361900001133,
+          "card_rule_understatement_factor_z_recomputed": 1.5936860873266332
+        },
+        {
+          "offset_psia": 50.0,
+          "gas_in_place_z_recomputed_scf": 101731853482.44981,
+          "gas_in_place_z_held_scf": 101324734858.07416,
+          "relative_shift_z_recomputed": 0.01731853482449819,
+          "relative_shift_z_held": 0.013247348580741614,
+          "exact_prediction_z_recomputed_scf": 101731853482.44981,
+          "exact_prediction_z_held_scf": 101324734858.07413,
+          "prediction_error_z_recomputed": 0.0,
+          "prediction_error_z_held": 3.0517578125e-16,
+          "card_rule_of_thumb_scf": 101082272380.00023,
+          "card_rule_relative_shift": 0.010822723800002265,
+          "card_rule_understatement_factor_z_recomputed": 1.6002011272332826
+        }
+      ],
+      "invariance_to_sample_size": [
+        {
+          "n_surveys": 12,
+          "relative_shift": 0.008624012173521045,
+          "design_stderr_relative": 0.013241716768953877
+        },
+        {
+          "n_surveys": 24,
+          "relative_shift": 0.008644603948637197,
+          "design_stderr_relative": 0.009760502574940901
+        },
+        {
+          "n_surveys": 48,
+          "relative_shift": 0.008654576373440026,
+          "design_stderr_relative": 0.007046182578520285
+        }
+      ],
+      "max_prediction_error": 3.0517578125e-16
+    },
+    "E3_psig_for_psia": {
+      "offset_psia": -14.696,
+      "gas_in_place_z_recomputed_scf": 99496326979.45467,
+      "gas_in_place_z_held_scf": 99611601475.2904,
+      "shift_z_recomputed_scf": -503673020.54533386,
+      "shift_z_held_scf": -388398524.7095947,
+      "relative_shift_z_recomputed": -0.005036730205453366,
+      "relative_shift_z_held": -0.003883985247095989,
+      "sign_is_negative": true,
+      "exact_prediction_z_recomputed_scf": 99496326979.45465,
+      "exact_prediction_z_held_scf": 99611601475.29039,
+      "prediction_error_z_recomputed": 1.52587890625e-16,
+      "prediction_error_z_held": 1.52587890625e-16,
+      "card_rule_of_thumb_shift_scf": -318101497.9296638,
+      "card_rule_relative_shift": -0.003181014979296638,
+      "card_rule_understatement_factor": 1.5833720489323262,
+      "shift_in_units_of_design_sigma": -0.3803683686440343,
+      "design_sigma_scf": 1324171676.8953876,
+      "coverage_of_truth_with_offset_present": 0.9245,
+      "ensemble_median_scf": 99459059862.57079
+    },
+    "E4_z_factor": {
+      "observed_pressure_window_psia": [
+        2070.938460104194,
+        4500.0
+      ],
+      "z_at_first_survey_dak": 0.9740451420001954,
+      "z_at_last_survey_dak": 0.8965277984203801,
+      "multiplicative": [
+        {
+          "relative_z_error": -0.05,
+          "gas_in_place_scf": 100000000000.00719,
+          "relative_shift_from_base": 0.0
+        },
+        {
+          "relative_z_error": -0.02,
+          "gas_in_place_scf": 100000000000.0072,
+          "relative_shift_from_base": 1.52587890625e-16
+        },
+        {
+          "relative_z_error": -0.01,
+          "gas_in_place_scf": 100000000000.00722,
+          "relative_shift_from_base": 3.0517578125e-16
+        },
+        {
+          "relative_z_error": 0.01,
+          "gas_in_place_scf": 100000000000.00717,
+          "relative_shift_from_base": -1.52587890625e-16
+        },
+        {
+          "relative_z_error": 0.02,
+          "gas_in_place_scf": 100000000000.00722,
+          "relative_shift_from_base": 3.0517578125e-16
+        },
+        {
+          "relative_z_error": 0.05,
+          "gas_in_place_scf": 100000000000.0072,
+          "relative_shift_from_base": 1.52587890625e-16
+        }
+      ],
+      "max_multiplicative_relative_shift": 3.0517578125e-16,
+      "correlation_choice": [
+        {
+          "method": "hall-yarborough",
+          "gas_in_place_scf": 99801460328.34517,
+          "relative_shift": -0.0019853967165482933,
+          "z_at_first_survey": 0.9723575114957235,
+          "z_at_last_survey": 0.8967330225088577,
+          "relative_z_difference_first": -0.0017325998885497906,
+          "relative_z_difference_last": 0.00022890989977009113
+        },
+        {
+          "method": "dpr",
+          "gas_in_place_scf": 100332580695.09195,
+          "relative_shift": 0.003325806950919441,
+          "z_at_first_survey": 0.9774792707055224,
+          "z_at_last_survey": 0.8969915521910139,
+          "relative_z_difference_first": 0.0035256360893860528,
+          "relative_z_difference_last": 0.0005172776253574707
+        }
+      ],
+      "correlation_profile_over_window": [
+        {
+          "method": "hall-yarborough",
+          "scan_points": 401,
+          "signed_difference_at_worst": -0.0027049796440373752,
+          "max_absolute_relative_difference": 0.0027049796440373752,
+          "pressure_at_worst_psia": 3546.593345590896,
+          "min_signed_relative_difference": -0.0027049796440373752,
+          "max_signed_relative_difference": 0.00022890989977009113
+        },
+        {
+          "method": "dpr",
+          "scan_points": 401,
+          "signed_difference_at_worst": 0.0035256360893860528,
+          "max_absolute_relative_difference": 0.0035256360893860528,
+          "pressure_at_worst_psia": 4500.0,
+          "min_signed_relative_difference": 0.0005172776253574707,
+          "max_signed_relative_difference": 0.0035256360893860528
+        }
+      ],
+      "tilt": [
+        {
+          "tilt_across_window": -0.01,
+          "gas_in_place_scf": 98931413274.75638,
+          "relative_shift": -0.010685867252436254,
+          "amplification": 1.0685867252436254
+        },
+        {
+          "tilt_across_window": -0.005,
+          "gas_in_place_scf": 99463185674.66098,
+          "relative_shift": -0.00536814325339019,
+          "amplification": 1.073628650678038
+        },
+        {
+          "tilt_across_window": 0.005,
+          "gas_in_place_scf": 100541934710.17026,
+          "relative_shift": 0.005419347101702554,
+          "amplification": 1.0838694203405108
+        },
+        {
+          "tilt_across_window": 0.01,
+          "gas_in_place_scf": 101089069825.27205,
+          "relative_shift": 0.010890698252720599,
+          "amplification": 1.0890698252720599
+        }
+      ]
+    },
+    "E5_short_depletion": {
+      "sweep": [
+        {
+          "depletion_fraction": 0.1,
+          "n_surveys": 12,
+          "gas_in_place_scf": 91116487311.85806,
+          "delta_stderr_scf": 6607478963.094142,
+          "delta_stderr_relative": 0.06607478963094142,
+          "collapsed_stderr_scf": 6607478963.094142,
+          "stderr_identity_relative_difference": 0.0,
+          "design_stderr_scf": 6702412634.694921,
+          "fieller_g": 0.02918818626637115,
+          "fieller": {
+            "kind": "bounded",
+            "bounded": true,
+            "lower_scf": 78540917681.30003,
+            "upper_scf": 108870370672.648,
+            "g": 0.02918818626637115,
+            "discriminant": 2.1674009985781016e+20
+          },
+          "delta_interval_scf": [
+            76394106720.50603,
+            105838867903.2101
+          ],
+          "delta_warnings": [
+            "g = 0.02919 exceeds 0.01: the exact interval is asymmetric and roughly 1/(1-g) = 1.03 times wider on one side than the symmetric approximation. Prefer x_intercept_fieller."
+          ],
+          "bootstrap_iid": {
+            "block_length": 1,
+            "n_starts": 12,
+            "standard_error_scf": 5863317815.196763,
+            "bias_scf": 81428324.90234375,
+            "percentile_low_scf": 80539123911.78743,
+            "percentile_high_scf": 103099057582.22343,
+            "replicates_used": 4000,
+            "replicates_failed": 0
+          },
+          "ensemble": {
+            "replicates_requested": 2000,
+            "replicates_used": 2000,
+            "library_refusals": 0,
+            "mean_gas_in_place_scf": 100745947808.32213,
+            "median_gas_in_place_scf": 100256499708.97986,
+            "sampling_sd_scf": 7109223652.8265505,
+            "robust_scale_scf": 7219944792.756373,
+            "median_delta_stderr_scf": 6510144702.537863,
+            "delta_coverage": 0.948,
+            "fieller_coverage": 0.947,
+            "unbounded_fraction": 0.0,
+            "fieller_kinds": {
+              "bounded": 2000
+            }
+          }
+        },
+        {
+          "depletion_fraction": 0.2,
+          "n_surveys": 12,
+          "gas_in_place_scf": 93291240928.99846,
+          "delta_stderr_scf": 3404459892.4421444,
+          "delta_stderr_relative": 0.034044598924421444,
+          "collapsed_stderr_scf": 3404459892.442145,
+          "stderr_identity_relative_difference": 1.4006249838974374e-16,
+          "design_stderr_scf": 3383378455.4588594,
+          "fieller_g": 0.008247515356794544,
+          "fieller": {
+            "kind": "bounded",
+            "bounded": true,
+            "lower_scf": 86335385464.79713,
+            "upper_scf": 101632413393.73248,
+            "g": 0.008247515356794542,
+            "discriminant": 5.753878967236484e+19
+          },
+          "delta_interval_scf": [
+            85705631572.61911,
+            100876850285.3778
+          ],
+          "delta_warnings": [],
+          "bootstrap_iid": {
+            "block_length": 1,
+            "n_starts": 12,
+            "standard_error_scf": 3866674800.489784,
+            "bias_scf": 559745279.6104431,
+            "percentile_low_scf": 87265925017.48306,
+            "percentile_high_scf": 102642599443.73918,
+            "replicates_used": 4000,
+            "replicates_failed": 0
+          },
+          "ensemble": {
+            "replicates_requested": 2000,
+            "replicates_used": 2000,
+            "library_refusals": 0,
+            "mean_gas_in_place_scf": 100365749970.83879,
+            "median_gas_in_place_scf": 100269056215.2236,
+            "sampling_sd_scf": 3473334907.4138,
+            "robust_scale_scf": 3502063364.7140245,
+            "median_delta_stderr_scf": 3285452099.1333423,
+            "delta_coverage": 0.95,
+            "fieller_coverage": 0.948,
+            "unbounded_fraction": 0.0,
+            "fieller_kinds": {
+              "bounded": 2000
+            }
+          }
+        },
+        {
+          "depletion_fraction": 0.35,
+          "n_surveys": 12,
+          "gas_in_place_scf": 99227763393.75375,
+          "delta_stderr_scf": 1640711943.7248147,
+          "delta_stderr_relative": 0.016407119437248145,
+          "collapsed_stderr_scf": 1640711943.7248147,
+          "stderr_identity_relative_difference": 0.0,
+          "design_stderr_scf": 1931747897.936452,
+          "fieller_g": 0.001965331065711666,
+          "fieller": {
+            "kind": "bounded",
+            "bounded": true,
+            "lower_scf": 95725832761.01846,
+            "upper_scf": 103051570845.65883,
+            "g": 0.0019653310657116656,
+            "discriminant": 1.3363925283823614e+19
+          },
+          "delta_interval_scf": [
+            95572029367.02258,
+            102883497420.48492
+          ],
+          "delta_warnings": [],
+          "bootstrap_iid": {
+            "block_length": 1,
+            "n_starts": 12,
+            "standard_error_scf": 1656299550.7469146,
+            "bias_scf": 132102391.41685486,
+            "percentile_low_scf": 96285392467.50545,
+            "percentile_high_scf": 102976009248.86389,
+            "replicates_used": 4000,
+            "replicates_failed": 0
+          },
+          "ensemble": {
+            "replicates_requested": 2000,
+            "replicates_used": 2000,
+            "library_refusals": 0,
+            "mean_gas_in_place_scf": 100037838068.93314,
+            "median_gas_in_place_scf": 99989246193.57117,
+            "sampling_sd_scf": 2034560435.4885042,
+            "robust_scale_scf": 2063189705.0329907,
+            "median_delta_stderr_scf": 1848920862.5873766,
+            "delta_coverage": 0.9385,
+            "fieller_coverage": 0.9415,
+            "unbounded_fraction": 0.0,
+            "fieller_kinds": {
+              "bounded": 2000
+            }
+          }
+        },
+        {
+          "depletion_fraction": 0.5,
+          "n_surveys": 12,
+          "gas_in_place_scf": 103021777761.35617,
+          "delta_stderr_scf": 842324853.0511969,
+          "delta_stderr_relative": 0.008423248530511969,
+          "collapsed_stderr_scf": 842324853.0511972,
+          "stderr_identity_relative_difference": 2.830482541716851e-16,
+          "design_stderr_scf": 1324171676.8953876,
+          "fieller_g": 0.0005561506128517739,
+          "fieller": {
+            "kind": "bounded",
+            "bounded": true,
+            "lower_scf": 101187352961.57814,
+            "upper_scf": 104943034571.8457,
+            "g": 0.0005561506128517738,
+            "discriminant": 3.5223648877786977e+18
+          },
+          "delta_interval_scf": [
+            101144961030.27917,
+            104898594492.43317
+          ],
+          "delta_warnings": [],
+          "bootstrap_iid": {
+            "block_length": 1,
+            "n_starts": 12,
+            "standard_error_scf": 649482472.5757775,
+            "bias_scf": -54823797.93934631,
+            "percentile_low_scf": 101583902902.08037,
+            "percentile_high_scf": 104018055267.5614,
+            "replicates_used": 4000,
+            "replicates_failed": 0
+          },
+          "ensemble": {
+            "replicates_requested": 2000,
+            "replicates_used": 2000,
+            "library_refusals": 0,
+            "mean_gas_in_place_scf": 100035459182.86696,
+            "median_gas_in_place_scf": 100039927709.13042,
+            "sampling_sd_scf": 1364003858.5803347,
+            "robust_scale_scf": 1365440095.3369806,
+            "median_delta_stderr_scf": 1304436788.9080677,
+            "delta_coverage": 0.9465,
+            "fieller_coverage": 0.944,
+            "unbounded_fraction": 0.0,
+            "fieller_kinds": {
+              "bounded": 2000
+            }
+          }
+        }
+      ],
+      "degraded_programme": {
+        "n_surveys": 6,
+        "depletion_fraction": 0.04,
+        "pressure_sigma_psia": 120.0,
+        "gas_in_place_scf": 88660703536.76892,
+        "delta_stderr_scf": 37831110141.76406,
+        "delta_stderr_relative": 0.3783111014176406,
+        "delta_interval_scf": [
+          -16375297040.53035,
+          193696704114.06818
+        ],
+        "delta_warnings": [
+          "g = 1.469 >= 1 at 95 percent confidence: the exact confidence set for this x-intercept is unbounded and the standard error below does not describe it. Use x_intercept_fieller and report the set it returns."
+        ],
+        "fieller": {
+          "kind": "exclusive",
+          "bounded": false,
+          "lower_scf": -406982535217.5429,
+          "upper_scf": 41166488624.92618,
+          "g": 1.4686692442647462,
+          "discriminant": 1.1028535037156185e+22
+        },
+        "bootstrap_iid": {
+          "block_length": 1,
+          "n_starts": 6,
+          "standard_error_scf": 211675793146.07755,
+          "bias_scf": 59058491714.787964,
+          "percentile_low_scf": 38437949224.06026,
+          "percentile_high_scf": 542444283552.6593,
+          "replicates_used": 4000,
+          "replicates_failed": 0
+        },
+        "ensemble": {
+          "replicates_requested": 2000,
+          "replicates_used": 2000,
+          "library_refusals": 94,
+          "mean_gas_in_place_scf": 87912499339.4736,
+          "median_gas_in_place_scf": 92932382034.949,
+          "sampling_sd_scf": 2479988944345.655,
+          "robust_scale_scf": 58822123644.5439,
+          "median_delta_stderr_scf": 51215401772.39316,
+          "delta_coverage": 0.908,
+          "fieller_coverage": 0.9425,
+          "unbounded_fraction": 0.7355,
+          "fieller_kinds": {
+            "bounded": 529,
+            "exclusive": 1471
+          }
+        }
+      }
+    },
+    "E6_standard_basis": {
+      "standard_pressure_ratio_us_over_spe": 1.002317048392499,
+      "rounded_ratio_14p73_over_14p696": 1.0023135547087643,
+      "relative_gap_declared_ratio_against_rounded": 3.485619563203149e-06,
+      "gas_fvf_spe_rcf_per_scf": 0.004037971861226888,
+      "gas_fvf_us_rcf_per_scf": 0.0040473280374369,
+      "gas_fvf_ratio": 1.002317048392499,
+      "static_gas_in_place_spe_scf": 174759018698.45874,
+      "static_gas_in_place_us_scf": 174355029657.26724,
+      "static_relative_shift": -0.002311692090057882,
+      "static_identity_error": 1.1127954650996797e-16,
+      "dynamic_gas_in_place_spe_scf": 100000000000.00719,
+      "dynamic_gas_in_place_us_scf": 99768830791.00139,
+      "dynamic_relative_shift": -0.002311692090057771,
+      "dynamic_identity_error": 0.0,
+      "comment": "The p/Z x-intercept inherits the basis of the cumulative production supplied to it. It carries no basis error of its own; the error appears when a dynamic G on one basis is compared with a static G on another."
+    },
+    "E7_ranking": {
+      "rankings_by_assumed_sigma": {
+        "sigma_22.5_psia": [
+          {
+            "source": "shared calibration bias, 25 psia",
+            "relative_effect": 0.008624012173521045
+          },
+          {
+            "source": "random pressure scatter, one sigma",
+            "relative_effect": 0.006620858384476938
+          },
+          {
+            "source": "psig supplied as psia",
+            "relative_effect": 0.005036730205453366
+          },
+          {
+            "source": "deviation-factor correlation choice",
+            "relative_effect": 0.003325806950919441
+          },
+          {
+            "source": "standard basis 14.696 against 14.73",
+            "relative_effect": 0.002311692090057882
+          },
+          {
+            "source": "uniform multiplicative Z error, 5 percent",
+            "relative_effect": 3.0517578125e-16
+          }
+        ],
+        "sigma_45_psia": [
+          {
+            "source": "random pressure scatter, one sigma",
+            "relative_effect": 0.013241716768953877
+          },
+          {
+            "source": "shared calibration bias, 25 psia",
+            "relative_effect": 0.008624012173521045
+          },
+          {
+            "source": "psig supplied as psia",
+            "relative_effect": 0.005036730205453366
+          },
+          {
+            "source": "deviation-factor correlation choice",
+            "relative_effect": 0.003325806950919441
+          },
+          {
+            "source": "standard basis 14.696 against 14.73",
+            "relative_effect": 0.002311692090057882
+          },
+          {
+            "source": "uniform multiplicative Z error, 5 percent",
+            "relative_effect": 3.0517578125e-16
+          }
+        ],
+        "sigma_90_psia": [
+          {
+            "source": "random pressure scatter, one sigma",
+            "relative_effect": 0.026483433537907754
+          },
+          {
+            "source": "shared calibration bias, 25 psia",
+            "relative_effect": 0.008624012173521045
+          },
+          {
+            "source": "psig supplied as psia",
+            "relative_effect": 0.005036730205453366
+          },
+          {
+            "source": "deviation-factor correlation choice",
+            "relative_effect": 0.003325806950919441
+          },
+          {
+            "source": "standard basis 14.696 against 14.73",
+            "relative_effect": 0.002311692090057882
+          },
+          {
+            "source": "uniform multiplicative Z error, 5 percent",
+            "relative_effect": 3.0517578125e-16
+          }
+        ]
+      },
+      "top_two_by_assumed_sigma": {
+        "sigma_22.5_psia": [
+          "shared calibration bias, 25 psia",
+          "random pressure scatter, one sigma"
+        ],
+        "sigma_45_psia": [
+          "random pressure scatter, one sigma",
+          "shared calibration bias, 25 psia"
+        ],
+        "sigma_90_psia": [
+          "random pressure scatter, one sigma",
+          "shared calibration bias, 25 psia"
+        ]
+      },
+      "ranking_stable_under_sigma_factor_two": false,
+      "short_depletion_penalty_f010_over_f050": 5.061588879781202,
+      "noise_free_relative_error": 7.194245199571014e-14,
+      "options": [
+        {
+          "option": "base programme as it stands",
+          "n_surveys": 12,
+          "depletion_fraction": 0.5,
+          "pressure_sigma_psia": 45.0,
+          "calibration_bias_present": true,
+          "design_stderr_relative": 0.013241716768953877,
+          "bias_relative": 0.008624012173521045,
+          "total_relative": 0.021865728942474922
+        },
+        {
+          "option": "double the survey count at the same depletion",
+          "n_surveys": 24,
+          "depletion_fraction": 0.5,
+          "pressure_sigma_psia": 45.0,
+          "calibration_bias_present": true,
+          "design_stderr_relative": 0.009760502574940901,
+          "bias_relative": 0.008644603948637197,
+          "total_relative": 0.0184051065235781
+        },
+        {
+          "option": "wait three more years, to 65 percent depletion",
+          "n_surveys": 15,
+          "depletion_fraction": 0.65,
+          "pressure_sigma_psia": 45.0,
+          "calibration_bias_present": true,
+          "design_stderr_relative": 0.008885427936969508,
+          "bias_relative": 0.007987559123923571,
+          "total_relative": 0.01687298706089308
+        },
+        {
+          "option": "halve the average-pressure scatter",
+          "n_surveys": 12,
+          "depletion_fraction": 0.5,
+          "pressure_sigma_psia": 22.5,
+          "calibration_bias_present": true,
+          "design_stderr_relative": 0.006620858384476938,
+          "bias_relative": 0.008624012173521045,
+          "total_relative": 0.015244870557997984
+        },
+        {
+          "option": "calibrate the pressure datum, removing the bias",
+          "n_surveys": 12,
+          "depletion_fraction": 0.5,
+          "pressure_sigma_psia": 45.0,
+          "calibration_bias_present": false,
+          "design_stderr_relative": 0.013241716768953877,
+          "bias_relative": 7.194245199571014e-14,
+          "total_relative": 0.01324171676902582
+        }
+      ],
+      "best_option": "calibrate the pressure datum, removing the bias",
+      "best_option_total_relative": 0.01324171676902582,
+      "best_option_runner_up": "halve the average-pressure scatter",
+      "best_option_margin_relative": 0.002003153788972164,
+      "residual_datum_error_break_even_psia": 5.82513592489704,
+      "break_even_note": "The recommended option assumes the calibration check leaves no systematic behind. A residual datum error larger than residual_datum_error_break_even_psia, applied as a shared offset on every survey, puts the calibrated programme behind best_option_runner_up on the same linear combination convention.",
+      "combination_convention": "one-sigma random standard error and the absolute value of the systematic shift are added linearly. A bias is not a random variable and adding it in quadrature would understate it; the two components are reported separately as well."
+    }
+  },
+  "acceptance": [
+    {
+      "id": "AC1",
+      "criterion": "noise-free x-intercept recovers G to better than 1e-9 relative",
+      "observed": 7.194245199571014e-14,
+      "threshold": 1e-09,
+      "met": true
+    },
+    {
+      "id": "AC2",
+      "criterion": "exact linear-perturbation prediction matches the refit for every offset",
+      "observed": 3.0517578125e-16,
+      "threshold": 1e-09,
+      "met": true
+    },
+    {
+      "id": "AC3",
+      "criterion": "psig slip moves G negative and matches its exact prediction",
+      "observed": 1.52587890625e-16,
+      "threshold": 1e-09,
+      "met": true
+    },
+    {
+      "id": "AC4",
+      "criterion": "uniform multiplicative Z error leaves G unchanged",
+      "observed": 3.0517578125e-16,
+      "threshold": 1e-12,
+      "met": true
+    },
+    {
+      "id": "AC5",
+      "criterion": "delta-method 95 percent coverage at f = 0.50 inside [0.935, 0.965]",
+      "observed": 0.9405,
+      "threshold": [
+        0.935,
+        0.965
+      ],
+      "met": true,
+      "shortfall_in_monte_carlo_standard_errors": 2.756809750418031,
+      "band_half_width_in_monte_carlo_standard_errors": 4.35285750066007
+    },
+    {
+      "id": "AC6",
+      "criterion": "Fieller 95 percent coverage inside [0.935, 0.965] at every setting whose error model is the fitted least-squares one: E5 f = 0.10, 0.20, 0.35, 0.50, the degraded programme, E1 n = 12 and E1 n = 24. E1b violates that model by construction and is excluded from this criterion and reported separately",
+      "observed": [
+        0.941,
+        0.948
+      ],
+      "threshold": [
+        0.935,
+        0.965
+      ],
+      "met": true
+    },
+    {
+      "id": "AC7",
+      "criterion": "library delta standard error equals the collapsed closed form",
+      "observed": 2.830482541716851e-16,
+      "threshold": 1e-12,
+      "met": true
+    },
+    {
+      "id": "AC8",
+      "criterion": "standard-basis change scales static and dynamic G by exactly the declared standard-pressure ratio SPE_STANDARD/US_CONTRACTUAL_STANDARD = 14.695948775513450/14.73, the constants the library carries rather than the rounded 14.696/14.73",
+      "observed": 1.1127954650996797e-16,
+      "threshold": 1e-12,
+      "met": true
+    },
+    {
+      "id": "AC9",
+      "criterion": "degraded programme reaches the unbounded Fieller regime in >= 10 percent of draws",
+      "observed": 0.7355,
+      "threshold": 0.1,
+      "met": true
+    }
+  ],
+  "all_acceptance_criteria_met": true,
+  "inconclusive_conditions": [
+    {
+      "condition": "ranking of the top two sources changes when sigma_p is halved or doubled",
+      "observed": {
+        "sigma_22.5_psia": [
+          "shared calibration bias, 25 psia",
+          "random pressure scatter, one sigma"
+        ],
+        "sigma_45_psia": [
+          "random pressure scatter, one sigma",
+          "shared calibration bias, 25 psia"
+        ],
+        "sigma_90_psia": [
+          "random pressure scatter, one sigma",
+          "shared calibration bias, 25 psia"
+        ]
+      },
+      "triggered": true
+    },
+    {
+      "condition": "Monte Carlo sd and median delta standard error differ by more than 1.5x",
+      "observed": 1.0921984990308296,
+      "triggered": false
+    },
+    {
+      "condition": "degraded programme library refusal rate above 25 percent",
+      "observed": 0.047,
+      "triggered": false
+    }
+  ],
+  "any_inconclusive_condition_triggered": true,
+  "limitations": [
+    "Synthetic throughout. No field data, no simulator execution, no third-party dataset.",
+    "The generator and the estimator share the volumetric tank assumption, so this measures a measurement error budget, not model adequacy.",
+    "Every mechanism that biases a p/Z line physically -- aquifer support, rock and connate-water expansion, retrograde condensation, multi-tank communication -- is excluded by construction and is larger than anything ranked here.",
+    "sigma_p = 45 psia is an assumed representativeness figure for a volume-averaged shut-in pressure, not a measured gauge specification. The ranking is conditional on it.",
+    "The shared calibration bias is treated as a single unknown constant, not as a distribution. No prior is placed on its size.",
+    "The Monte Carlo noise is applied to the reported series only and never feeds back into the balance, which is the NoiseModel contract, not a claim about real measurement physics.",
+    "Deviation-factor differences are between published correlations, not against laboratory PVT. The repository's own check.py compares DAK with NIST reference equations of state for pure methane and reports a signed range of -1.696 to -0.129 percent across its sampled corners, a wider spread than the correlation-choice row of the ranking table uses.",
+    "Cumulative production is never perturbed. The abscissa is the noise-free generated volume in every experiment, so this is an error budget on the ordinate only. A metering or allocation error scales the x-intercept by exactly the same factor (the E6 rescale identity), which would place a 1 percent metering bias above every row of the ranking table, and an error in the abscissa also violates the errors-free-regressor assumption that ordinary least squares rests on, biasing the slope rather than only widening it.",
+    "Gas gravity, composition and reservoir temperature are treated as exactly known. An error in any of them is a shape error on Z(p), which is the mechanism this case finds matters most.",
+    "The calibrated option in the next-measurement table is modelled as leaving no systematic behind. A residual datum error above residual_datum_error_break_even_psia reverses the recommendation.",
+    "The pressure error is homoscedastic and additive in psia over a window from 4500 down to 2071 psia. A proportional error would tilt the line rather than scatter it, and by this case's own tilt result a tilt is the damaging mode. No heteroscedastic case was run.",
+    "The estimator is unweighted ordinary least squares by declaration. No weighted, errors-in-variables or robust fit was tried, and under a non-constant ordinate variance that choice would change every standard error reported here.",
+    "The abscissa grid is evenly spaced, that is, constant offtake. The design formula, the 1/f scaling and the short-depletion penalty all rest on that geometry; real programmes have irregular spacing and shut-in timing that correlates with rate.",
+    "Every percentage is for one synthetic tank at G = 100 Bscf, p_i = 4500 psia, T = 200 degF and gamma = 0.65. No sensitivity to initial pressure, temperature or gravity was run, so the magnitudes are not known to transfer to another reservoir."
+  ]
+}

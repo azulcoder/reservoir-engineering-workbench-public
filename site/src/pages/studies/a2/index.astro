@@ -1,0 +1,270 @@
+---
+/**
+ * A2 — an availability page, not a study page.
+ *
+ * There is deliberately no figure here and no number derived from the reference extract.
+ * The page states what the study is, why its exhibits are withheld, what that costs, and
+ * what a reader would need in order to run it themselves. Anything else would be quoting
+ * values the repository has decided not to redistribute.
+ */
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Callout from "../../../components/Callout.astro";
+import StatusTable from "../../../components/StatusTable.astro";
+import { NAV, VERIFICATION } from "../../../scripts/site";
+import { href } from "../../../lib/urls";
+
+const contents = [
+  { id: "what", label: "What A2 is" },
+  { id: "why", label: "Why it is withheld" },
+  { id: "cost", label: "What the decision costs" },
+  { id: "run", label: "What you would need to run it" },
+  { id: "status", label: "Status" },
+];
+
+const description =
+  "A2 compares the library's PVT correlations against reference equations of state. Its inputs are not redistributed by this repository, so no A2 figure or number is published here.";
+---
+
+<BaseLayout
+  title="A2 — availability"
+  description={description}
+  canonicalPath="/studies/a2/"
+  nav={NAV}
+  contents={contents}
+>
+  <p class="eyebrow">Study A2 — independent PVT check</p>
+  <h1>Availability: the exhibits are withheld on rights grounds</h1>
+
+  <p class="lede">
+    A2 is the only study in this project that compares the code against values it did not
+    produce. It is also the only one whose inputs this repository cannot redistribute.
+    <strong> No figure, table or number from A2 appears anywhere on this site</strong>, and
+    none will while the rights question stands.
+  </p>
+
+  <Callout kind="note" label="What is on this page, and what is not">
+    <p>
+      This is an availability record. It describes the study, the decision that withholds it
+      and how a reader could run it themselves. It carries no reference-derived value, no
+      reference-derived plot, and no result restated from a report that is not in the public
+      tree. <strong>A2 is not independently reproducible from this repository</strong>, and
+      describing it as reproducible would be the claim this page exists to avoid making.
+    </p>
+  </Callout>
+
+  <section id="what" aria-labelledby="what-h">
+    <h2 id="what-h">What A2 is</h2>
+
+    <p>
+      An independent check of the PVT correlation set against reference equations of state
+      for three pure components, entered through their true critical constants so that no
+      pseudocritical correlation contaminates the attribution. Its pre-registered experiments
+      are:
+    </p>
+
+    <ul>
+      <li>
+        <strong>Deviation factor</strong> from three correlations against pure-component
+        reference states for methane, carbon dioxide and nitrogen.
+      </li>
+      <li>
+        <strong>A control on the reference side of that comparison</strong>: the field gas
+        constant, the unit chain and the molar masses the comparison rests on, recomputed
+        from primary definitions rather than from the library under test.
+      </li>
+      <li>
+        <strong>Viscosity</strong> from the Lee-Gonzalez-Eakin correlation against the
+        reference methane viscosity, with the reference density supplied directly so that the
+        comparison does not inherit the deviation-factor experiment's error, plus a positive
+        control on the viscosity instrument itself.
+      </li>
+      <li>
+        <strong>A bibliographic conflict turned into a number</strong>: the two values in
+        circulation for a pseudocritical-pressure constant, converted from a citation
+        question into a bounded difference in the pseudocritical pressure, the deviation
+        factor and the gas formation volume factor.
+      </li>
+      <li>
+        <strong>A declared double extrapolation</strong>: a pseudocritical correlation plus an
+        acid-gas correction applied to pure carbon dioxide, with the profile that bounds what
+        the correction can repair at all.
+      </li>
+    </ul>
+
+    <p>
+      The run script is in the public tree and can be read without being run. It exits
+      non-zero when the reference tables are absent, which is the correct behaviour and not a
+      defect: a check whose oracle is missing has not passed, and producing a result from
+      nothing would be worse than stopping.
+    </p>
+  </section>
+
+  <section id="why" aria-labelledby="why-h">
+    <h2 id="why-h">Why it is withheld</h2>
+
+    <p>
+      The reference values come from the NIST Chemistry WebBook, Standard Reference Database
+      69. NIST Standard Reference Data is a statutory exception to the usual rule that works
+      of the United States Government are in the public domain: the Standard Reference Data
+      Act, Public Law 90-396, lets the Secretary of Commerce assert copyright in it, and the
+      WebBook does assert it.
+    </p>
+
+    <p>
+      Two NIST pages were retrieved and they disagree in tone while agreeing in effect. The
+      older public-law page states that none of the data may be reproduced without prior
+      permission, and carries NIST's own banner saying the page is no longer being updated.
+      The current licensing statement the WebBook's metadata points at does not repeat that
+      sentence, but it separates Standard Reference Data from a fair-use section it scopes to
+      material <em>not</em> covered by the Act. Neither page establishes that citation alone
+      permits redistributing an extract, and no carve-out for small extracts or for scientific
+      use was found on either.
+    </p>
+
+    <p>
+      So the project publishes metadata instead of values: the exact request URLs, the
+      declared units, the isotherms and pressure grid, the row counts, the per-property
+      citations, and a SHA-256 digest of each file. The tables themselves are absent from the
+      tree and from its history.
+    </p>
+
+    <Callout kind="superseded" title="What the previous framing got wrong">
+      <p>
+        <strong>[SUPERSEDED]</strong> An earlier revision of this repository framed the
+        requirement as <em>attribution</em>: cite the source and the per-species reference
+        equation, and the extract may travel. A field in the reference manifest was even
+        called <code>attribution_required</code>, which read as if satisfying it settled the
+        matter. That was wrong. Attribution and redistribution are different permissions, the
+        way access and redistribution are different permissions. Citation is still required;
+        it is simply not sufficient.
+      </p>
+    </Callout>
+
+    <Callout kind="note" title="What this decision is not">
+      <p>
+        It is a conservative publication decision and explicitly <strong>not an adjudication
+        of copyright exceptions</strong>. It is not legal advice, and it is not a finding that
+        redistribution would infringe. A defensible fair-use or de-minimis argument may well
+        exist for a few hundred rows of thermophysical values used as a test oracle. The point
+        is that this project would have to make that argument in public, about somebody else's
+        asserted copyright, with no advice, and the cost of being wrong is asymmetric. The
+        claim made here is the narrow one the retrieved evidence supports: permission to
+        redistribute has not been established, and an unestablished permission is not a
+        permission.
+      </p>
+    </Callout>
+  </section>
+
+  <section id="cost" aria-labelledby="cost-h">
+    <h2 id="cost-h">What the decision costs, stated plainly</h2>
+
+    <p>
+      {VERIFICATION.testsSkipped} skipped tests and one unavailable study. In the public
+      verification profile, {VERIFICATION.testsCollected} tests are collected,
+      {" "}{VERIFICATION.testsPassed} pass and {VERIFICATION.testsSkipped} skip; every one of
+      the skips is a reference-dependent test, and the skip count is measured by the
+      verification runner rather than asserted, so a test quietly added or removed changes the
+      count and fails the run.
+    </p>
+
+    <p>
+      The consequence for the rest of the site is the one that matters:
+      <strong> the public profile is not externally validated.</strong> It shows that the code
+      agrees with its own committed snapshots, its own analytic limits and its own closed
+      forms. A profile that cannot see an independent reference cannot tell you the library is
+      right about the physical world, and nothing on this site describes it as validated,
+      benchmarked against reality, or field-proven. That is set out in full on the
+      {" "}<a href={href("/methods/")}>methods page</a>.
+    </p>
+
+    <p>
+      Stating the price is better than a stub that pretends the oracle ran.
+    </p>
+  </section>
+
+  <section id="run" aria-labelledby="run-h">
+    <h2 id="run-h">What you would need to run it yourself</h2>
+
+    <ol>
+      <li>
+        <strong>Obtain the reference data yourself</strong>, on whatever basis is available to
+        you. The repository publishes the acquisition recipe as a readable script and the
+        exact request parameters in a manifest, so the retrieval is reproducible without the
+        repository ever holding the values.
+      </li>
+      <li>
+        <strong>Place the files where the test oracle looks for them</strong>, under the
+        repository's reference directory. The verification profile refuses to move restricted
+        data for you: it checks the digests against the committed manifest, reports the
+        reference-dependent tests as not run, and tells you to place or symlink the files
+        yourself. Writing restricted data into a repository tree is a decision for the person
+        who holds it, not for a script.
+      </li>
+      <li>
+        <strong>Check the digests.</strong> Each file's required SHA-256 is in the manifest.
+        If your extract does not match, you have a different extract, and the comparison is a
+        different comparison.
+      </li>
+      <li>
+        <strong>Run the external-reference profile</strong>, which requires both the path to
+        your extract and a stated access basis. The access basis is recorded in the report on
+        purpose: access rights and redistribution rights are different rights, and a
+        verification record that does not say which one the operator had is not a record worth
+        keeping.
+      </li>
+      <li>
+        <strong>Run A2's own script</strong> once the extract is in place. It will produce the
+        study's summary and run record locally. Neither is committed here.
+      </li>
+    </ol>
+
+    <p>
+      Cite the WebBook and the per-species reference equation recorded in the manifest
+      wherever you report those values or results derived from them.
+    </p>
+  </section>
+
+  <section id="status" aria-labelledby="status-h">
+    <h2 id="status-h">Status</h2>
+
+    <StatusTable
+      caption="What has and has not run for A2 in the public profile."
+      captionTitle="A2"
+      rows={[
+        {
+          check: "A2 case study",
+          scope: "Correlations against reference equations of state for three pure components",
+          environment: "not run anywhere in the public profile",
+          state: "BLOCKED",
+          note: "its reference inputs are not in this tree; the run script exits 1 rather than producing a result from nothing",
+          evidence: { label: "no committed summary in the public tree" },
+        },
+        {
+          check: "Reference-dependent tests",
+          scope: `${VERIFICATION.testsSkipped} tests comparing computed deviation factors, densities and viscosities against the reference tables`,
+          environment: "not run; skipped with a reason that names the missing directory",
+          state: "NOT RUN",
+          note: "expected in the public profile, and the count is measured rather than asserted",
+          evidence: { label: "Methods", path: "/methods/" },
+        },
+        {
+          check: "Digest verification of the reference tables",
+          scope: "SHA-256 of each extract against the committed manifest",
+          environment: "not applicable in the public profile",
+          state: "NOT APPLICABLE",
+          note: "hashing a file the tree is supposed not to have would fail by design and would tell a reader nothing; the manifest is validated as a provenance record instead",
+          evidence: { label: "Methods", path: "/methods/" },
+        },
+        {
+          check: "Publication of A2 exhibits on this site",
+          scope: "Any figure, table or number derived from the reference extract",
+          environment: "not applicable",
+          state: "NOT APPLICABLE",
+          note: "withheld by decision, not by omission",
+          evidence: { label: "This page", path: "/studies/a2/" },
+        },
+      ]}
+      id="a2-status"
+    />
+  </section>
+</BaseLayout>

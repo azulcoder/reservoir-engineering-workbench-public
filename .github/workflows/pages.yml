@@ -1,0 +1,577 @@
+# GitHub Pages deployment.
+#
+# STATUS: CONFIGURED, NOT EXECUTED, NOT TRIGGERED.
+#
+# This repository has no git remote. No hosted project exists for it, no Pages site has
+# been provisioned, and this workflow has never run. It is written now so that the
+# deployment path is reviewable before it is used, not so that anything is published.
+# Reading it here is not evidence that it works; docs/release/DEPLOYMENT_RUNBOOK.md sets
+# out what would have to be observed before anyone may say that it does.
+#
+# Three things keep it inert, on purpose:
+#
+#   1. The only trigger is workflow_dispatch. There is no push trigger and no schedule,
+#      so merging to any branch cannot deploy. A human starts this or nothing does.
+#   2. The preflight job requires repository configuration that does not exist. No
+#      account name, repository name, or domain is invented anywhere in this file; the
+#      real values are supplied by whoever owns the eventual repository, and until they
+#      are, preflight fails loudly and every job behind it is skipped.
+#   3. The deploy job is the only job with write permissions of any kind, and it runs
+#      only after the artifact it deploys has been built and tested in this same run.
+#
+# What gets deployed
+# ------------------
+# One directory, built once, in the build job below, at the real base path. That exact
+# directory is fingerprinted, served, driven through the full browser suite, and
+# fingerprinted again; only then is it uploaded. There is no second build between the
+# tests and the upload, and nothing here deploys a committed dist. The deploy job
+# consumes the artifact this run produced, by name, from this run.
+
+name: pages
+
+on:
+  workflow_dispatch:
+    inputs:
+      acknowledge:
+        description: >-
+          Type PUBLISH to confirm you intend to make this content public. This is a
+          second human step on top of the configuration gate below.
+        required: true
+        type: string
+        default: ""
+      expected_sha:
+        description: >-
+          The full 40-character commit SHA this deployment is meant to publish. Preflight
+          compares it with the commit the run actually checked out and fails if they
+          differ.
+        required: true
+        type: string
+        default: ""
+
+# Read-only at the top, so every job that does not say otherwise is read-only. Only the
+# deploy job widens this, and it widens it to the two scopes Pages actually needs.
+permissions:
+  contents: read
+
+# Never let two deployments race. Unlike the verification pipeline, an in-flight deploy
+# is not cancelled: cancelling one halfway is how a site ends up half-published.
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  # The interpreter the canonical sequence runs under, matching ci.yml.
+  PRIMARY_PYTHON: "3.13"
+
+  # Exact, to the patch, and the same value the verification workflow pins. The figure
+  # renderer records the interpreter in site/src/generated/figures/manifest.json, so a
+  # different patch release changes a committed file. See the note in ci.yml.
+  NODE_VERSION: "24.14.0"
+
+  # The deployment build is tested by the same suite, under the same skip policy, as
+  # every other build -- and now by literally the same file rather than by a copy of it
+  # kept in step by hand. The policy is site/tests/skip-policy.json and the gate is
+  # scripts/check_skip_policy.py. The two inline copies that used to live here and in
+  # ci.yml matched whole English sentences, which is how the deployment build could have
+  # ended up held to a different standard than the pull-request build.
+
+  # The port the deployment build is served on while it is being tested. It is distinct
+  # from the two fixture ports in ci.yml so that a local reproduction of all three can
+  # run side by side without one server answering for another.
+  QA_PORT: "4324"
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Gate 1: does the real configuration exist yet. Today it does not.
+  # ---------------------------------------------------------------------------
+  preflight:
+    name: deployment preflight
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      site_origin: ${{ steps.config.outputs.site_origin }}
+      base_path: ${{ steps.config.outputs.base_path }}
+    steps:
+      - name: Human acknowledgement
+        env:
+          ACK: ${{ inputs.acknowledge }}
+        run: |
+          if [ "${ACK}" != "PUBLISH" ]; then
+            echo "::error::the acknowledgement input was '${ACK}', not PUBLISH."
+            echo "::error::Deployment makes this content public. Re-run and type it."
+            exit 1
+          fi
+
+      - name: This run publishes the commit it was asked to publish
+        env:
+          # Both through the environment, never interpolated into the script body. An
+          # input is a string a human typed and ${{ }} substitution happens before bash
+          # sees the line, so an interpolated input is code, not data.
+          EXPECTED: ${{ inputs.expected_sha }}
+          ACTUAL: ${{ github.sha }}
+          REF: ${{ github.ref }}
+        # `gh workflow run --ref` takes a branch or a tag, not a commit, so the ref that
+        # started this run and the commit it resolved to are two different things and the
+        # second is decided on the server after the dispatch. A branch that moves between
+        # the dispatcher's check and the checkout would deploy a commit nobody reviewed.
+        # This compares the SHA the operator named with the SHA this run is actually
+        # standing on, before any expensive step, and it is the strong end of that
+        # binding: the dispatcher's own ref-to-SHA check is a courtesy, this is the gate.
+        run: |
+          set -euo pipefail
+          if ! printf '%s' "${EXPECTED}" | grep -Eq '^[0-9a-f]{40}$'; then
+            echo "::error::expected_sha must be a full 40-character lowercase commit SHA."
+            echo "::error::It was ${#EXPECTED} character(s). Abbreviated SHAs, branch names"
+            echo "::error::and tags are all rejected: the point is to name one commit."
+            exit 1
+          fi
+          if [ "${EXPECTED}" != "${ACTUAL}" ]; then
+            echo "::error::this run is on ${ACTUAL}, but expected_sha names ${EXPECTED}."
+            echo "::error::The ref ${REF} does not resolve to the commit you asked to"
+            echo "::error::publish. Nothing has been built or deployed. Re-dispatch against"
+            echo "::error::a ref that resolves to ${EXPECTED}, or check what moved."
+            exit 1
+          fi
+          echo "publishing ${ACTUAL} via ${REF}"
+          {
+            echo "### Source"
+            echo ""
+            echo "- requested: \`${EXPECTED}\`"
+            echo "- this run:  \`${ACTUAL}\`"
+            echo "- ref:       \`${REF}\`"
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Required repository configuration
+        id: config
+        # These are GitHub Actions repository variables (Settings -> Secrets and
+        # variables -> Actions -> Variables). None of them is set, because there is no
+        # repository. They are named here rather than guessed: this file must not invent
+        # an account name, a repository name, or a domain, and a placeholder that looked
+        # plausible would be worse than one that fails. Nothing about the destination is
+        # inferable from an author's name, and nothing here tries.
+        #
+        # They are variables, not secrets. A site origin and a base path are printed in
+        # every page the build emits; treating them as secrets would be theatre, and it
+        # would also hide them from the logs that make a deployment auditable.
+        env:
+          SITE_ORIGIN: ${{ vars.PAGES_SITE_ORIGIN }}
+          BASE_PATH: ${{ vars.PAGES_BASE_PATH }}
+          APPROVAL: ${{ vars.PAGES_PUBLICATION_APPROVED }}
+        run: |
+          missing=0
+
+          if [ -z "${SITE_ORIGIN}" ]; then
+            echo "::error::vars.PAGES_SITE_ORIGIN is not set. Set it to the origin the"
+            echo "::error::site will actually be served from, for example the scheme and"
+            echo "::error::host of the Pages URL GitHub assigns once Pages is enabled."
+            missing=1
+          elif ! printf '%s' "${SITE_ORIGIN}" | grep -Eq '^https://[A-Za-z0-9.-]+$'; then
+            echo "::error::vars.PAGES_SITE_ORIGIN is '${SITE_ORIGIN}', which is not an"
+            echo "::error::https origin of the form https://host. Supply the real one."
+            missing=1
+          fi
+
+          if [ -z "${BASE_PATH}" ]; then
+            echo "::error::vars.PAGES_BASE_PATH is not set. Set it to the path the site is"
+            echo "::error::served under ('/' for a user or organisation site, '/<repo>/'"
+            echo "::error::for a project site). The site build needs it to emit correct"
+            echo "::error::asset URLs, and getting it wrong produces a site of broken links."
+            missing=1
+          elif ! printf '%s' "${BASE_PATH}" | grep -Eq '^/([A-Za-z0-9._-]+/)*$'; then
+            echo "::error::vars.PAGES_BASE_PATH is '${BASE_PATH}'. A base path must begin"
+            echo "::error::and end with '/' and contain no scheme, host or query. Astro"
+            echo "::error::joins it to every route, and the static server the QA suite"
+            echo "::error::runs against matches on that exact prefix, so a missing"
+            echo "::error::trailing slash produces a site whose own links 404."
+            missing=1
+          fi
+
+          if [ "${APPROVAL}" != "approved" ]; then
+            echo "::error::vars.PAGES_PUBLICATION_APPROVED is '${APPROVAL}', not 'approved'."
+            echo "::error::Publication is a decision about a repository that does not exist"
+            echo "::error::yet. Whoever creates it records that decision by setting this."
+            missing=1
+          fi
+
+          if [ "${missing}" -ne 0 ]; then
+            echo "::error::preflight failed: the deployment configuration for this"
+            echo "::error::repository has not been created. This is the expected result"
+            echo "::error::today. No remote is configured and no Pages site exists."
+            echo "::error::docs/release/DEPLOYMENT_RUNBOOK.md is the sequence that changes it."
+            exit 1
+          fi
+
+          echo "site_origin=${SITE_ORIGIN}" >> "${GITHUB_OUTPUT}"
+          echo "base_path=${BASE_PATH}" >> "${GITHUB_OUTPUT}"
+          echo "preflight passed: origin ${SITE_ORIGIN}, base path ${BASE_PATH}"
+
+  # ---------------------------------------------------------------------------
+  # Gate 2: the same verification the pull-request pipeline runs. Reused, not restated.
+  #
+  # No secrets are passed. `secrets: inherit` is deliberately absent: the called
+  # workflow reads none, and handing it the whole secret set so it can ignore them is
+  # how a reusable workflow becomes an exfiltration path the day someone adds a step.
+  #
+  # The two fixture bases ('/' and the project base) are what this gate covers. The real
+  # deployment base is not passed down to it, because the build job below builds at the
+  # real base and tests THAT build, and deploys it. Passing it here as well would add a
+  # third build whose only effect would be to make the tested artifact and the deployed
+  # artifact two different directories.
+  # ---------------------------------------------------------------------------
+  verification:
+    name: required checks
+    needs: preflight
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+
+  # ---------------------------------------------------------------------------
+  # Build and test the artifact that will ship. Read-only.
+  # ---------------------------------------------------------------------------
+  build:
+    name: build and test the deployment artifact
+    needs: [preflight, verification]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    env:
+      SITE_ORIGIN: ${{ needs.preflight.outputs.site_origin }}
+      BASE_PATH: ${{ needs.preflight.outputs.base_path }}
+      DIST: dist-deploy
+    outputs:
+      fingerprint: ${{ steps.fingerprint.outputs.fingerprint }}
+      files: ${{ steps.fingerprint.outputs.files }}
+      artifact_id: ${{ steps.upload.outputs.artifact_id }}
+    steps:
+      - name: Configuration reached this job intact
+        # A job cannot see another job's environment, only its declared outputs. If an
+        # output were ever renamed or dropped, these would arrive empty and the build
+        # would quietly produce a root-based site and deploy it under a project path.
+        run: |
+          if [ -z "${SITE_ORIGIN}" ] || [ -z "${BASE_PATH}" ]; then
+            echo "::error::the deployment origin or base path did not reach this job."
+            echo "::error::origin='${SITE_ORIGIN}' base='${BASE_PATH}'. Refusing to build"
+            echo "::error::with a default base, which would ship a site of broken links."
+            exit 1
+          fi
+          echo "building for ${SITE_ORIGIN}${BASE_PATH}"
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: A build output must not be committed
+        run: |
+          if [ -e site/dist ] || [ -e "site/${DIST}" ]; then
+            echo "::error::a build directory exists in a fresh checkout. It is a build"
+            echo "::error::product and must not be committed: a committed directory cannot"
+            echo "::error::be shown to have been built from the figure data the"
+            echo "::error::verification workflow just checked, which is the whole reason"
+            echo "::error::this job builds it here."
+            exit 1
+          fi
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ env.PRIMARY_PYTHON }}
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install the locked site toolchain
+        # npm ci, never npm install. build_release.py treats a missing site/node_modules
+        # as BLOCKED rather than as a step it can skip, so this has to succeed before the
+        # sequence will run at all.
+        run: |
+          if [ ! -f site/package-lock.json ]; then
+            echo "::error::site/package-lock.json is missing; npm ci cannot run and"
+            echo "::error::npm install would resolve versions at deploy time."
+            exit 1
+          fi
+          npm ci --prefix site
+
+      - name: Canonical release sequence at the real base
+        # The same script the verification workflow runs, with two differences, both of
+        # them in the direction of more coverage rather than less.
+        #
+        #   --site-url   the real origin, so the built pages carry absolute URLs that
+        #                point at where this is actually served. Nothing invents it; it
+        #                comes from the configuration the preflight job validated.
+        #   --verify-cases all
+        #                every synthetic case is re-run and diffed against its committed
+        #                snapshot. The verification workflow narrows this to "fast"
+        #                because its own synthetic-cases job covers the rest; this job
+        #                produces the artifact that ships, so nothing about it is
+        #                allowed to be narrower than it looks.
+        run: |
+          python3 scripts/build_release.py \
+            --base-path "${BASE_PATH}" \
+            --out-dir "site/${DIST}" \
+            --site-url "${SITE_ORIGIN}" \
+            --json "${RUNNER_TEMP}/build-release.json" \
+            --log-dir "${RUNNER_TEMP}/build-release-logs" \
+            --verify-cases all
+
+      - name: Every step of the sequence passed, with no narrowing at all
+        # For the deployment build the allowed set of coverage reductions is empty. If
+        # the script reports any, this job stops: an artifact that is about to be made
+        # public must not have been validated by a sequence that quietly checked less
+        # than the documented one.
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          summary = json.loads(Path(os.environ["RUNNER_TEMP"], "build-release.json").read_text())
+          problems = []
+          if not summary["steps"]:
+              problems.append("the sequence recorded no steps at all.")
+          for step in summary["steps"]:
+              print(f"{step['status'].upper():<8} {step['step']:<26} {step['title']}")
+              if step["status"] != "passed":
+                  problems.append(f"{step['step']}: {step['status']} -- {step['detail']}")
+
+          for note in summary.get("coverage_reductions") or []:
+              problems.append(
+                  f"coverage reduction on the deployment build: {note!r}. This artifact is "
+                  f"about to be published; it is validated at full width or not at all."
+              )
+
+          for problem in problems:
+              print(f"::error::{problem}")
+          raise SystemExit(1 if problems else 0)
+          PY
+
+      - name: The committed figures and downloads did not drift
+        # The sequence regenerates site/src/generated/figures and site/public/data in
+        # place. This is the separate statement that the bytes committed to git were
+        # already the bytes the generators produce, which is what makes
+        # site/public/data/index.json's "byte-identical to the file the page inlines"
+        # claim true of the published tree and not only of this runner's temporary state.
+        run: |
+          set -euo pipefail
+          drift="$(git status --porcelain -- site/src/generated site/public/data)"
+          if [ -n "${drift}" ]; then
+            echo "::error::running the canonical sequence changed committed files, so the"
+            echo "::error::tree being deployed is not the tree the generators produce:"
+            printf '%s\n' "${drift}"
+            exit 1
+          fi
+          echo "committed figures and downloads reproduce byte for byte"
+
+      - name: Fingerprint the artifact
+        id: fingerprint
+        working-directory: site
+        run: |
+          set -euo pipefail
+          test -d "${DIST}" || { echo "::error::${DIST} was not produced"; exit 1; }
+          if [ -z "$(ls -A "${DIST}")" ]; then
+            echo "::error::${DIST} is empty. Refusing to publish an empty site."
+            exit 1
+          fi
+          ( cd "${DIST}" && find . -type f -print0 | sort -z \
+            | xargs -0 sha256sum ) > "${RUNNER_TEMP}/before.sha256"
+          files="$(wc -l < "${RUNNER_TEMP}/before.sha256")"
+          root="$(sha256sum "${RUNNER_TEMP}/before.sha256" | cut -d' ' -f1)"
+          echo "files=${files}" >> "${GITHUB_OUTPUT}"
+          echo "fingerprint=${root}" >> "${GITHUB_OUTPUT}"
+          echo "${files} files, fingerprint ${root}"
+
+      - name: Install the browser engines
+        working-directory: site
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: Serve the artifact and run the browser suite against it
+        working-directory: site
+        # The artifact is tested exactly as it will be served: the same directory, at the
+        # same base path, through the same static server the local QA runs use, which
+        # refuses to serve a build made for a different base.
+        #
+        # QA_RELEASE=1 leaves the Playwright config with no webServer at all. QA_REUSE=1
+        # was not enough: `reuseExistingServer` decides between this server and
+        # Playwright's own by probing a URL, so a server that dies after the readiness
+        # check below would hand the suite to a fallback that rebuilds into site/dist and
+        # tests THAT -- and this directory would still pass its after-fingerprint, because
+        # nothing touched it. This is the artifact that gets uploaded, so the question of
+        # which bytes the browser actually visited is the whole question.
+        env:
+          QA_RELEASE: "1"
+          QA_WORKERS: "4"
+        run: |
+          set -uo pipefail
+          export QA_BASE="${BASE_PATH}"
+          export QA_DIST="${DIST}"
+          # Teardown, not a check: the server is a child of this step and must go away
+          # when the step ends however it ends. It is written as a function returning 0
+          # so no failure-swallowing idiom appears anywhere in this file.
+          cleanup() { kill "${server}" 2>/dev/null; return 0; }
+          node tests/serve.mjs &
+          server=$!
+          trap cleanup EXIT
+
+          url="http://127.0.0.1:${QA_PORT}${QA_BASE}"
+          ready=0
+          for _ in $(seq 1 60); do
+            if curl -fsS -o /dev/null "${url}"; then ready=1; break; fi
+            if ! kill -0 "${server}" 2>/dev/null; then break; fi
+            sleep 1
+          done
+          if [ "${ready}" -ne 1 ]; then
+            echo "::error::the static server never answered ${url}. It refuses to serve a"
+            echo "::error::build made for a different base than the one under test, so the"
+            echo "::error::base path in configuration and the base path in the build"
+            echo "::error::disagree. Nothing is deployed."
+            exit 1
+          fi
+
+          set -e
+          npx playwright test
+
+      - name: Skip policy
+        if: always()
+        working-directory: site
+        # The same gate, the same policy file, the same command the pull-request build and
+        # the local release path run. Not "identical rules": the same file. The deployment
+        # build cannot be held to a different standard than the build that was reviewed,
+        # because there is no second copy to drift.
+        run: |
+          set -euo pipefail
+          python3 "${GITHUB_WORKSPACE}/scripts/check_skip_policy.py" \
+            --report "test-results/report-${QA_PORT}.json" \
+            --engines chromium,firefox,webkit \
+            --json "test-results/skip-policy-${QA_PORT}.json" \
+            --github
+
+      - name: The artifact that ships is the artifact that was tested
+        working-directory: site
+        # Not `if: always()`. This runs on the success path only, immediately before the
+        # upload, and it is the link in the chain that makes "tested" and "deployed" the
+        # same noun: the same file list, the same digests, no rebuild in between.
+        run: |
+          set -euo pipefail
+          ( cd "${DIST}" && find . -type f -print0 | sort -z \
+            | xargs -0 sha256sum ) > "${RUNNER_TEMP}/after.sha256"
+          if ! diff -u "${RUNNER_TEMP}/before.sha256" "${RUNNER_TEMP}/after.sha256"; then
+            echo "::error::${DIST} changed while the browser suite was running. The QA"
+            echo "::error::report is about bytes that are no longer on disk, so there is"
+            echo "::error::no tested artifact to deploy."
+            exit 1
+          fi
+          echo "fingerprint unchanged: ${{ steps.fingerprint.outputs.fingerprint }}"
+
+      - name: Record what is being published
+        run: |
+          {
+            echo "### Deployment artifact"
+            echo ""
+            echo "| field | value |"
+            echo "| --- | --- |"
+            echo "| commit | \`${GITHUB_SHA}\` |"
+            echo "| origin | \`${SITE_ORIGIN}\` |"
+            echo "| base path | \`${BASE_PATH}\` |"
+            echo "| files | ${{ steps.fingerprint.outputs.files }} |"
+            echo "| fingerprint (sha256 of the sorted digest listing) | \`${{ steps.fingerprint.outputs.fingerprint }}\` |"
+            echo ""
+            echo "Copy this block into docs/release/DEPLOYMENT_RUNBOOK.md, step 7."
+          } >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Upload the reviewed build
+        id: upload
+        # path is the directory built and tested in this job, and nothing else. Not the
+        # case studies, not data/, not the run artefacts, not a second build. The name
+        # comes from the job's DIST variable so there is no second place to change it.
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: site/${{ env.DIST }}
+
+      - name: Gather the evidence into one directory
+        if: always()
+        # One root, so the uploaded artifact has a predictable layout. Mixing a
+        # workspace-relative path with an absolute RUNNER_TEMP path in a single upload
+        # leaves the action to pick a common ancestor and the result is a tree nobody can
+        # guess from the artifact name. The manifest records what was actually found, so
+        # an artifact that is missing the Playwright report says so in writing rather than
+        # by absence.
+        run: |
+          set -euo pipefail
+          dest="${RUNNER_TEMP}/evidence"
+          mkdir -p "${dest}"
+          if [ -d site/test-results ]; then cp -R site/test-results "${dest}/test-results"; fi
+          if [ -f "${RUNNER_TEMP}/build-release.json" ]; then
+            cp "${RUNNER_TEMP}/build-release.json" "${dest}/build-release.json"
+          fi
+          if [ -d "${RUNNER_TEMP}/build-release-logs" ]; then
+            cp -R "${RUNNER_TEMP}/build-release-logs" "${dest}/build-release-logs"
+          fi
+          ( cd "${dest}" && find . -type f | sort ) > "${dest}/MANIFEST.txt"
+          cat "${dest}/MANIFEST.txt"
+
+      - name: Keep the evidence for the deployment build
+        if: always()
+        # Ninety days, not the fourteen the verification workflow keeps. This is the
+        # evidence for something that was published, and step 7 of
+        # docs/release/DEPLOYMENT_RUNBOOK.md asks for it by name.
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: evidence-deployment
+          path: ${{ runner.temp }}/evidence/
+          if-no-files-found: error
+          retention-days: 90
+
+  # ---------------------------------------------------------------------------
+  # Deploy. The only job in either workflow with write permissions of any kind.
+  # ---------------------------------------------------------------------------
+  deploy:
+    name: deploy to Pages
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: What is about to go live
+        # No checkout. This job needs no repository contents; it publishes the artifact
+        # the build job produced, and a checkout here would only widen what a job holding
+        # pages:write can touch.
+        run: |
+          echo "commit      ${GITHUB_SHA}"
+          echo "files       ${{ needs.build.outputs.files }}"
+          echo "fingerprint ${{ needs.build.outputs.fingerprint }}"
+          echo "artifact    ${{ needs.build.outputs.artifact_id }}"
+
+      - name: Deploy
+        id: deployment
+        # Deploys the artifact uploaded by this run, which is the directory the browser
+        # suite ran against. It fails if Pages has not been enabled on the repository,
+        # which is another piece of real configuration that does not exist today.
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
+
+      - name: Record the deployment
+        run: |
+          {
+            echo "### Deployed"
+            echo ""
+            echo "| field | value |"
+            echo "| --- | --- |"
+            echo "| commit | \`${GITHUB_SHA}\` |"
+            echo "| page URL | ${{ steps.deployment.outputs.page_url }} |"
+            echo "| artifact fingerprint | \`${{ needs.build.outputs.fingerprint }}\` |"
+            echo ""
+            echo "Verification of the live URLs is step 8 of"
+            echo "docs/release/DEPLOYMENT_RUNBOOK.md and is not done by this workflow."
+          } >> "${GITHUB_STEP_SUMMARY}"

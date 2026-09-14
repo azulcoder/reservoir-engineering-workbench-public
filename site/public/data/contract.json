@@ -1,0 +1,61 @@
+{
+  "contract_version": "1.0.0",
+  "case_id": "A4_misleading_fit_counterexample",
+  "numerical_source": {
+    "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json",
+    "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+    "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
+    "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506"
+  },
+  "export": {
+    "exporter_path": "scripts/export_presentation_data.py",
+    "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
+    "reconciliation_checks_passed": 43,
+    "reconcile_relative_tolerance": 1e-12
+  },
+  "units": {
+    "pressure": "psia (absolute)",
+    "p_over_z": "psia",
+    "cumulative_gas": "scf, also reported as Bscf = 1e9 scf",
+    "time": "days, also reported as years of 365.25 days",
+    "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
+  },
+  "evidence_class": "synthetic; generator and estimator are separate modules; known inventory is evaluation-only information that no field measurement provides",
+  "files": [
+    {
+      "figure_data": "f01_f02_scenarios",
+      "path": "f01_f02_scenarios.json",
+      "sha256": "dd3d8d265ac77a893fa949b37225b76ea6f56259c7cf5ce706d013c04512f499"
+    },
+    {
+      "figure_data": "f05_holdout",
+      "path": "f05_holdout.json",
+      "sha256": "4dcf5257b65b55c0a76f8b6305a9a94e1d329ab690be340b6eb691d66ce3b51c"
+    },
+    {
+      "figure_data": "f03_bias_sweep",
+      "path": "f03_bias_sweep.json",
+      "sha256": "e4669e92d1d3dddb06baa10c20cf2701b616b1625c7f2ceeb10d56ff3e584b59"
+    },
+    {
+      "figure_data": "f04_progressive",
+      "path": "f04_progressive.json",
+      "sha256": "908e1e796c9fba54994d4ad916ce6dc75af4b3594cc1ca146d4d1ad113ae46bb"
+    },
+    {
+      "figure_data": "f06_detection",
+      "path": "f06_detection.json",
+      "sha256": "568c3f68405172d552f925c2173bab5f3620e9c76b50fce8b26a74a71abaf9a9"
+    },
+    {
+      "figure_data": "f07_z_mismatch",
+      "path": "f07_z_mismatch.json",
+      "sha256": "8adb8d8dc0b0024ca2e6c2085e3040e2d8e1d0e3be894f3efc27638d7db6d0fc"
+    },
+    {
+      "figure_data": "f08_refinement",
+      "path": "f08_refinement.json",
+      "sha256": "5e124ef42a76a1e0761b0fbd6ec1b6c9dc552575ea75ccf3b408bfaeb292565e"
+    }
+  ]
+}

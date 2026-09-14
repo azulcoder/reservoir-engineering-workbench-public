@@ -1,0 +1,464 @@
+---
+/**
+ * Methods: the two verification profiles, the measured counts, what is NOT RUN and why,
+ * the unit conventions, and the data and provenance policy. F09 is the exhibit.
+ *
+ * The status table below carries five states and uses all of them. NOT RUN, BLOCKED and
+ * NOT APPLICABLE are not degraded forms of PASS; they are the honest outcome for a check
+ * whose preconditions are absent, and this page depends on being able to say so.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Figure from "../../components/Figure.astro";
+import DataTable from "../../components/DataTable.astro";
+import StatusTable from "../../components/StatusTable.astro";
+import Callout from "../../components/Callout.astro";
+import { checkedExhibit, provenance, unitsLine } from "../../scripts/exhibits";
+import { download, dataIndex } from "../../scripts/public-data";
+import { NAV, VERIFICATION, NOT_RUN, GATE, FOUR_STATEMENTS } from "../../scripts/site";
+import { loadContract } from "../../lib/figures";
+import { href } from "../../lib/urls";
+
+const f09 = await checkedExhibit("F09");
+const contract = loadContract();
+const prov = provenance();
+const idx = dataIndex();
+const contractDownload = await download("contract.json");
+
+const digestRows = prov.dataFileDigests.map((d) => ({
+  file: d.file,
+  declared: d.declared,
+  match: d.match ? "yes" : "no",
+}));
+
+const unitRows = Object.entries(contract.units).map(([k, v]) => ({
+  q: k.replace(/_/g, " "),
+  v,
+}));
+
+const contents = [
+  { id: "profiles", label: "Two verification profiles" },
+  { id: "measured", label: "What was measured" },
+  { id: "notrun", label: "What is NOT RUN, and why" },
+  { id: "units", label: "Unit conventions" },
+  { id: "provenance", label: "Data and provenance policy" },
+  { id: "checking", label: "Checking it yourself" },
+];
+
+const description =
+  "The two verification profiles, the measured test and check counts, what is deliberately not run and why, the unit conventions, and the data and provenance policy.";
+---
+
+<BaseLayout
+  title="Methods"
+  description={description}
+  canonicalPath="/methods/"
+  nav={NAV}
+  contents={contents}
+>
+  <h1>Methods</h1>
+
+  <p class="lede">
+    This page is the record of what has actually been checked, what has not, and how to
+    reproduce either. It is written to be falsifiable: every number on it came from running a
+    command on a named date on a named interpreter, and the commands are here so that a
+    reader can disagree by running them.
+  </p>
+
+  <Callout kind="note">
+    <p>
+      <strong>Two claims this page deliberately does not make:</strong> that the library has
+      been validated against field data, and that a hosted continuous-integration service has
+      run anything. Neither has happened.
+    </p>
+  </Callout>
+
+  <section id="profiles" aria-labelledby="profiles-h">
+    <h2 id="profiles-h">Two verification profiles</h2>
+
+    <p>
+      Verification runs at one of two depths, and the difference is worth a name because it
+      is the difference between "this code agrees with itself" and "this code agrees with
+      something it did not produce".
+    </p>
+
+    <h3>public-core</h3>
+    <p>
+      Everything a clone of the public tree can run, with no restricted files and no network.
+      It covers the numerical core, the analytic and closed-form identities, the dependency
+      policy, and the synthetic studies, which it re-runs from scratch and compares against
+      their committed snapshots byte for byte.
+    </p>
+    <pre><code>python3 scripts/verify.py --profile public-core</code></pre>
+    <p>
+      <strong>This is a self-consistency and reproducibility result.</strong> The code agrees
+      with its own committed snapshots, its own analytic limits and its own closed forms, and
+      it has not drifted. {NOT_RUN.externalValidation}
+    </p>
+
+    <h3>external-reference</h3>
+    <p>
+      An explicit opt-in for a reader who has obtained the reference extract themselves. It
+      is the only profile that compares the library against values it did not produce, and it
+      requires both the path to the extract and a stated access basis, failing clearly without
+      either. The access basis is recorded in the report on purpose: access rights and
+      redistribution rights are different rights.
+    </p>
+    <pre><code>python3 scripts/verify.py --profile external-reference \
+    --reference-dir /path/to/your/extract \
+    --access-basis "how you came to hold this data"</code></pre>
+    <p>
+      It refuses to move data for you. If your copy lives elsewhere, the profile verifies its
+      digests against the committed manifest, reports the reference-dependent tests as not
+      run, and tells you to place or symlink the files yourself. See the
+      {" "}<a href={href("/studies/a2/")}>A2 availability page</a>.
+    </p>
+  </section>
+
+  <section id="measured" aria-labelledby="measured-h">
+    <h2 id="measured-h">What was measured</h2>
+
+    <p>
+      Measured on {VERIFICATION.date} with {VERIFICATION.interpreter}, and re-measured in this
+      candidate tree before publication. The two test runners disagree by exactly the skip
+      count, because one counts a skipped test in its total and the other does not:
+      {" "}{VERIFICATION.testsCollected} minus {VERIFICATION.testsSkipped} is
+      {" "}{VERIFICATION.testsPassed}.
+    </p>
+
+    <DataTable
+      caption={`Public-core profile, measured on ${VERIFICATION.date}. These are counts from a run, not targets.`}
+      captionTitle="Measured"
+      columns={[
+        { key: "q", label: "Quantity", rowHeader: true },
+        { key: "v", label: "Measured", numeric: true },
+      ]}
+      rows={[
+        { q: "tests collected", v: VERIFICATION.testsCollected },
+        { q: "tests passed", v: VERIFICATION.testsPassed },
+        { q: "tests failed or errored", v: VERIFICATION.testsFailedOrErrored },
+        { q: "tests skipped", v: VERIFICATION.testsSkipped },
+        { q: "reference-dependent tests, not run", v: VERIFICATION.testsSkipped },
+        { q: "checks collected", v: VERIFICATION.checksCollected },
+        { q: "checks passed", v: VERIFICATION.checksPassed },
+        { q: "mandatory checks failed", v: VERIFICATION.mandatoryChecksFailed },
+        { q: "synthetic studies reproduced", v: VERIFICATION.casesReproduced },
+        { q: "figure data files re-exported and diffed", v: VERIFICATION.figureDataFiles },
+        { q: "exporter reconciliation checks recorded", v: VERIFICATION.reconciliationChecks },
+        { q: "exporter reconciliation tolerance", v: VERIFICATION.reconcileTolerance },
+      ]}
+      id="t-measured"
+    />
+
+    <p>
+      There is no composite score anywhere on this site and no "N of M passing" badge. A
+      single number over a set of checks invites exactly the substitution the flagship study
+      is about: reading one aggregate statistic as if it answered a question about a quantity
+      it does not measure.
+    </p>
+
+    <StatusTable
+      caption="Every check, what it covers, where it ran, and what it actually did."
+      captionTitle="Verification"
+      rows={[
+        {
+          check: "Unit and property tests",
+          scope: `${VERIFICATION.testsCollected} collected across the numerical core, the analytic identities and the dependency policy`,
+          environment: VERIFICATION.interpreter,
+          state: "PASS",
+          note: `${VERIFICATION.testsPassed} passed, ${VERIFICATION.testsSkipped} skipped, 0 failed or errored`,
+        },
+        {
+          check: "Study reproduction",
+          scope: "A1, A3 and A4 re-run into fresh directories and diffed against their committed snapshots",
+          environment: VERIFICATION.interpreter,
+          state: "PASS",
+          note: "byte-identical in all three",
+          evidence: { label: "Studies", path: "/studies/" },
+        },
+        {
+          check: "Figure-data re-export",
+          scope: `${VERIFICATION.figureDataFiles} figure files plus the export contract, re-exported to a scratch directory and diffed`,
+          environment: VERIFICATION.interpreter,
+          state: "PASS",
+          note: `byte-identical, with ${VERIFICATION.reconciliationChecks} reconciliation checks recorded by the exporter at ${VERIFICATION.reconcileTolerance}`,
+          evidence: { label: "contract.json", path: "/data/contract.json" },
+        },
+        {
+          check: "Export-contract digests at site build",
+          scope: "Every figure data file re-hashed against contract.json while this page was built",
+          environment: "this site build",
+          state: "PASS",
+          note: "a mismatch stops the build; no page can render a number from a file that does not match its declared digest",
+        },
+        {
+          check: "Download integrity at site build",
+          scope: `${idx.count} published files re-hashed against their recorded SHA-256`,
+          environment: "this site build",
+          state: "PASS",
+          note: "a stale or hand-edited download cannot ship under a name that implies it came from the committed export",
+        },
+        {
+          check: "Reference-dependent tests",
+          scope: `${VERIFICATION.testsSkipped} tests in the gas-properties suite`,
+          environment: "not run in the public profile",
+          state: "NOT RUN",
+          note: "the reference extract is not redistributed; the skips are expected and their count is measured, not asserted",
+          evidence: { label: "A2 availability", path: "/studies/a2/" },
+        },
+        {
+          check: "A2 study",
+          scope: "The one study that reads the reference tables directly",
+          environment: "not run in the public profile",
+          state: "BLOCKED",
+          note: "exits 1 when the tables are absent, which is correct behaviour and not a defect",
+          evidence: { label: "A2 availability", path: "/studies/a2/" },
+        },
+        {
+          check: "Digest verification of the reference tables",
+          scope: "SHA-256 of three extracts against the committed manifest",
+          environment: "not applicable in the public profile",
+          state: "NOT APPLICABLE",
+          note: "hashing a file the tree is supposed not to have would fail by design; the manifest is validated as a provenance record instead",
+        },
+        {
+          check: "Hosted continuous integration",
+          scope: "Any check running anywhere other than the author's machine",
+          environment: "not run anywhere",
+          state: "NOT RUN",
+          note: "no hosted run is reported here; every check above ran on the author's own machine",
+        },
+        {
+          check: "Deployment",
+          scope: "Publication of this site to any origin",
+          environment: "not run anywhere",
+          state: "NOT RUN",
+          note: "the deployment target is configuration; with no origin supplied the build omits the canonical link and the social block rather than inventing a domain",
+        },
+        {
+          check: "External validation against field data",
+          scope: "Comparison of any result here against a measured reservoir",
+          environment: "not run anywhere",
+          state: "NOT APPLICABLE",
+          note: "there is no field data in this project and none is implied; every history is synthetic",
+        },
+        {
+          check: "Human peer review",
+          scope: "Review by a person other than the author",
+          environment: "not run anywhere",
+          state: "NOT RUN",
+          note: "every review pass was conducted under a different role by the same author",
+          evidence: { label: "About", path: "/about/" },
+        },
+      ]}
+      id="verification-status"
+    />
+  </section>
+
+  <section id="notrun" aria-labelledby="notrun-h">
+    <h2 id="notrun-h">What is NOT RUN, and why</h2>
+
+    <p>
+      The profile reports these rather than skipping them quietly. A count of zero tests run
+      and a count of twenty tests deliberately not run are different situations, and a report
+      that shows only green cannot tell them apart.
+    </p>
+
+    <dl class="reasons">
+      <dt>{VERIFICATION.testsSkipped} tests in the gas-properties suite</dt>
+      <dd>
+        They compare computed deviation factors, densities and viscosities against reference
+        tables that are absent from the public tree on purpose: they are someone else's data,
+        and access to them is not the same as the right to redistribute them. The test oracle
+        skips them with a reason that names the missing directory. The count is measured — the
+        verification runner counts skips carrying a reference-absent sentinel and fails on any
+        skip the reference policy does not explain — and the expected value passed on the
+        command line is a drift alarm on top of that measurement, not the source of it.
+      </dd>
+
+      <dt>The A2 study</dt>
+      <dd>
+        It declares the reference tables as run inputs and exits non-zero when they are
+        absent. It ships no committed summary, which is how the verification runner tells it
+        apart from the reproducible studies without carrying a hard-coded list.
+      </dd>
+
+      <dt>Digest verification of those tables</dt>
+      <dd>
+        Hashing a file the tree is supposed not to have would fail by design and would tell a
+        reader nothing, so the public check validates the manifest as a provenance record
+        instead: required fields present, digests well formed, the decision recorded.
+      </dd>
+
+      <dt>Hosted continuous integration</dt>
+      <dd>{NOT_RUN.hostedCi}</dd>
+
+      <dt>Deployment</dt>
+      <dd>{NOT_RUN.deployment}</dd>
+
+      <dt>Human peer review</dt>
+      <dd>{NOT_RUN.peerReview}</dd>
+    </dl>
+
+    <Callout kind="note" title="The four statements, and what clearing a gate means">
+      <ol>
+        {FOUR_STATEMENTS.map((s) => (
+          <li>
+            <strong>{s.name}</strong> — {s.text}.
+          </li>
+        ))}
+      </ol>
+      <p>
+        The 1 percent figure that appears in the flagship study is a borrowed project
+        demonstration criterion. {GATE.scope} {GATE.meaning}
+      </p>
+    </Callout>
+  </section>
+
+  <section id="units" aria-labelledby="units-h">
+    <h2 id="units-h">Unit conventions</h2>
+
+    <p>
+      Declared once in the export contract and printed on every figure, because a reader who
+      misreads Bscf as scf misreads a finding by nine orders of magnitude.
+    </p>
+
+    <DataTable
+      caption="Units and standard conditions, as contract.json declares them."
+      captionTitle="Units"
+      columns={[
+        { key: "q", label: "Quantity", rowHeader: true },
+        { key: "v", label: "Convention" },
+      ]}
+      rows={unitRows}
+      id="t-units"
+    />
+
+    <p class="units-line">{unitsLine()}</p>
+
+    <p>
+      Quantities are kept apart as carefully as units are. Inventory in place, recoverable
+      gas and reserves are three different things: recoverable gas is smaller than inventory
+      by whatever the drive mechanism and the abandonment condition leave behind, and reserves
+      are a further commercial and regulatory classification of a recoverable volume. Nothing
+      on this site is presented as any of the other two. Cumulative produced water, its
+      reservoir-volume equivalent and total influx are likewise three quantities with two
+      conversions between them.
+    </p>
+  </section>
+
+  <section id="provenance" aria-labelledby="provenance-h">
+    <h2 id="provenance-h">Data and provenance policy</h2>
+
+    <Figure
+      id={f09.id}
+      number={f09.number}
+      title={f09.title}
+      svg={f09.svg}
+      units={f09.units}
+      interpretation="Every number on this site traces to a committed file through a declared digest, and the chain from the study's run summary to the exported figure data to this page is drawn here in full."
+      caveat={f09.caveat}
+      longDescription={f09.longDescription}
+      evidenceClass={f09.evidenceClass}
+      tableLabel="Data table — the declared digests"
+      tableOpen={true}
+      svgDownload={f09.svgDownload}
+      dataDownload={contractDownload.path}
+      dataDownloadLabel={contractDownload.name}
+    >
+      <DataTable
+        caption="Figure data files and the SHA-256 each one is declared at in contract.json. The site build re-hashes every file it reads and stops on a mismatch."
+        captionTitle="Table F09"
+        columns={[
+          { key: "file", label: "File", rowHeader: true },
+          { key: "declared", label: "Declared SHA-256" },
+          { key: "match", label: "Matched when the figures were rendered" },
+        ]}
+        rows={digestRows}
+        id="t-f09"
+      />
+      <Fragment slot="footnote">
+        <p>
+          The numerical source is the study's audited run summary at
+          {" "}<code>{prov.numericalSource.baseline_summary_path}</code>, declared at
+          {" "}<code>{prov.numericalSource.baseline_summary_sha256}</code>. The exporter is
+          {" "}<code>{prov.exportBlock.exporter_path}</code>, declared at
+          {" "}<code>{prov.exportBlock.exporter_sha256}</code>. The reconciliation tolerance is a
+          same-environment determinism target, not an independent reproduction.
+        </p>
+      </Fragment>
+    </Figure>
+
+    <h3>Published data</h3>
+    <p>
+      {idx.count} files, {(idx.bytes / 1000).toFixed(0)} kB in total, generated from the
+      committed export by <code>{idx.generator}</code>. CSV copies are written at
+      {" "}{idx.csv_precision}. Full-dataset and selected-case downloads are separate files with
+      separate names, so a reader who takes a file from the scenario explorer can tell from
+      the file name which of the two they hold.
+    </p>
+    <p><strong>{idx.excluded}</strong></p>
+
+    <h3>Provenance, stated exactly</h3>
+    <ul>
+      <li>
+        <strong>Studies A2 and A3</strong> declare their protocol as a run input and pin it by
+        SHA-256 inside a record the run itself wrote. That is internal content linkage as
+        recorded. It is <em>not</em> an independent trusted timestamp and <em>not</em> proof
+        against retrospective construction.
+      </li>
+      <li>
+        <strong>Studies A1 and A4</strong> declare no inputs, so nothing machine-written pins
+        their protocol to their runs, and their prospective ordering is unverified. The studies
+        say so themselves.
+      </li>
+      <li>
+        <strong>Every date in this repository is self-reported.</strong> No signed tag and no
+        trusted timestamp attests to any of them.
+      </li>
+      <li>
+        <strong>Shipped run records are not edited after the fact</strong>, including where a
+        later audit found a stale sentence in one. A contemporaneous machine-written record is
+        more useful wrong than corrected.
+      </li>
+      <li>
+        <strong>Superseded claims stay visible and stay marked.</strong> They are not quietly
+        rewritten; the correction and its direction are shown next to the claim it replaced.
+      </li>
+    </ul>
+  </section>
+
+  <section id="checking" aria-labelledby="checking-h">
+    <h2 id="checking-h">Checking it yourself</h2>
+
+    <ol>
+      <li>Re-run a study into a fresh directory and diff its summary against the committed one.</li>
+      <li>Re-export the figure data and diff the {VERIFICATION.figureDataFiles} files against what is committed under the site's data directory.</li>
+      <li>Hash any published download and compare it with the SHA-256 recorded in the data index.</li>
+      <li>Read the export contract, which carries the digests of the run summary, the study source and the exporter itself.</li>
+      <li>Rebuild this site. A missing figure, a stale figure, a data file that disagrees with its digest, a missing download or a hand-written site-absolute URL each stop the build rather than degrading the page.</li>
+    </ol>
+
+    <p>
+      The last one is not decoration. This site has no runtime charting, no client-side data
+      fetch and no placeholder path: a page that could not render an exhibit does not get
+      built, because a reader would otherwise have no way to tell an exhibit that was withdrawn
+      from one that failed to build.
+    </p>
+  </section>
+
+  <style>
+    .reasons dt {
+      font-weight: var(--weight-semibold);
+      margin-block-start: var(--space-4);
+    }
+    .reasons dd {
+      margin-inline-start: 0;
+      padding-inline-start: var(--space-4);
+      border-inline-start: 2px solid var(--c-rule);
+    }
+    .units-line {
+      font-size: var(--text-sm);
+      color: var(--c-ink-2);
+    }
+  </style>
+</BaseLayout>

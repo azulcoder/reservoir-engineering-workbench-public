@@ -1,0 +1,407 @@
+{
+  "source_pointer": "/progressive_fits",
+  "rows": [
+    {
+      "productivity_index_bbl_per_day_psi": 0.0,
+      "history_fraction": 0.2,
+      "n_points": 11,
+      "years_observed": 2.4,
+      "r_squared": 1.0,
+      "relative_gas_in_place_error": 6.328271240363392e-14,
+      "relative_stderr": 6.686993175236865e-13,
+      "depletion_fraction_observed": 0.11458333333332613
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.0,
+      "history_fraction": 0.4,
+      "n_points": 20,
+      "years_observed": 4.8,
+      "r_squared": 1.0,
+      "relative_gas_in_place_error": -2.760014439218139e-13,
+      "relative_stderr": 2.3629042695223085e-13,
+      "depletion_fraction_observed": 0.2177083333333933
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.0,
+      "history_fraction": 0.6,
+      "n_points": 30,
+      "years_observed": 7.199999999999999,
+      "r_squared": 1.0,
+      "relative_gas_in_place_error": -1.7719159473017498e-13,
+      "relative_stderr": 1.2848929306771684e-13,
+      "depletion_fraction_observed": 0.3322916666667249
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.0,
+      "history_fraction": 0.8,
+      "n_points": 39,
+      "years_observed": 9.6,
+      "r_squared": 1.0,
+      "relative_gas_in_place_error": -1.0502709812953981e-13,
+      "relative_stderr": 7.219558966727044e-14,
+      "depletion_fraction_observed": 0.4354166666667113
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.0,
+      "history_fraction": 1.0,
+      "n_points": 49,
+      "years_observed": 12.0,
+      "r_squared": 1.0,
+      "relative_gas_in_place_error": -9.581224702515101e-14,
+      "relative_stderr": 4.640951610356109e-14,
+      "depletion_fraction_observed": 0.5500000000000511
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.05,
+      "history_fraction": 0.2,
+      "n_points": 11,
+      "years_observed": 2.4,
+      "r_squared": 0.9999998741419661,
+      "relative_gas_in_place_error": 0.001391437744272972,
+      "relative_stderr": 0.00011157140151801719,
+      "depletion_fraction_observed": 0.11442411929489125
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.05,
+      "history_fraction": 0.4,
+      "n_points": 20,
+      "years_observed": 4.8,
+      "r_squared": 0.9999997536155009,
+      "relative_gas_in_place_error": 0.0022500729272072473,
+      "relative_stderr": 0.00010457377869707515,
+      "depletion_fraction_observed": 0.21721957345184967
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.05,
+      "history_fraction": 0.6,
+      "n_points": 30,
+      "years_observed": 7.199999999999999,
+      "r_squared": 0.9999997311866261,
+      "relative_gas_in_place_error": 0.002845069387742427,
+      "relative_stderr": 8.232120817854358e-05,
+      "depletion_fraction_observed": 0.33134895589558705
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.05,
+      "history_fraction": 0.8,
+      "n_points": 39,
+      "years_observed": 9.6,
+      "r_squared": 0.9999998007424988,
+      "relative_gas_in_place_error": 0.003111288953057567,
+      "relative_stderr": 5.822730670702923e-05,
+      "depletion_fraction_observed": 0.4340661614137628
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.05,
+      "history_fraction": 1.0,
+      "n_points": 49,
+      "years_observed": 12.0,
+      "r_squared": 0.9999998914951487,
+      "relative_gas_in_place_error": 0.003157650910591503,
+      "relative_stderr": 3.5729606817519217e-05,
+      "depletion_fraction_observed": 0.5482687586549827
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.2,
+      "history_fraction": 0.2,
+      "n_points": 11,
+      "years_observed": 2.4,
+      "r_squared": 0.9999979984832046,
+      "relative_gas_in_place_error": 0.005564336155111649,
+      "relative_stderr": 0.00044503994367753845,
+      "depletion_fraction_observed": 0.11394928122794772
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.2,
+      "history_fraction": 0.4,
+      "n_points": 20,
+      "years_observed": 4.8,
+      "r_squared": 0.9999960951406771,
+      "relative_gas_in_place_error": 0.008998922752106564,
+      "relative_stderr": 0.00041663499551631173,
+      "depletion_fraction_observed": 0.21576666577553952
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.2,
+      "history_fraction": 0.6,
+      "n_points": 30,
+      "years_observed": 7.199999999999999,
+      "r_squared": 0.9999957477283148,
+      "relative_gas_in_place_error": 0.011380934010431831,
+      "relative_stderr": 0.0003279173759202478,
+      "depletion_fraction_observed": 0.328552433106514
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.2,
+      "history_fraction": 0.8,
+      "n_points": 39,
+      "years_observed": 9.6,
+      "r_squared": 0.999996847994494,
+      "relative_gas_in_place_error": 0.0124485141170112,
+      "relative_stderr": 0.00023210745695755717,
+      "depletion_fraction_observed": 0.43006302107757693
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.2,
+      "history_fraction": 1.0,
+      "n_points": 49,
+      "years_observed": 12.0,
+      "r_squared": 0.9999982833200116,
+      "relative_gas_in_place_error": 0.012636664232451578,
+      "relative_stderr": 0.0001425343318411937,
+      "depletion_fraction_observed": 0.5431365655882922
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.6,
+      "history_fraction": 0.2,
+      "n_points": 11,
+      "years_observed": 2.4,
+      "r_squared": 0.9999822797630229,
+      "relative_gas_in_place_error": 0.01668052499998307,
+      "relative_stderr": 0.0013250645914659129,
+      "depletion_fraction_observed": 0.11270338175636371
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.6,
+      "history_fraction": 0.4,
+      "n_points": 20,
+      "years_observed": 4.8,
+      "r_squared": 0.999965763965043,
+      "relative_gas_in_place_error": 0.026979545778795355,
+      "relative_stderr": 0.0012361602516165837,
+      "depletion_fraction_observed": 0.2119889672858452
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.6,
+      "history_fraction": 0.6,
+      "n_points": 30,
+      "years_observed": 7.199999999999999,
+      "r_squared": 0.9999629530224694,
+      "relative_gas_in_place_error": 0.03413142233092681,
+      "relative_stderr": 0.0009717595957958649,
+      "depletion_fraction_observed": 0.32132440760544956
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.6,
+      "history_fraction": 0.8,
+      "n_points": 39,
+      "years_observed": 9.6,
+      "r_squared": 0.9999725852566169,
+      "relative_gas_in_place_error": 0.03734432046421765,
+      "relative_stderr": 0.0006885021406032269,
+      "depletion_fraction_observed": 0.4197416981777218
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 0.6,
+      "history_fraction": 1.0,
+      "n_points": 49,
+      "years_observed": 12.0,
+      "r_squared": 0.9999850702490228,
+      "relative_gas_in_place_error": 0.037918536308146455,
+      "relative_stderr": 0.00042352342818751954,
+      "depletion_fraction_observed": 0.5299067130608693
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 2.0,
+      "history_fraction": 0.2,
+      "n_points": 11,
+      "years_observed": 2.4,
+      "r_squared": 0.9998145221963677,
+      "relative_gas_in_place_error": 0.055412518226251484,
+      "relative_stderr": 0.00429647086162696,
+      "depletion_fraction_observed": 0.1085673434363888
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 2.0,
+      "history_fraction": 0.4,
+      "n_points": 20,
+      "years_observed": 4.8,
+      "r_squared": 0.9996559833801304,
+      "relative_gas_in_place_error": 0.08949806785480918,
+      "relative_stderr": 0.003944541777117835,
+      "depletion_fraction_observed": 0.19982443269678737
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 2.0,
+      "history_fraction": 0.6,
+      "n_points": 30,
+      "years_observed": 7.199999999999999,
+      "r_squared": 0.9996408205575404,
+      "relative_gas_in_place_error": 0.11302414269485417,
+      "relative_stderr": 0.0030641751753113875,
+      "depletion_fraction_observed": 0.29854848059460903
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 2.0,
+      "history_fraction": 0.8,
+      "n_points": 39,
+      "years_observed": 9.6,
+      "r_squared": 0.9997404951364083,
+      "relative_gas_in_place_error": 0.12343156487866547,
+      "relative_stderr": 0.0021569262286775088,
+      "depletion_fraction_observed": 0.38757738368664413
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 2.0,
+      "history_fraction": 1.0,
+      "n_points": 49,
+      "years_observed": 12.0,
+      "r_squared": 0.9998594933759798,
+      "relative_gas_in_place_error": 0.125025506108015,
+      "relative_stderr": 0.0013299984184321839,
+      "depletion_fraction_observed": 0.4888778050043536
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 6.0,
+      "history_fraction": 0.2,
+      "n_points": 11,
+      "years_observed": 2.4,
+      "r_squared": 0.998616620943815,
+      "relative_gas_in_place_error": 0.16357457455060787,
+      "relative_stderr": 0.011801976739890262,
+      "depletion_fraction_observed": 0.09847528112032476
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 6.0,
+      "history_fraction": 0.4,
+      "n_points": 20,
+      "years_observed": 4.8,
+      "r_squared": 0.9978220555866532,
+      "relative_gas_in_place_error": 0.2595138508646677,
+      "relative_stderr": 0.010076723345808405,
+      "depletion_fraction_observed": 0.17285108312534592
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 6.0,
+      "history_fraction": 0.6,
+      "n_points": 30,
+      "years_observed": 7.199999999999999,
+      "r_squared": 0.9981209404736894,
+      "relative_gas_in_place_error": 0.31964455830831673,
+      "relative_stderr": 0.0071938132358157604,
+      "depletion_fraction_observed": 0.25180391536084423
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 6.0,
+      "history_fraction": 0.8,
+      "n_points": 39,
+      "years_observed": 9.6,
+      "r_squared": 0.9988554438393193,
+      "relative_gas_in_place_error": 0.3406358995423653,
+      "relative_stderr": 0.004691939861459754,
+      "depletion_fraction_observed": 0.3247836842317126
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 6.0,
+      "history_fraction": 1.0,
+      "n_points": 49,
+      "years_observed": 12.0,
+      "r_squared": 0.9993518747138217,
+      "relative_gas_in_place_error": 0.3359034415070268,
+      "relative_stderr": 0.002984214622891399,
+      "depletion_fraction_observed": 0.41170640250731433
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 20.0,
+      "history_fraction": 0.2,
+      "n_points": 11,
+      "years_observed": 2.4,
+      "r_squared": 0.9930024916278127,
+      "relative_gas_in_place_error": 0.4865802425932684,
+      "relative_stderr": 0.026912024502758113,
+      "depletion_fraction_observed": 0.07707847181760483
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 20.0,
+      "history_fraction": 0.4,
+      "n_points": 20,
+      "years_observed": 4.8,
+      "r_squared": 0.994941841547007,
+      "relative_gas_in_place_error": 0.670433323287799,
+      "relative_stderr": 0.015724772365362388,
+      "depletion_fraction_observed": 0.13033045395959467
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 20.0,
+      "history_fraction": 0.6,
+      "n_points": 30,
+      "years_observed": 7.199999999999999,
+      "r_squared": 0.9980397422323611,
+      "relative_gas_in_place_error": 0.7156151902260044,
+      "relative_stderr": 0.007579744742553654,
+      "depletion_fraction_observed": 0.19368659624824844
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 20.0,
+      "history_fraction": 0.8,
+      "n_points": 39,
+      "years_observed": 9.6,
+      "r_squared": 0.9987761908034399,
+      "relative_gas_in_place_error": 0.6897167218091662,
+      "relative_stderr": 0.005032439385784501,
+      "depletion_fraction_observed": 0.2576861914466162
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 20.0,
+      "history_fraction": 1.0,
+      "n_points": 49,
+      "years_observed": 12.0,
+      "r_squared": 0.9974513496598766,
+      "relative_gas_in_place_error": 0.6273506839367444,
+      "relative_stderr": 0.006171122167080051,
+      "depletion_fraction_observed": 0.3379726357870736
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 60.0,
+      "history_fraction": 0.2,
+      "n_points": 11,
+      "years_observed": 2.4,
+      "r_squared": 0.9934772224392434,
+      "relative_gas_in_place_error": 0.918432879576409,
+      "relative_stderr": 0.026207831096603247,
+      "depletion_fraction_observed": 0.05972756959765694
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 60.0,
+      "history_fraction": 0.4,
+      "n_points": 20,
+      "years_observed": 4.8,
+      "r_squared": 0.998597815513752,
+      "relative_gas_in_place_error": 0.9765367425969504,
+      "relative_stderr": 0.008351044232216744,
+      "depletion_fraction_observed": 0.11014636289902133
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 60.0,
+      "history_fraction": 0.6,
+      "n_points": 30,
+      "years_observed": 7.199999999999999,
+      "r_squared": 0.9989248792545858,
+      "relative_gas_in_place_error": 0.9163508024641134,
+      "relative_stderr": 0.0056714386427392195,
+      "depletion_fraction_observed": 0.17339814100810422
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 60.0,
+      "history_fraction": 0.8,
+      "n_points": 39,
+      "years_observed": 9.6,
+      "r_squared": 0.997677876285676,
+      "relative_gas_in_place_error": 0.8370391325783166,
+      "relative_stderr": 0.007013529633359948,
+      "depletion_fraction_observed": 0.2370208989808239
+    },
+    {
+      "productivity_index_bbl_per_day_psi": 60.0,
+      "history_fraction": 1.0,
+      "n_points": 49,
+      "years_observed": 12.0,
+      "r_squared": 0.9952071514867221,
+      "relative_gas_in_place_error": 0.7400512569443336,
+      "relative_stderr": 0.008574768603041677,
+      "depletion_fraction_observed": 0.316082642856074
+    }
+  ],
+  "x_axis": "requested fraction of history",
+  "note": "Prefix fits share observations and are not independent samples. The axis is the requested fraction; the realised point count is reported per row."
+}

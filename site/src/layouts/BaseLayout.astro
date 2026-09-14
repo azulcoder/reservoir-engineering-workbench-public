@@ -1,0 +1,200 @@
+---
+/**
+ * The document shell for every page.
+ *
+ * What it guarantees
+ * ------------------
+ *  - `<html lang="en">`, a charset and a viewport, in that order, first in the head.
+ *  - A skip link to `#main` as the first focusable element.
+ *  - Landmarks with accessible names: banner, navigation, main, contentinfo, and the
+ *    contents rail as its own labelled navigation.
+ *  - No external request of any kind: no font server, no CDN, no analytics, no
+ *    favicon fetched from elsewhere, no preconnect. Everything is same-origin.
+ *  - A canonical link and an Open Graph block ONLY when a real site URL was supplied
+ *    to the build. With SITE_URL unset there is no origin, and inventing one would put
+ *    a domain on the page that nobody owns.
+ *  - Every URL built through src/lib/urls.ts, and a build-time audit that fails on any
+ *    hand-written site-absolute URL in the page body.
+ *
+ * It does NOT emit an <h1>. The page owns its own heading, so heading order stays the
+ * page's responsibility and cannot be broken by the layout silently inserting a level.
+ *
+ * Navigation and contents entries are props with empty defaults. This layout does not
+ * decide what routes exist; the pages that own the routes pass them in.
+ */
+import { assetHref, pageHref, absolutePageUrl, pathFromRequest, assertNoRawSitePaths, HAS_SITE_URL, type SitePath } from "../lib/urls";
+import "../styles/tokens.css";
+import "../styles/base.css";
+
+export interface NavItem {
+  /** Site-relative route, e.g. "/methods/". */
+  path: SitePath;
+  label: string;
+}
+
+export interface ContentsItem {
+  /** Fragment id of the section heading this entry jumps to, without the "#". */
+  id: string;
+  label: string;
+}
+
+export interface Props {
+  /** Page title. The site name is appended by this layout, once. */
+  title: string;
+  /** Meta description. Required: a page with no description is a page nobody can cite. */
+  description: string;
+  /** Site-relative path of this page. Defaults to the request path. */
+  canonicalPath?: SitePath;
+  /** Primary navigation. Empty by default; the layout invents no routes. */
+  nav?: NavItem[];
+  /** Contents rail entries. When empty, no rail is rendered and the page is one column. */
+  contents?: ContentsItem[];
+  /** Accessible name of the contents rail. */
+  contentsLabel?: string;
+  /** Extra class on <body>. */
+  bodyClass?: string;
+  /** Open Graph type. Only used when a site URL is configured. */
+  ogType?: "website" | "article";
+  /** Suppress the site-name suffix, for the home page whose title already carries it. */
+  bareTitle?: boolean;
+}
+
+const SITE_NAME = "Gas Reservoir Performance Lab";
+
+const {
+  title,
+  description,
+  canonicalPath,
+  nav = [],
+  contents = [],
+  contentsLabel = "On this page",
+  bodyClass = "",
+  ogType = "article",
+  bareTitle = false,
+} = Astro.props;
+
+const documentTitle = bareTitle ? title : `${title} — ${SITE_NAME}`;
+const here: SitePath = canonicalPath ?? pathFromRequest(Astro.url.pathname);
+const canonical = absolutePageUrl(here);
+
+const currentPath = pageHref(here);
+const hasRail = contents.length > 0;
+
+/**
+ * Render the page body to a string so it can be audited before it is written.
+ *
+ * The audit is the third of the three enforcement layers described in src/lib/urls.ts:
+ * types stop a bad call, registration records a good one, and this catches a raw
+ * `href="/foo"` that never went through the helper at all. It fails the build at root
+ * base too, where such a link would happen to work, because a base-path bug found on
+ * the deployed site is a bug found too late.
+ */
+const body = await Astro.slots.render("default");
+assertNoRawSitePaths(body, `page ${here}`);
+
+/* The footer slot is audited on the same terms. A page may replace the footer, and a
+   raw URL there would be just as broken under a non-root base as one in the article. */
+const footer = Astro.slots.has("footer") ? await Astro.slots.render("footer") : null;
+if (footer !== null) assertNoRawSitePaths(footer, `page ${here} (footer slot)`);
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{documentTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light" />
+    <link rel="icon" href={assetHref("/favicon.svg")} type="image/svg+xml" />
+
+    {canonical && <link rel="canonical" href={canonical} />}
+
+    {
+      /* Open Graph only when there is a real origin. No image is declared: no social
+         card image exists in this repository, and pointing at one that is not there
+         is worse than omitting the tag. */
+      HAS_SITE_URL && canonical && (
+        <>
+          <meta property="og:type" content={ogType} />
+          <meta property="og:title" content={documentTitle} />
+          <meta property="og:description" content={description} />
+          <meta property="og:url" content={canonical} />
+          <meta property="og:site_name" content={SITE_NAME} />
+          <meta property="og:locale" content="en" />
+        </>
+      )
+    }
+  </head>
+
+  <body class={bodyClass || undefined}>
+    <a class="skip-link" href="#main">Skip to main content</a>
+
+    <header class="site-header">
+      <div class="shell site-header__inner">
+        <a class="site-header__mark" href={pageHref("/")}>{SITE_NAME}</a>
+        {
+          nav.length > 0 && (
+            <nav class="site-nav" aria-label="Primary">
+              <ul>
+                {nav.map((item) => {
+                  const itemHref = pageHref(item.path);
+                  const current = itemHref === currentPath;
+                  return (
+                    <li>
+                      <a href={itemHref} aria-current={current ? "page" : undefined}>
+                        {item.label}
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
+          )
+        }
+      </div>
+    </header>
+
+    <div class="shell">
+      <div class={hasRail ? "page page--with-rail" : "page"}>
+        {
+          hasRail && (
+            <nav class="contents" aria-labelledby="contents-label">
+              <details class="contents__disclosure">
+                <summary class="contents__summary" id="contents-label">
+                  {contentsLabel}
+                </summary>
+                <ul class="contents__list">
+                  {contents.map((item) => (
+                    <li>
+                      <a href={`#${item.id}`}>{item.label}</a>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            </nav>
+          )
+        }
+
+        <main id="main" class="page__body" tabindex="-1">
+          <Fragment set:html={body} />
+        </main>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <div class="shell">
+        {
+          footer !== null ? (
+            <Fragment set:html={footer} />
+          ) : (
+            <p>
+              Synthetic throughout. No field data of any kind is used, implied or
+              represented. Known inventory is evaluation-only information that no field
+              measurement provides.
+            </p>
+          )
+        }
+      </div>
+    </footer>
+  </body>
+</html>

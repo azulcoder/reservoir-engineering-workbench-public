@@ -1,0 +1,43 @@
+MIT License
+
+Copyright (c) 2026 azul
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+Scope note
+
+This licence covers the source code, documentation and configuration authored in
+this repository. It does not and cannot relicense third-party material:
+
+* The NIST Chemistry WebBook reference extract described under data/reference/ is NOT
+  distributed with this repository, and is not in its history. NIST Standard Reference
+  Data is a statutory exception to the public-domain status of US Government works
+  (Standard Reference Data Act, Public Law 90-396), the WebBook asserts copyright, and
+  nothing retrieved from NIST establishes that citation alone permits redistributing an
+  extract. This project therefore takes the non-redistribution route. That is a
+  conservative publication decision, not an adjudication of copyright exceptions.
+  data/reference/ keeps only metadata -- request URLs, units, row counts, per-property
+  citations and SHA-256 digests -- which reproduces no retrieved value. Obtain the
+  values yourself under your own access basis; see data/reference/README.md and
+  docs/release/PUBLIC_DATA_POLICY.md.
+* No third-party dataset, simulator deck, book, paper or binary is distributed here.
+  Where a study uses one, the repository stores retrieval instructions and checksums,
+  and the third party's own licence governs the material itself.

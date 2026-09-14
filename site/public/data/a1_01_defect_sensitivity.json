@@ -1,0 +1,126 @@
+{
+  "description": "post-hoc positive control, not pre-registered and not gated: seeded defects against the experiment-1 arm, whose uncorrupted recovery error is exactly 0.0",
+  "gate_used_for_detection": 5e-12,
+  "cases": [
+    {
+      "name": "baseline_uncorrupted",
+      "defect_class": "none",
+      "magnitude": "-",
+      "recovery_relative_error": 0,
+      "detected_at_A1_gate": false
+    },
+    {
+      "name": "standard_pressure_x1.5",
+      "defect_class": "standard-volume basis",
+      "magnitude": "+50 percent",
+      "recovery_relative_error": 0,
+      "detected_at_A1_gate": false
+    },
+    {
+      "name": "standard_temperature_x1.5",
+      "defect_class": "standard-volume basis",
+      "magnitude": "+50 percent",
+      "recovery_relative_error": 0,
+      "detected_at_A1_gate": false
+    },
+    {
+      "name": "standard_z_factor_x1.5",
+      "defect_class": "standard-volume basis",
+      "magnitude": "+50 percent",
+      "recovery_relative_error": 0,
+      "detected_at_A1_gate": false
+    },
+    {
+      "name": "reservoir_temperature_640_to_900_degr",
+      "defect_class": "reservoir temperature",
+      "magnitude": "+40.6 percent",
+      "recovery_relative_error": 0,
+      "detected_at_A1_gate": false
+    },
+    {
+      "name": "ordinate_scaled_by_1_plus_1e-10",
+      "defect_class": "ordinate multiplicative",
+      "magnitude": "+1.0e-10 relative",
+      "recovery_relative_error": 0,
+      "detected_at_A1_gate": false
+    },
+    {
+      "name": "ordinate_scaled_by_1_plus_0.001",
+      "defect_class": "ordinate multiplicative",
+      "magnitude": "+1.0e-03 relative",
+      "recovery_relative_error": 0,
+      "detected_at_A1_gate": false
+    },
+    {
+      "name": "ordinate_scaled_by_1_plus_0.5",
+      "defect_class": "ordinate multiplicative",
+      "magnitude": "+5.0e-01 relative",
+      "recovery_relative_error": 2.220446049250313e-16,
+      "detected_at_A1_gate": false
+    },
+    {
+      "name": "analyst_divides_by_z_0.8_not_0.9",
+      "defect_class": "ordinate multiplicative",
+      "magnitude": "-11.1 percent relative",
+      "recovery_relative_error": 2.220446049250313e-16,
+      "detected_at_A1_gate": false
+    },
+    {
+      "name": "cumulative_gas_scaled_by_1_plus_0.001",
+      "defect_class": "abscissa multiplicative",
+      "magnitude": "+1.0e-03 relative",
+      "recovery_relative_error": 0.0009999999999998899,
+      "detected_at_A1_gate": true
+    },
+    {
+      "name": "cumulative_gas_scaled_by_1_plus_0.01",
+      "defect_class": "abscissa multiplicative",
+      "magnitude": "+1.0e-02 relative",
+      "recovery_relative_error": 0.010000000000000009,
+      "detected_at_A1_gate": true
+    },
+    {
+      "name": "first_point_ordinate_plus_0.01_psia",
+      "defect_class": "ordinate point-wise",
+      "magnitude": "0.01 psia of p/Z on one point",
+      "recovery_relative_error": -0.0000013295427350179523,
+      "detected_at_A1_gate": true
+    },
+    {
+      "name": "middle_point_ordinate_plus_0.01_psia",
+      "defect_class": "ordinate point-wise",
+      "magnitude": "0.01 psia of p/Z on one point",
+      "recovery_relative_error": 2.045454547960901e-7,
+      "detected_at_A1_gate": true
+    },
+    {
+      "name": "last_point_ordinate_plus_0.01_psia",
+      "defect_class": "ordinate point-wise",
+      "magnitude": "0.01 psia of p/Z on one point",
+      "recovery_relative_error": 0.0000017386399202568015,
+      "detected_at_A1_gate": true
+    }
+  ],
+  "detection_thresholds": {
+    "ordinate_multiplicative": {
+      "detected": false,
+      "largest_magnitude_probed_relative": 0.5,
+      "largest_recovery_error_observed": 2.220446049250313e-16,
+      "note": "no detection at any probed magnitude; the x-intercept of a straight line is invariant under a uniform rescaling of the ordinate"
+    },
+    "standard_volume_basis": {
+      "detected": false,
+      "note": "no detection at +50 percent; the standard group cancels out of the balance"
+    },
+    "abscissa_multiplicative": {
+      "detected": true,
+      "sensitivity_dG_over_dbias": 0.9999999999998899,
+      "minimum_detectable_relative_bias": 5.000000000000551e-12
+    },
+    "ordinate_point_wise": {
+      "detected": true,
+      "sensitivity_relative_error_per_psia": 0.00017386399202568015,
+      "minimum_detectable_shift_psia": 2.8758111105958542e-8
+    }
+  }
+}

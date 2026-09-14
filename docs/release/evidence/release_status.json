@@ -1,0 +1,255 @@
+{
+  "record_version": "1.0.0",
+  "generated_utc_date": "2026-09-14",
+  "verdict_scope": "LOCAL release candidate. Hosted CI and deployment are NOT part of this record.",
+  "source_revision": {
+    "commit": "62185ec8b23c0c4f209fa4dc25faec5384862b35",
+    "branch": "release/rc-close",
+    "dirty": true,
+    "dirty_patch_sha256": "0718b4d9eb0324739c8b2bd93ae35a44ec4fce3fcbd15046a0618519a37bb753",
+    "dirty_paths": [
+      "ocs/release/USABILITY.md",
+      "site/screenshots/INVENTORY-chromium.json",
+      "site/screenshots/INVENTORY-firefox.json",
+      "site/screenshots/INVENTORY-webkit.json",
+      "site/screenshots/a2-unavailable-1440.png",
+      "site/screenshots/a4-1440.png",
+      "site/screenshots/a4-375.png",
+      "site/screenshots/a4-768.png",
+      "site/screenshots/a4-nojs-1440.png",
+      "site/screenshots/a4-print-limitations.png",
+      "site/screenshots/a4-print-top.png",
+      "site/screenshots/explorer-case-0-375.png",
+      "site/screenshots/explorer-case-60-1440.png",
+      "site/screenshots/explorer-invalid-case-1440.png",
+      "site/screenshots/explorer-nojs-1440.png",
+      "site/screenshots/figure-f01-1440.png",
+      "site/screenshots/figure-f01-375.png",
+      "site/screenshots/home-1440.png",
+      "site/screenshots/home-375.png",
+      "site/screenshots/home-768.png",
+      "site/screenshots/metrics-table-375.png"
+    ],
+    "remote_configured": false,
+    "note": "The commit named here is the revision the checks below ran against. A later evidence-only commit does not become the tested revision retroactively."
+  },
+  "environment": {
+    "python": "3.13.2",
+    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "node": "v24.14.0",
+    "npm": "11.9.0",
+    "typescript": "6.0.3",
+    "astro": "7.3.2",
+    "astro_check": "0.9.10",
+    "playwright": "1.63.0",
+    "axe_core_playwright": "4.13.0",
+    "browsers": "chromium, firefox, webkit from site/.playwright-cache"
+  },
+  "frozen_scientific_artefacts": {
+    "count": 14,
+    "baseline": "docs/release/evidence/frozen_baseline.json",
+    "status": "unchanged",
+    "checked_by": "scripts/check_frozen.py"
+  },
+  "artifacts": {
+    "dist_project_digest": "352edf86175f8c519923ba8a88ab9996cb273d422f62f108a440ab3871b550c8",
+    "dist_root_digest": "548d309c1839c6a6ca8cb2e201edb8690d86edd436783a1b8f7dab73a87e759e",
+    "figure_manifest_sha256": "22c0ad7d6e7d6037eb943b6acd876f885721e482fbf28fcf95047863779ed9cd",
+    "public_data_index_sha256": "ed0f080c19ef01a11b79f87671e4e58e8c271cc7de8468866e65b7d28f783398",
+    "figure_contract_sha256": "320519b8e2cc57fdd7e441a4cc4ec499372d7a12374d23af2855235fa8fae4b6"
+  },
+  "checks": [
+    {
+      "name": "public-core tests and case reproduction",
+      "label": "public-core",
+      "exit_code": 0,
+      "command": [
+        "python3",
+        "scripts/verify.py",
+        "--profile",
+        "public-core",
+        "--cases",
+        "all",
+        "--expect-reference-skips",
+        "20"
+      ],
+      "log": "docs/release/evidence/logs/public-core.log",
+      "result": "641 collected, 621 passed, 20 skipped (reference-absent), 10/10 checks"
+    },
+    {
+      "name": "python suite and repository hygiene",
+      "label": "python-suite",
+      "exit_code": 0,
+      "command": [
+        "python3",
+        "scripts/check.py"
+      ],
+      "log": "docs/release/evidence/logs/python-suite.log",
+      "result": "641 run, 0 failed, 20 skipped; hygiene 0 errors"
+    },
+    {
+      "name": "canonical build, project base, --verify-cases all",
+      "label": "build-project",
+      "exit_code": 0,
+      "command": [
+        "python3",
+        "scripts/build_release.py",
+        "--base-path",
+        "/reservoir-engineering-workbench-public/",
+        "--out-dir",
+        "site/dist-project",
+        "--json",
+        "docs/release/evidence/build-project.json",
+        "--verify-cases",
+        "all"
+      ],
+      "log": "docs/release/evidence/logs/build-project.log",
+      "result": "10/10 steps"
+    },
+    {
+      "name": "canonical build, root base, --verify-cases fast",
+      "label": "build-root",
+      "exit_code": 0,
+      "command": [
+        "python3",
+        "scripts/build_release.py",
+        "--base-path",
+        "/",
+        "--out-dir",
+        "site/dist-root",
+        "--json",
+        "docs/release/evidence/build-root.json",
+        "--verify-cases",
+        "fast"
+      ],
+      "log": "docs/release/evidence/logs/build-root.log",
+      "result": "10/10 steps"
+    },
+    {
+      "name": "browser suite, 3 engines, project base",
+      "label": "browser-project",
+      "exit_code": 0,
+      "command": [
+        "npx",
+        "playwright",
+        "test",
+        "--grep-invert",
+        "captures",
+        "--reporter=list"
+      ],
+      "log": "docs/release/evidence/logs/browser-project.log",
+      "result": "466 passed, 0 failed, 14 skipped"
+    },
+    {
+      "name": "browser suite, 3 engines, root base",
+      "label": "browser-root",
+      "exit_code": 0,
+      "command": [
+        "npx",
+        "playwright",
+        "test",
+        "--grep-invert",
+        "captures",
+        "--reporter=list"
+      ],
+      "log": "docs/release/evidence/logs/browser-root.log",
+      "result": "466 passed, 0 failed, 14 skipped"
+    },
+    {
+      "name": "failure drills",
+      "label": "drills",
+      "exit_code": 0,
+      "command": [
+        "python3",
+        "scripts/drills_release.py"
+      ],
+      "log": "docs/release/evidence/logs/drills.log",
+      "result": "10 cases, 10 caught, 0 not caught"
+    },
+    {
+      "name": "frozen artefacts",
+      "label": "frozen-check",
+      "exit_code": 0,
+      "command": [
+        "python3",
+        "scripts/check_frozen.py",
+        "--baseline",
+        "docs/release/evidence/frozen_baseline.json"
+      ],
+      "log": "docs/release/evidence/logs/frozen-check.log",
+      "result": "14 checked, 0 moved"
+    },
+    {
+      "name": "packaging: wheel and sdist",
+      "label": "packaging",
+      "exit_code": 0,
+      "command": [
+        ".venv/bin/python",
+        "-m",
+        "build",
+        "--outdir",
+        "/tmp/rc/dist"
+      ],
+      "log": "docs/release/evidence/logs/packaging.log",
+      "result": "both built"
+    },
+    {
+      "name": "wheel import from outside the checkout",
+      "label": "wheel-smoke",
+      "exit_code": 0,
+      "command": [
+        "/tmp/rc/venv/bin/python",
+        "-c",
+        "\nimport reservoir_lab, reservoir_lab.gas_properties as gp, reservoir_lab.units as u\npc = gp.pseudocritical_sutton(0.65)\nz = gp.z_factor(3000.0, 660.0, pc)\nprint('version', reservoir_lab.__version__)\nprint('R_field', round(u.GAS_CONSTANT_FIELD, 5))\nprint('z(3000 psia, 660 degR, sg 0.65) =', round(z, 6))\nprint('imported from', reservoir_lab.__file__.split('site-packages')[-1])\n"
+      ],
+      "log": "docs/release/evidence/logs/wheel-smoke.log",
+      "result": "reservoir_lab 0.2.0 imported and evaluated Z"
+    },
+    {
+      "name": "clean committed-source export build",
+      "label": "clean-export-build",
+      "exit_code": 0,
+      "command": [
+        "python3",
+        "scripts/build_release.py",
+        "--base-path",
+        "/reservoir-engineering-workbench-public/",
+        "--out-dir",
+        "site/dist-clean",
+        "--verify-cases",
+        "fast"
+      ],
+      "log": "docs/release/evidence/logs/clean-export-build.log",
+      "result": "npm ci from the lockfile, 10/10 steps, no pre-existing dist"
+    },
+    {
+      "name": "screenshots",
+      "label": "screenshots",
+      "exit_code": 0,
+      "command": [
+        "npx",
+        "playwright",
+        "test",
+        "--project=chromium",
+        "--grep",
+        "captures",
+        "--workers=1",
+        "--reporter=list"
+      ],
+      "log": "docs/release/evidence/logs/screenshots.log",
+      "result": "17 captures, chromium, macOS arm64"
+    }
+  ],
+  "verdicts": {
+    "scientific_regression_and_public_core_reproduction": "PASS",
+    "data_history_and_distribution_policy": "PASS",
+    "packaging_and_type_checks": "PASS",
+    "figures_exports_and_provenance": "PASS",
+    "local_browser_reflow_and_accessibility": "PASS",
+    "local_performance_evidence": "PARTIAL - payload measured, no timing run",
+    "hosted_ci": "NOT RUN - no remote exists",
+    "deployment": "NOT PERFORMED - configured, manual, gated",
+    "human_usability_evaluation": "PENDING - zero participants"
+  }
+}

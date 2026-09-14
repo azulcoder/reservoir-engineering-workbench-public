@@ -1,0 +1,11 @@
+{
+  "//": "Site and browser code. Astro's strict preset plus the project's own source. Node-only tooling (build scripts, Playwright config, browser tests) is checked by tsconfig.node.json instead, because it needs Node's globals and must not pull DOM-free types into the site graph. Both configurations are run; see package.json's `check` script.",
+  "extends": "astro/tsconfigs/strict",
+  "include": [".astro/types.d.ts", "src/**/*.ts", "src/**/*.astro", "astro.config.mjs"],
+  "exclude": ["dist", "node_modules", "test-results", "playwright-report", "tests", "scripts"],
+  "compilerOptions": {
+    "types": ["node"],
+    "allowJs": true,
+    "checkJs": false
+  }
+}

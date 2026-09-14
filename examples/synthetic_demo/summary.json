@@ -1,0 +1,29 @@
+{
+  "case_type": "synthetic_self_consistency_demo",
+  "fit": {
+    "giip_sm3": 1001492563.5752792,
+    "intercept_pa": 27756505.419941235,
+    "n_observations": 9,
+    "r_squared": 0.9999419958376982,
+    "rmse_pa": 27251.073073176038,
+    "slope_pa_per_sm3": -0.027715138813264747,
+    "warnings": [
+      "OLS screening only; a high R-squared does not validate reservoir assumptions."
+    ]
+  },
+  "holdout_observations": 4,
+  "holdout_pressure_rmse_fraction_initial_pressure": 0.0006513844917821768,
+  "holdout_pressure_rmse_pa": 16284.61229455442,
+  "known_synthetic_giip_sm3": 1000000000.0,
+  "limitations": [
+    "Synthetic generator and inverse model share the same physical assumptions.",
+    "Successful recovery is verification/self-consistency, not validation against field data.",
+    "Toy Z values are not measured or EOS-calibrated PVT.",
+    "No aquifer, condensate, compaction, transient forward model, or simulator execution.",
+    "Known future Z values are supplied; the holdout is a conditional pressure check, not a standalone forecast."
+  ],
+  "model": "volumetric_isothermal_gas",
+  "passes_demo_gates": true,
+  "relative_giip_error": 0.00149256357527916,
+  "training_observations": 9
+}

@@ -1,0 +1,60 @@
+---
+/**
+ * A limitation, a caveat, or a claim that has been superseded.
+ *
+ * Not a decorative "tip" box. Four kinds, and each one names itself in words so the
+ * kind survives greyscale, forced colours and a screen reader:
+ *
+ *   limitation  what this case does not establish. The default.
+ *   caveat      a condition the reader must carry with the number next to it.
+ *   note        a note about reading the page, not about the physics.
+ *   superseded  a claim the corrected analysis replaced, kept visible with its
+ *               correction and the direction of the correction (D09). The contrast
+ *               colour is used here and only here outside the figures, because a
+ *               superseded claim is a statement the corrected analysis displaced —
+ *               the same reserved meaning tokens.css assigns it. It never means "bad".
+ *
+ * The block is a <section> when it has a title, so it becomes a landmark a reader can
+ * jump to, and an <aside> otherwise. Nothing here is hidden behind a disclosure:
+ * docs/design/decisions.md D08 is explicit that putting the limitations behind a
+ * control would make them findable but not read.
+ */
+
+export type CalloutKind = "limitation" | "caveat" | "note" | "superseded";
+
+export interface Props {
+  kind?: CalloutKind;
+  /** Overrides the default label text for the kind. */
+  label?: string;
+  /** Optional heading inside the callout. */
+  title?: string;
+  /** Heading level for that title, so the page keeps its heading order. */
+  headingLevel?: 3 | 4;
+  id?: string;
+}
+
+const DEFAULT_LABEL: Record<CalloutKind, string> = {
+  limitation: "Limitation",
+  caveat: "Caveat",
+  note: "Note",
+  superseded: "Superseded claim",
+};
+
+const { kind = "limitation", label, title, headingLevel = 3, id } = Astro.props;
+
+const text = label ?? DEFAULT_LABEL[kind];
+const Heading = `h${headingLevel}` as "h3" | "h4";
+const Wrapper = title ? "section" : "aside";
+const titleId = title && id ? `${id}-title` : undefined;
+---
+
+<Wrapper
+  class={`callout callout--${kind}`}
+  id={id}
+  aria-labelledby={titleId}
+  aria-label={title ? undefined : text}
+>
+  <span class="callout__label">{text}</span>
+  {title && <Heading class="callout__title" id={titleId}>{title}</Heading>}
+  <slot />
+</Wrapper>
