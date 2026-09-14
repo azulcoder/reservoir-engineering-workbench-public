@@ -5,14 +5,14 @@
     "is_base_case": false,
     "is_volumetric_control": false,
     "n_observations": 49,
-    "r_squared": 0.9993518747138217,
-    "fitted_gas_in_place_scf": 133590344150.70267,
-    "fitted_gas_in_place_bscf": 133.59034415070266,
-    "fitted_gas_in_place_stderr_scf": 398662258.4916214,
-    "intercept_psia": 4300.416519618112,
-    "slope_psia_per_scf": -3.219107299227279e-8,
-    "depletion_fraction_observed": 0.41170640250731433,
-    "true_gas_in_place_scf": 100000000000.00764,
+    "r_squared": 0.9993518747138276,
+    "fitted_gas_in_place_scf": 133590344150.69247,
+    "fitted_gas_in_place_bscf": 133.5903441506925,
+    "fitted_gas_in_place_stderr_scf": 398662258.48975533,
+    "intercept_psia": 4300.416519618106,
+    "slope_psia_per_scf": -3.21910729922752e-8,
+    "depletion_fraction_observed": 0.41170640250734575,
+    "true_gas_in_place_scf": 100000000000.00002,
     "true_gas_in_place_derivation": "fit.gas_in_place_scf / (1 + relative_gas_in_place_error); the truth is not a field of the export",
     "relative_gas_in_place_error": 0.33590344150692464,
     "relative_remaining_gas_error": 0.7464520922376077,
@@ -21,9 +21,9 @@
     "invaded_pore_volume_fraction": 0.22145708989972618,
     "terminal_pressure_psia": 2176.0193935896614,
     "max_solver_residual_p_over_z_psia": 2.6311681722290814e-9,
-    "residual_min_psia": -18.950137208290926,
-    "residual_max_psia": 43.779161030438445,
-    "residual_rms_psia": 13.284406907391306
+    "residual_min_psia": -18.95013720814086,
+    "residual_max_psia": 43.77916103044481,
+    "residual_rms_psia": 13.284406907331368
   },
   "observations": [
     {
@@ -36,8 +36,8 @@
       "pressure_psia": 4000,
       "z_factor": 0.9207688359477478,
       "p_over_z_psia": 4344.1956806485505,
-      "fitted_p_over_z_psia": 4300.416519618112,
-      "residual_p_over_z_psia": 43.779161030438445
+      "fitted_p_over_z_psia": 4300.416519618106,
+      "residual_p_over_z_psia": 43.77916103044481
     },
     {
       "j": 6,
@@ -49,8 +49,8 @@
       "pressure_psia": 3939.9144171200182,
       "z_factor": 0.9172470078952499,
       "p_over_z_psia": 4295.3690589416,
-      "fitted_p_over_z_psia": 4263.5309151477995,
-      "residual_p_over_z_psia": 31.838143793800555
+      "fitted_p_over_z_psia": 4263.53091514779,
+      "residual_p_over_z_psia": 31.83814379380965
     },
     {
       "j": 6,
@@ -62,8 +62,8 @@
       "pressure_psia": 3882.858430274431,
       "z_factor": 0.9139787408487812,
       "p_over_z_psia": 4248.302785104774,
-      "fitted_p_over_z_psia": 4226.645310677487,
-      "residual_p_over_z_psia": 21.657474427286616
+      "fitted_p_over_z_psia": 4226.645310677475,
+      "residual_p_over_z_psia": 21.65747442729844
     },
     {
       "j": 6,
@@ -75,8 +75,8 @@
       "pressure_psia": 3828.479359491928,
       "z_factor": 0.9109352551031837,
       "p_over_z_psia": 4202.80073478797,
-      "fitted_p_over_z_psia": 4189.7597062071745,
-      "residual_p_over_z_psia": 13.041028580795683
+      "fitted_p_over_z_psia": 4189.75970620716,
+      "residual_p_over_z_psia": 13.041028580810234
     },
     {
       "j": 6,
@@ -88,8 +88,8 @@
       "pressure_psia": 3776.473680728818,
       "z_factor": 0.9080921219241403,
       "p_over_z_psia": 4158.690059690106,
-      "fitted_p_over_z_psia": 4152.874101736862,
-      "residual_p_over_z_psia": 5.815957953243924
+      "fitted_p_over_z_psia": 4152.874101736845,
+      "residual_p_over_z_psia": 5.815957953261204
     },
     {
       "j": 6,
@@ -101,8 +101,8 @@
       "pressure_psia": 3726.5786066326364,
       "z_factor": 0.9054284963442286,
       "p_over_z_psia": 4115.817672714217,
-      "fitted_p_over_z_psia": 4115.9884972665495,
-      "residual_p_over_z_psia": -0.17082455233230576
+      "fitted_p_over_z_psia": 4115.988497266529,
+      "residual_p_over_z_psia": -0.17082455231138738
     },
     {
       "j": 6,
@@ -114,8 +114,8 @@
       "pressure_psia": 3678.5653588032,
       "z_factor": 0.9029265076111088,
       "p_over_z_psia": 4074.0473646472688,
-      "fitted_p_over_z_psia": 4079.1028927962366,
-      "residual_p_over_z_psia": -5.055528148967824
+      "fitted_p_over_z_psia": 4079.1028927962134,
+      "residual_p_over_z_psia": -5.0555281489446315
     },
     {
       "j": 6,
@@ -127,8 +127,8 @@
       "pressure_psia": 3632.2337439813027,
       "z_factor": 0.9005707707033358,
       "p_over_z_psia": 4033.257420896048,
-      "fitted_p_over_z_psia": 4042.217288325924,
-      "residual_p_over_z_psia": -8.959867429875885
+      "fitted_p_over_z_psia": 4042.217288325898,
+      "residual_p_over_z_psia": -8.959867429849965
     },
     {
       "j": 6,
@@ -140,8 +140,8 @@
       "pressure_psia": 3587.4077454672793,
       "z_factor": 0.8983479917396396,
       "p_over_z_psia": 3993.3386376478775,
-      "fitted_p_over_z_psia": 4005.331683855611,
-      "residual_p_over_z_psia": -11.993046207733641
+      "fitted_p_over_z_psia": 4005.331683855583,
+      "residual_p_over_z_psia": -11.993046207705447
     },
     {
       "j": 6,
@@ -153,8 +153,8 @@
       "pressure_psia": 3543.9319123208256,
       "z_factor": 0.8962466468767717,
       "p_over_z_psia": 3954.1926596553217,
-      "fitted_p_over_z_psia": 3968.4460793852986,
-      "residual_p_over_z_psia": -14.25341972997694
+      "fitted_p_over_z_psia": 3968.4460793852677,
+      "residual_p_over_z_psia": -14.253419729946017
     },
     {
       "j": 6,
@@ -163,11 +163,11 @@
       "times_years": 2.5,
       "cumulative_gas_scf": 11458333333.333338,
       "cumulative_gas_bscf": 11.458333333333337,
-      "pressure_psia": 3501.6683808659527,
-      "z_factor": 0.8942567192177127,
-      "p_over_z_psia": 3915.7305789429006,
-      "fitted_p_over_z_psia": 3931.560474914986,
-      "residual_p_over_z_psia": -15.829895972085524
+      "pressure_psia": 3501.668380866381,
+      "z_factor": 0.8942567192177326,
+      "p_over_z_psia": 3915.730578943292,
+      "fitted_p_over_z_psia": 3931.560474914952,
+      "residual_p_over_z_psia": -15.82989597165988
     },
     {
       "j": 6,
@@ -176,11 +176,11 @@
       "times_years": 2.75,
       "cumulative_gas_scf": 12604166666.666672,
       "cumulative_gas_bscf": 12.604166666666671,
-      "pressure_psia": 3460.4944013641802,
-      "z_factor": 0.8923694818779081,
-      "p_over_z_psia": 3877.8717466692087,
-      "fitted_p_over_z_psia": 3894.6748704446736,
-      "residual_p_over_z_psia": -16.803123775464883
+      "pressure_psia": 3460.4944013641866,
+      "z_factor": 0.8923694818774981,
+      "p_over_z_psia": 3877.8717466709977,
+      "fitted_p_over_z_psia": 3894.674870444637,
+      "residual_p_over_z_psia": -16.803123773639072
     },
     {
       "j": 6,
@@ -189,11 +189,11 @@
       "times_years": 3,
       "cumulative_gas_scf": 13750000000.000006,
       "cumulative_gas_bscf": 13.750000000000005,
-      "pressure_psia": 3420.300271299004,
-      "z_factor": 0.8905773180535338,
-      "p_over_z_psia": 3840.542760256337,
-      "fitted_p_over_z_psia": 3857.789265974361,
-      "residual_p_over_z_psia": -17.24650571802431
+      "pressure_psia": 3420.3002712989846,
+      "z_factor": 0.8905773180535329,
+      "p_over_z_psia": 3840.5427602563186,
+      "fitted_p_over_z_psia": 3857.7892659743216,
+      "residual_p_over_z_psia": -17.246505718002936
     },
     {
       "j": 6,
@@ -202,11 +202,11 @@
       "times_years": 3.25,
       "cumulative_gas_scf": 14895833333.33334,
       "cumulative_gas_bscf": 14.89583333333334,
-      "pressure_psia": 3380.9875982292965,
-      "z_factor": 0.8888735709603897,
-      "p_over_z_psia": 3803.6765955098485,
-      "fitted_p_over_z_psia": 3820.9036615040486,
-      "residual_p_over_z_psia": -17.227065994200075
+      "pressure_psia": 3380.9875982280487,
+      "z_factor": 0.8888735709603364,
+      "p_over_z_psia": 3803.6765955086726,
+      "fitted_p_over_z_psia": 3820.9036615040063,
+      "residual_p_over_z_psia": -17.22706599533376
     },
     {
       "j": 6,
@@ -215,11 +215,11 @@
       "times_years": 3.5,
       "cumulative_gas_scf": 16041666666.666674,
       "cumulative_gas_bscf": 16.041666666666675,
-      "pressure_psia": 3342.4678315137016,
-      "z_factor": 0.8872524180460752,
-      "p_over_z_psia": 3767.2118593652867,
-      "fitted_p_over_z_psia": 3784.0180570337357,
-      "residual_p_over_z_psia": -16.80619766844893
+      "pressure_psia": 3342.4678315127903,
+      "z_factor": 0.8872524180460375,
+      "p_over_z_psia": 3767.2118593644195,
+      "fitted_p_over_z_psia": 3784.0180570336906,
+      "residual_p_over_z_psia": -16.806197669271114
     },
     {
       "j": 6,
@@ -228,11 +228,11 @@
       "times_years": 3.75,
       "cumulative_gas_scf": 17187500000.000008,
       "cumulative_gas_bscf": 17.187500000000007,
-      "pressure_psia": 3304.6610147242764,
-      "z_factor": 0.8857087650500588,
-      "p_over_z_psia": 3731.092143519097,
-      "fitted_p_over_z_psia": 3747.132452563423,
-      "residual_p_over_z_psia": -16.040309044326023
+      "pressure_psia": 3304.6610147241786,
+      "z_factor": 0.8857087650500549,
+      "p_over_z_psia": 3731.092143519003,
+      "fitted_p_over_z_psia": 3747.1324525633754,
+      "residual_p_over_z_psia": -16.040309044372407
     },
     {
       "j": 6,
@@ -241,11 +241,11 @@
       "times_years": 4,
       "cumulative_gas_scf": 18333333333.333336,
       "cumulative_gas_bscf": 18.333333333333336,
-      "pressure_psia": 3267.4947202648746,
-      "z_factor": 0.8842381563902698,
-      "p_over_z_psia": 3695.2654628746013,
-      "fitted_p_over_z_psia": 3710.2468480931107,
-      "residual_p_over_z_psia": -14.981385218509331
+      "pressure_psia": 3267.494720266173,
+      "z_factor": 0.8842381563903203,
+      "p_over_z_psia": 3695.2654628758587,
+      "fitted_p_over_z_psia": 3710.24684809306,
+      "residual_p_over_z_psia": -14.981385217201478
     },
     {
       "j": 6,
@@ -254,11 +254,11 @@
       "times_years": 4.25,
       "cumulative_gas_scf": 19479166666.666664,
       "cumulative_gas_bscf": 19.479166666666664,
-      "pressure_psia": 3230.9031351896583,
-      "z_factor": 0.8828366990536702,
-      "p_over_z_psia": 3659.6837655853296,
-      "fitted_p_over_z_psia": 3673.3612436227986,
-      "residual_p_over_z_psia": -13.677478037468973
+      "pressure_psia": 3230.90313518965,
+      "z_factor": 0.8828366990536699,
+      "p_over_z_psia": 3659.683765585322,
+      "fitted_p_over_z_psia": 3673.361243622745,
+      "residual_p_over_z_psia": -13.677478037423043
     },
     {
       "j": 6,
@@ -267,11 +267,11 @@
       "times_years": 4.5,
       "cumulative_gas_scf": 20624999999.999992,
       "cumulative_gas_bscf": 20.624999999999993,
-      "pressure_psia": 3194.8262731757522,
-      "z_factor": 0.8815009977185049,
-      "p_over_z_psia": 3624.3025038480737,
-      "fitted_p_over_z_psia": 3636.475639152486,
-      "residual_p_over_z_psia": -12.173135304412426
+      "pressure_psia": 3194.8262731757486,
+      "z_factor": 0.8815009977185048,
+      "p_over_z_psia": 3624.30250384807,
+      "fitted_p_over_z_psia": 3636.4756391524297,
+      "residual_p_over_z_psia": -12.173135304359676
     },
     {
       "j": 6,
@@ -280,11 +280,11 @@
       "times_years": 4.75,
       "cumulative_gas_scf": 21770833333.33332,
       "cumulative_gas_bscf": 21.77083333333332,
-      "pressure_psia": 3159.2092922163874,
-      "z_factor": 0.880228099265208,
-      "p_over_z_psia": 3589.080256417189,
-      "fitted_p_over_z_psia": 3599.5900346821736,
-      "residual_p_over_z_psia": -10.509778264984561
+      "pressure_psia": 3159.2092922163865,
+      "z_factor": 0.8802280992652081,
+      "p_over_z_psia": 3589.0802564171877,
+      "fitted_p_over_z_psia": 3599.5900346821145,
+      "residual_p_over_z_psia": -10.509778264926808
     },
     {
       "j": 6,
@@ -296,8 +296,8 @@
       "pressure_psia": 3124.0019013181227,
       "z_factor": 0.8790154451752197,
       "p_over_z_psia": 3553.978395334562,
-      "fitted_p_over_z_psia": 3562.704430211861,
-      "residual_p_over_z_psia": -8.726034877299298
+      "fitted_p_over_z_psia": 3562.7044302117997,
+      "residual_p_over_z_psia": -8.726034877237907
     },
     {
       "j": 6,
@@ -306,11 +306,11 @@
       "times_years": 5.25,
       "cumulative_gas_scf": 24062499999.999977,
       "cumulative_gas_bscf": 24.06249999999998,
-      "pressure_psia": 3089.1578424359914,
-      "z_factor": 0.8778608305888805,
-      "p_over_z_psia": 3518.9607905888042,
-      "fitted_p_over_z_psia": 3525.8188257415486,
-      "residual_p_over_z_psia": -6.858035152744378
+      "pressure_psia": 3089.1578424353343,
+      "z_factor": 0.8778608305888592,
+      "p_over_z_psia": 3518.960790588141,
+      "fitted_p_over_z_psia": 3525.8188257414845,
+      "residual_p_over_z_psia": -6.85803515334328
     },
     {
       "j": 6,
@@ -319,11 +319,11 @@
       "times_years": 5.5,
       "cumulative_gas_scf": 25208333333.333305,
       "cumulative_gas_bscf": 25.208333333333304,
-      "pressure_psia": 3054.63443624827,
-      "z_factor": 0.8767623690114814,
-      "p_over_z_psia": 3483.9935474104145,
-      "fitted_p_over_z_psia": 3488.933221271236,
-      "residual_p_over_z_psia": -4.9396738608215855
+      "pressure_psia": 3054.6344362482428,
+      "z_factor": 0.8767623690114806,
+      "p_over_z_psia": 3483.9935474103863,
+      "fitted_p_over_z_psia": 3488.9332212711693,
+      "residual_p_over_z_psia": -4.939673860782932
     },
     {
       "j": 6,
@@ -332,11 +332,11 @@
       "times_years": 5.75,
       "cumulative_gas_scf": 26354166666.666634,
       "cumulative_gas_bscf": 26.354166666666632,
-      "pressure_psia": 3020.3921823078513,
-      "z_factor": 0.8757184618329051,
-      "p_over_z_psia": 3449.044771747851,
-      "fitted_p_over_z_psia": 3452.047616800924,
-      "residual_p_over_z_psia": -3.002845053073088
+      "pressure_psia": 3020.392182306508,
+      "z_factor": 0.8757184618328652,
+      "p_over_z_psia": 3449.044771746474,
+      "fitted_p_over_z_psia": 3452.047616800854,
+      "residual_p_over_z_psia": -3.002845054380032
     },
     {
       "j": 6,
@@ -345,11 +345,11 @@
       "times_years": 6,
       "cumulative_gas_scf": 27499999999.99996,
       "cumulative_gas_bscf": 27.49999999999996,
-      "pressure_psia": 2986.3944056263367,
-      "z_factor": 0.8747277719675377,
-      "p_over_z_psia": 3414.0843601078277,
-      "fitted_p_over_z_psia": 3415.1620123306116,
-      "residual_p_over_z_psia": -1.077652222783854
+      "pressure_psia": 2986.3944056263463,
+      "z_factor": 0.874727771967538,
+      "p_over_z_psia": 3414.0843601078373,
+      "fitted_p_over_z_psia": 3415.162012330539,
+      "residual_p_over_z_psia": -1.0776522227015448
     },
     {
       "j": 6,
@@ -358,11 +358,11 @@
       "times_years": 6.25,
       "cumulative_gas_scf": 28645833333.33329,
       "cumulative_gas_bscf": 28.64583333333329,
-      "pressure_psia": 2952.606943061771,
-      "z_factor": 0.873789201038629,
-      "p_over_z_psia": 3379.0838105485354,
-      "fitted_p_over_z_psia": 3378.276407860299,
-      "residual_p_over_z_psia": 0.8074026882363796
+      "pressure_psia": 2952.6069430625294,
+      "z_factor": 0.8737892010386497,
+      "p_over_z_psia": 3379.0838105493235,
+      "fitted_p_over_z_psia": 3378.276407860224,
+      "residual_p_over_z_psia": 0.8074026890994901
     },
     {
       "j": 6,
@@ -371,11 +371,11 @@
       "times_years": 6.5,
       "cumulative_gas_scf": 29791666666.66662,
       "cumulative_gas_bscf": 29.791666666666618,
-      "pressure_psia": 2918.9978638847933,
-      "z_factor": 0.8729018696251037,
-      "p_over_z_psia": 3344.016052043115,
-      "fitted_p_over_z_psia": 3341.3908033899866,
-      "residual_p_over_z_psia": 2.6252486531284376
+      "pressure_psia": 2918.9978638836947,
+      "z_factor": 0.8729018696250755,
+      "p_over_z_psia": 3344.0160520419645,
+      "fitted_p_over_z_psia": 3341.390803389909,
+      "residual_p_over_z_psia": 2.6252486520556886
     },
     {
       "j": 6,
@@ -384,11 +384,11 @@
       "times_years": 6.75,
       "cumulative_gas_scf": 30937499999.999947,
       "cumulative_gas_bscf": 30.937499999999947,
-      "pressure_psia": 2885.5372197622914,
-      "z_factor": 0.8720651001673532,
-      "p_over_z_psia": 3308.855289827037,
-      "fitted_p_over_z_psia": 3304.5051989196745,
-      "residual_p_over_z_psia": 4.350090907362301
+      "pressure_psia": 2885.5372197623324,
+      "z_factor": 0.8720651001673542,
+      "p_over_z_psia": 3308.85528982708,
+      "fitted_p_over_z_psia": 3304.5051989195936,
+      "residual_p_over_z_psia": 4.350090907486447
     },
     {
       "j": 6,
@@ -397,11 +397,11 @@
       "times_years": 7,
       "cumulative_gas_scf": 32083333333.333275,
       "cumulative_gas_bscf": 32.08333333333327,
-      "pressure_psia": 2852.196820130493,
-      "z_factor": 0.8712784021938185,
-      "p_over_z_psia": 3273.5768646954402,
-      "fitted_p_over_z_psia": 3267.619594449362,
-      "residual_p_over_z_psia": 5.957270246078224
+      "pressure_psia": 2852.1968201295813,
+      "z_factor": 0.8712784021937976,
+      "p_over_z_psia": 3273.576864694472,
+      "fitted_p_over_z_psia": 3267.6195944492783,
+      "residual_p_over_z_psia": 5.95727024519374
     },
     {
       "j": 6,
@@ -410,11 +410,11 @@
       "times_years": 7.25,
       "cumulative_gas_scf": 33229166666.666603,
       "cumulative_gas_bscf": 33.2291666666666,
-      "pressure_psia": 2818.950029444223,
-      "z_factor": 0.8705414595821344,
-      "p_over_z_psia": 3238.1571244146576,
-      "fitted_p_over_z_psia": 3230.7339899790495,
-      "residual_p_over_z_psia": 7.423134435608063
+      "pressure_psia": 2818.9500294442773,
+      "z_factor": 0.8705414595821356,
+      "p_over_z_psia": 3238.1571244147153,
+      "fitted_p_over_z_psia": 3230.733989978963,
+      "residual_p_over_z_psia": 7.4231344357522175
     },
     {
       "j": 6,
@@ -423,11 +423,11 @@
       "times_years": 7.5,
       "cumulative_gas_scf": 34374999999.99993,
       "cumulative_gas_bscf": 34.37499999999993,
-      "pressure_psia": 2785.771583379198,
-      "z_factor": 0.8698541196160879,
-      "p_over_z_psia": 3202.5733057500547,
-      "fitted_p_over_z_psia": 3193.848385508737,
-      "residual_p_over_z_psia": 8.724920241317704
+      "pressure_psia": 2785.7715833785405,
+      "z_factor": 0.869854119616075,
+      "p_over_z_psia": 3202.573305749346,
+      "fitted_p_over_z_psia": 3193.848385508648,
+      "residual_p_over_z_psia": 8.724920240698339
     },
     {
       "j": 6,
@@ -436,11 +436,11 @@
       "times_years": 7.75,
       "cumulative_gas_scf": 35520833333.33326,
       "cumulative_gas_bscf": 35.52083333333326,
-      "pressure_psia": 2752.637421359893,
-      "z_factor": 0.8692163836346598,
-      "p_over_z_psia": 3166.803425689746,
-      "fitted_p_over_z_psia": 3156.9627810384245,
-      "residual_p_over_z_psia": 9.840644651321327
+      "pressure_psia": 2752.6374213599497,
+      "z_factor": 0.8692163836346608,
+      "p_over_z_psia": 3166.803425689807,
+      "fitted_p_over_z_psia": 3156.9627810383327,
+      "residual_p_over_z_psia": 9.840644651474577
     },
     {
       "j": 6,
@@ -449,11 +449,11 @@
       "times_years": 8,
       "cumulative_gas_scf": 36666666666.66659,
       "cumulative_gas_bscf": 36.666666666666586,
-      "pressure_psia": 2719.524533193688,
-      "z_factor": 0.8686283991030413,
-      "p_over_z_psia": 3130.8261806796895,
-      "fitted_p_over_z_psia": 3120.077176568112,
-      "residual_p_over_z_psia": 10.749004111577506
+      "pressure_psia": 2719.524533193744,
+      "z_factor": 0.8686283991030422,
+      "p_over_z_psia": 3130.826180679751,
+      "fitted_p_over_z_psia": 3120.0771765680174,
+      "residual_p_over_z_psia": 10.749004111733484
     },
     {
       "j": 6,
@@ -462,11 +462,11 @@
       "times_years": 8.25,
       "cumulative_gas_scf": 37812499999.999916,
       "cumulative_gas_bscf": 37.812499999999915,
-      "pressure_psia": 2686.410817866614,
-      "z_factor": 0.8680904529622555,
-      "p_over_z_psia": 3094.6208528149987,
-      "fitted_p_over_z_psia": 3083.1915720978,
-      "residual_p_over_z_psia": 11.429280717198708
+      "pressure_psia": 2686.410817867251,
+      "z_factor": 0.8680904529622654,
+      "p_over_z_psia": 3094.6208528156976,
+      "fitted_p_over_z_psia": 3083.191572097702,
+      "residual_p_over_z_psia": 11.429280717995425
     },
     {
       "j": 6,
@@ -475,11 +475,11 @@
       "times_years": 8.5,
       "cumulative_gas_scf": 38958333333.333244,
       "cumulative_gas_bscf": 38.95833333333324,
-      "pressure_psia": 2653.2749527525984,
-      "z_factor": 0.8676029661359175,
-      "p_over_z_psia": 3058.1672220066384,
-      "fitted_p_over_z_psia": 3046.3059676274875,
-      "residual_p_over_z_psia": 11.861254379150978
+      "pressure_psia": 2653.274952753648,
+      "z_factor": 0.8676029661364748,
+      "p_over_z_psia": 3058.1672220058836,
+      "fitted_p_over_z_psia": 3046.305967627387,
+      "residual_p_over_z_psia": 11.861254378496596
     },
     {
       "j": 6,
@@ -488,11 +488,11 @@
       "times_years": 8.75,
       "cumulative_gas_scf": 40104166666.66657,
       "cumulative_gas_bscf": 40.10416666666657,
-      "pressure_psia": 2620.096271723452,
-      "z_factor": 0.8671664890974058,
-      "p_over_z_psia": 3021.4454832665306,
-      "fitted_p_over_z_psia": 3009.420363157175,
-      "residual_p_over_z_psia": 12.025120109355612
+      "pressure_psia": 2620.096271723087,
+      "z_factor": 0.8671664890974013,
+      "p_over_z_psia": 3021.445483266125,
+      "fitted_p_over_z_psia": 3009.420363157072,
+      "residual_p_over_z_psia": 12.02512010905275
     },
     {
       "j": 6,
@@ -501,11 +501,11 @@
       "times_years": 9,
       "cumulative_gas_scf": 41249999999.9999,
       "cumulative_gas_bscf": 41.2499999999999,
-      "pressure_psia": 2586.8546507962074,
-      "z_factor": 0.8667816984052324,
-      "p_over_z_psia": 2984.436168363602,
-      "fitted_p_over_z_psia": 2972.534758686863,
-      "residual_p_over_z_psia": 11.90140967673915
+      "pressure_psia": 2586.854650794424,
+      "z_factor": 0.8667816984052131,
+      "p_over_z_psia": 2984.436168361611,
+      "fitted_p_over_z_psia": 2972.534758686757,
+      "residual_p_over_z_psia": 11.901409674854222
     },
     {
       "j": 6,
@@ -514,11 +514,11 @@
       "times_years": 9.25,
       "cumulative_gas_scf": 42395833333.33323,
       "cumulative_gas_bscf": 42.39583333333323,
-      "pressure_psia": 2553.5304000874007,
-      "z_factor": 0.8664493941535023,
-      "p_over_z_psia": 2947.120071082895,
-      "fitted_p_over_z_psia": 2935.6491542165504,
-      "residual_p_over_z_psia": 11.470916866344396
+      "pressure_psia": 2553.530400087435,
+      "z_factor": 0.8664493941535027,
+      "p_over_z_psia": 2947.1200710829326,
+      "fitted_p_over_z_psia": 2935.6491542164417,
+      "residual_p_over_z_psia": 11.470916866490825
     },
     {
       "j": 6,
@@ -527,11 +527,11 @@
       "times_years": 9.5,
       "cumulative_gas_scf": 43541666666.66656,
       "cumulative_gas_bscf": 43.54166666666656,
-      "pressure_psia": 2520.1041609615586,
-      "z_factor": 0.8661704982661221,
-      "p_over_z_psia": 2909.4781754934374,
-      "fitted_p_over_z_psia": 2898.763549746238,
-      "residual_p_over_z_psia": 10.714625747199534
+      "pressure_psia": 2520.104160961151,
+      "z_factor": 0.8661704982661191,
+      "p_over_z_psia": 2909.4781754929772,
+      "fitted_p_over_z_psia": 2898.7635497461265,
+      "residual_p_over_z_psia": 10.714625746850743
     },
     {
       "j": 6,
@@ -540,11 +540,11 @@
       "times_years": 9.75,
       "cumulative_gas_scf": 44687499999.999886,
       "cumulative_gas_bscf": 44.687499999999886,
-      "pressure_psia": 2486.556807338244,
-      "z_factor": 0.8659460536107777,
-      "p_over_z_psia": 2871.491586536975,
-      "fitted_p_over_z_psia": 2861.8779452759254,
-      "residual_p_over_z_psia": 9.613641261049452
+      "pressure_psia": 2486.5568073396635,
+      "z_factor": 0.8659460536107862,
+      "p_over_z_psia": 2871.491586538585,
+      "fitted_p_over_z_psia": 2861.8779452758117,
+      "residual_p_over_z_psia": 9.613641262773399
     },
     {
       "j": 6,
@@ -553,11 +553,11 @@
       "times_years": 10,
       "cumulative_gas_scf": 45833333333.33321,
       "cumulative_gas_bscf": 45.833333333333215,
-      "pressure_psia": 2452.869350211107,
-      "z_factor": 0.8657772238862055,
-      "p_over_z_psia": 2833.141462420248,
-      "fitted_p_over_z_psia": 2824.992340805613,
-      "residual_p_over_z_psia": 8.149121614635078
+      "pressure_psia": 2452.869350211111,
+      "z_factor": 0.8657772238862053,
+      "p_over_z_psia": 2833.1414624202534,
+      "fitted_p_over_z_psia": 2824.9923408054965,
+      "residual_p_over_z_psia": 8.14912161475695
     },
     {
       "j": 6,
@@ -566,11 +566,11 @@
       "times_years": 10.25,
       "cumulative_gas_scf": 46979166666.66654,
       "cumulative_gas_bscf": 46.97916666666654,
-      "pressure_psia": 2419.02284446701,
-      "z_factor": 0.8656652942726909,
-      "p_over_z_psia": 2794.408948206026,
-      "fitted_p_over_z_psia": 2788.1067363353004,
-      "residual_p_over_z_psia": 6.302211870725387
+      "pressure_psia": 2419.0228444669992,
+      "z_factor": 0.8656652942725969,
+      "p_over_z_psia": 2794.408948206317,
+      "fitted_p_over_z_psia": 2788.1067363351813,
+      "residual_p_over_z_psia": 6.302211871135569
     },
     {
       "j": 6,
@@ -579,11 +579,11 @@
       "times_years": 10.5,
       "cumulative_gas_scf": 48124999999.99987,
       "cumulative_gas_bscf": 48.12499999999987,
-      "pressure_psia": 2384.998297153125,
-      "z_factor": 0.865611672832,
-      "p_over_z_psia": 2755.2751100850865,
-      "fitted_p_over_z_psia": 2751.221131864988,
-      "residual_p_over_z_psia": 4.053978220098543
+      "pressure_psia": 2384.9982971531126,
+      "z_factor": 0.8656116728319999,
+      "p_over_z_psia": 2755.275110085073,
+      "fitted_p_over_z_psia": 2751.221131864866,
+      "residual_p_over_z_psia": 4.053978220206773
     },
     {
       "j": 6,
@@ -592,11 +592,11 @@
       "times_years": 10.75,
       "cumulative_gas_scf": 49270833333.3332,
       "cumulative_gas_bscf": 49.2708333333332,
-      "pressure_psia": 2350.776576342444,
+      "pressure_psia": 2350.7765763424304,
       "z_factor": 0.8656178926567898,
-      "p_over_z_psia": 2715.7208697793258,
-      "fitted_p_over_z_psia": 2714.335527394676,
-      "residual_p_over_z_psia": 1.3853423846499027
+      "p_over_z_psia": 2715.72086977931,
+      "fitted_p_over_z_psia": 2714.335527394551,
+      "residual_p_over_z_psia": 1.385342384759042
     },
     {
       "j": 6,
@@ -605,11 +605,11 @@
       "times_years": 11,
       "cumulative_gas_scf": 50416666666.66653,
       "cumulative_gas_bscf": 50.41666666666653,
-      "pressure_psia": 2316.338319776019,
+      "pressure_psia": 2316.3383197760313,
       "z_factor": 0.8656856147786317,
-      "p_over_z_psia": 2675.7269385472464,
-      "fitted_p_over_z_psia": 2677.4499229243634,
-      "residual_p_over_z_psia": -1.7229843771169726
+      "p_over_z_psia": 2675.7269385472605,
+      "fitted_p_over_z_psia": 2677.4499229242356,
+      "residual_p_over_z_psia": -1.7229843769750914
     },
     {
       "j": 6,
@@ -618,11 +618,11 @@
       "times_years": 11.25,
       "cumulative_gas_scf": 51562499999.999855,
       "cumulative_gas_bscf": 51.56249999999986,
-      "pressure_psia": 2281.663842448457,
-      "z_factor": 0.8658166318534307,
-      "p_over_z_psia": 2635.273750244506,
-      "fitted_p_over_z_psia": 2640.564318454051,
-      "residual_p_over_z_psia": -5.290568209544745
+      "pressure_psia": 2281.663842448463,
+      "z_factor": 0.8658166318534305,
+      "p_over_z_psia": 2635.2737502445134,
+      "fitted_p_over_z_psia": 2640.5643184539204,
+      "residual_p_over_z_psia": -5.290568209406956
     },
     {
       "j": 6,
@@ -631,11 +631,11 @@
       "times_years": 11.5,
       "cumulative_gas_scf": 52708333333.33318,
       "cumulative_gas_bscf": 52.70833333333319,
-      "pressure_psia": 2246.7330422904956,
-      "z_factor": 0.8660128726530356,
-      "p_over_z_psia": 2594.3413928797795,
-      "fitted_p_over_z_psia": 2603.678713983739,
-      "residual_p_over_z_psia": -9.337321103959312
+      "pressure_psia": 2246.733042290498,
+      "z_factor": 0.8660128726530354,
+      "p_over_z_psia": 2594.341392879783,
+      "fitted_p_over_z_psia": 2603.678713983605,
+      "residual_p_over_z_psia": -9.337321103821978
     },
     {
       "j": 6,
@@ -644,11 +644,11 @@
       "times_years": 11.75,
       "cumulative_gas_scf": 53854166666.66651,
       "cumulative_gas_bscf": 53.854166666666515,
-      "pressure_psia": 2211.5253030700287,
-      "z_factor": 0.8662764074024185,
-      "p_over_z_psia": 2552.9095380785207,
-      "fitted_p_over_z_psia": 2566.7931095134263,
-      "residual_p_over_z_psia": -13.883571434905662
+      "pressure_psia": 2211.5253030700405,
+      "z_factor": 0.8662764074024228,
+      "p_over_z_psia": 2552.9095380785216,
+      "fitted_p_over_z_psia": 2566.79310951329,
+      "residual_p_over_z_psia": -13.883571434768328
     },
     {
       "j": 6,
@@ -657,11 +657,11 @@
       "times_years": 12,
       "cumulative_gas_scf": 54999999999.99984,
       "cumulative_gas_bscf": 54.99999999999984,
-      "pressure_psia": 2176.0193935896523,
-      "z_factor": 0.866609454013158,
-      "p_over_z_psia": 2510.957367834823,
-      "fitted_p_over_z_psia": 2529.907505043114,
-      "residual_p_over_z_psia": -18.950137208290926
+      "pressure_psia": 2176.0193935896614,
+      "z_factor": 0.8666094540131578,
+      "p_over_z_psia": 2510.957367834834,
+      "fitted_p_over_z_psia": 2529.9075050429747,
+      "residual_p_over_z_psia": -18.95013720814086
     }
   ]
 }

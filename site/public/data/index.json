@@ -31,7 +31,7 @@
   },
   "raster_payload": {
     "files": 12,
-    "bytes": 8223697,
+    "bytes": 8226115,
     "note": "Rasters are downloads only. Nothing on the site inlines, embeds or preloads them, so they are not part of any page's initial payload. Their size is accounted for separately here and in docs/release/DISTRIBUTION_MANIFEST.md."
   },
   "files": [
@@ -39,22 +39,22 @@
       "name": "f01_f02_scenarios_all.csv",
       "kind": "full",
       "description": "All eight computed aquifer cases, 392 observation rows. Full dataset.",
-      "bytes": 45194,
-      "sha256": "4499232084efb121e7cbbc32bb9f1e5d989bf18c0f6ba3c13b605d41bffc798e"
+      "bytes": 45197,
+      "sha256": "3cb0c5f961570bd7e20e8c006bf23396278605d26d0bd594fe2b99dfa6d884f7"
     },
     {
       "name": "f01_f02_scenarios_all.json",
       "kind": "full",
       "description": "All eight computed aquifer cases, the committed export verbatim. Full dataset.",
-      "bytes": 98282,
-      "sha256": "488f5fc8309d2bd548144f31d3c3081a19de11f5f2ad94178c276861fde75d44"
+      "bytes": 98272,
+      "sha256": "f2a07dc6be4e929c79523181d7d7fc2f1bb8ca23315c60d9fe863bfa61277c9f"
     },
     {
       "name": "f01_f02_scenario_summaries.json",
       "kind": "full",
       "description": "Per-case headline block for all eight computed cases, with the true inventory derived from the exported fields.",
-      "bytes": 10136,
-      "sha256": "f5b2953a8bd00c451b024ee6c98be98fbacb6417552126dc0fb406da22ac7502"
+      "bytes": 10113,
+      "sha256": "8140b4d4d5a587cf000390804e092b4b04e197f2c9e21e6572625355ea9f39e8"
     },
     {
       "name": "f01_f02_case-0.csv",
@@ -74,99 +74,99 @@
       "name": "f01_f02_case-0p05.csv",
       "kind": "selected",
       "description": "Selected case only: J = 0.05 bbl/day/psi, 49 observations.",
-      "bytes": 5930,
-      "sha256": "accc47dc3400d05991ca7990daf6b25c681846323af7346907fe0a3c8de5e324"
+      "bytes": 5926,
+      "sha256": "9c91cc07ba959a395e08d0893d09ba857ce4b0b4543d213670d86227bd158744"
     },
     {
       "name": "f01_f02_case-0p05.json",
       "kind": "selected",
       "description": "Selected case only: J = 0.05 bbl/day/psi, headline block and 49 observations.",
-      "bytes": 21838,
-      "sha256": "481e2a49055ba4f81a98fd7d7fef2577f18a270157c1f9e5c1def1fa3fb0fd3c"
+      "bytes": 21842,
+      "sha256": "1c474c77ce9b8f9bf80125a637c1bdf82e3768eb4ffceb24743234ae4cc271ee"
     },
     {
       "name": "f01_f02_case-0p2.csv",
       "kind": "selected",
       "description": "Selected case only: J = 0.2 bbl/day/psi, 49 observations.",
-      "bytes": 5864,
-      "sha256": "20475c91b3c8bf7bd97c9ac64a30a05b9ad82f559b3506c55914da71b9df9cb8"
+      "bytes": 5863,
+      "sha256": "b1b2f209fbab77c204261d54037db07535128abf46f839275ca1e3194265abf2"
     },
     {
       "name": "f01_f02_case-0p2.json",
       "kind": "selected",
       "description": "Selected case only: J = 0.2 bbl/day/psi, headline block and 49 observations.",
-      "bytes": 21764,
-      "sha256": "469eacb3cebcc21c20639af2b2cfa4dadc18545d68d0aa955c25eb51fd5db0bc"
+      "bytes": 21752,
+      "sha256": "713cc823ddde54ff0e2a21785b8e82b4807b312fb173e797ab6261b9686d8ed2"
     },
     {
       "name": "f01_f02_case-0p6.csv",
       "kind": "selected",
       "description": "Selected case only: J = 0.6 bbl/day/psi, 49 observations.",
-      "bytes": 5833,
-      "sha256": "bb623c90f1974ef63119e0cf5ae728d0bf21c033344b635fe35f808aa58d4ede"
+      "bytes": 5834,
+      "sha256": "20820fb5f72ba6c4a932b6ec8a3303625ee0526ef3e7321b6551a6afdf3beaae"
     },
     {
       "name": "f01_f02_case-0p6.json",
       "kind": "selected",
       "description": "Selected case only: J = 0.6 bbl/day/psi, headline block and 49 observations.",
-      "bytes": 21723,
-      "sha256": "f2f31b76e0b0d0678e6bccac6f5a4809b90c5e57281dc39f7d8518cbf3688e4e"
+      "bytes": 21720,
+      "sha256": "86a883c49268dc6a3dd96c980664d859e7ab94f261b15e83ec9c3712f328381c"
     },
     {
       "name": "f01_f02_case-2.csv",
       "kind": "selected",
       "description": "Selected case only: J = 2 bbl/day/psi, 49 observations.",
-      "bytes": 5732,
-      "sha256": "27cd8430f09ad60751182101063a0bcaad9b31efa6afca1f82f7168b42896936"
+      "bytes": 5736,
+      "sha256": "22cca5aa8ca700780d2bc8b3acdfccc482eaaebcfde68e96923aa6c166b34683"
     },
     {
       "name": "f01_f02_case-2.json",
       "kind": "selected",
       "description": "Selected case only: J = 2 bbl/day/psi, headline block and 49 observations.",
       "bytes": 21594,
-      "sha256": "8b21ecf75e7b23348e141b2a74da096f74f0ec81335a7487e47e7f3153e1d9df"
+      "sha256": "f91729b6bcc04f34a146db244c44fc8f5b8b53c46814380dca1efbcc112bf56f"
     },
     {
       "name": "f01_f02_case-6.csv",
       "kind": "selected",
       "description": "Selected case only: J = 6 bbl/day/psi, 49 observations.",
-      "bytes": 5734,
-      "sha256": "089ff49d2e6ec10108e92894d9f9e078abc69d419a1c660b2583d28ae2e70ef7"
+      "bytes": 5738,
+      "sha256": "576d844eb6a80650c6ec24b0927d4427cc4b6cc791b3b9d7f15d27b4c2680991"
     },
     {
       "name": "f01_f02_case-6.json",
       "kind": "selected",
       "description": "Selected case only: J = 6 bbl/day/psi, headline block and 49 observations.",
-      "bytes": 21624,
-      "sha256": "46c6e391096efc737e37d945b2e39186868563ddb7e7df801c0e1b617d9e9e24"
+      "bytes": 21615,
+      "sha256": "076b855cb8403c3522fa8cf3e1f867df8f2c052f6e39fa37dd1e4ff1fe925ad1"
     },
     {
       "name": "f01_f02_case-20.csv",
       "kind": "selected",
       "description": "Selected case only: J = 20 bbl/day/psi, 49 observations.",
-      "bytes": 5781,
-      "sha256": "1effc53d28a5194be3d39d10573fe7c2593c3fe697a8667c5777621f3fc4c03b"
+      "bytes": 5776,
+      "sha256": "d5cbbfe09be054b2e0d4ed6e745e001a3d32a29e207f2f25653e01b1d540adb3"
     },
     {
       "name": "f01_f02_case-20.json",
       "kind": "selected",
       "description": "Selected case only: J = 20 bbl/day/psi, headline block and 49 observations.",
-      "bytes": 21654,
-      "sha256": "9ce100009d3f87a69b243c5e55270176a87fb6d2c4c93b4ee0795464a8a574e7"
+      "bytes": 21646,
+      "sha256": "0681ec026205a0931b41ed702bcb2f091359275d29e0d424f004726672d30c50"
     },
     {
       "name": "f01_f02_case-60.csv",
       "kind": "selected",
       "description": "Selected case only: J = 60 bbl/day/psi, 49 observations.",
-      "bytes": 5771,
-      "sha256": "87d7cecc0a67bee86a486d02bcbc4adf9e9eb4591e42bf179aed6796e75b8f5a"
+      "bytes": 5775,
+      "sha256": "de081cb42376eac834b5b1c02778a55aac283ba05a514f1d754204aeb74141ec"
     },
     {
       "name": "f01_f02_case-60.json",
       "kind": "selected",
       "description": "Selected case only: J = 60 bbl/day/psi, headline block and 49 observations.",
-      "bytes": 21668,
-      "sha256": "cebd542bf12d6dee2e33654b625c13bbe9fdbc54edbedb8a7853f597f458f0e7"
+      "bytes": 21661,
+      "sha256": "190c56d53761e1e92d687c63cf181bc8aa6d8652c4811c68a76cc511157ba889"
     },
     {
       "name": "f03_bias_sweep.csv",
@@ -200,15 +200,15 @@
       "name": "f05_holdout.csv",
       "kind": "full",
       "description": "F05 chronological split, 30 calibration and 19 held-out observations. An empty reconstruction field is the calibration region, where there is no reconstruction to report.",
-      "bytes": 4258,
-      "sha256": "bbc4ffc79986c896d5379f16900cc5e763604e73ec676ee609158a82a392e58b"
+      "bytes": 4259,
+      "sha256": "c1b9694ef575c368cb0a070df2a1eda04fa0e442cda8c712349591fa0a96a86c"
     },
     {
       "name": "f05_holdout.json",
       "kind": "full",
       "description": "F05 chronological split, the committed export verbatim.",
-      "bytes": 7209,
-      "sha256": "535f796cedaf358902a3a1a201a11b8a591de726d5b53bb76751036d60f1c0d4"
+      "bytes": 7210,
+      "sha256": "462ed6bd0a4e81a73e44ffc55315fde5748f5ee6890aaff5c1c15007403a2e75"
     },
     {
       "name": "f06_detection.csv",
@@ -257,7 +257,7 @@
       "kind": "full",
       "description": "F09 export contract: numerical source digests, exporter digest, units, evidence class and the seven declared figure-data files.",
       "bytes": 2412,
-      "sha256": "6e8eb8af52908f4037bb29e47e59eafe62f177fefdd2de24a0d5ed2519fed9cd"
+      "sha256": "1e0aaf5be238baad1e48f770cf31520e37e6d341abcd02eaac2f5c0f8656b6f5"
     },
     {
       "name": "a1_01_defect_sensitivity.csv",
@@ -294,10 +294,10 @@
       "figure_id": "F01",
       "media_type": "image/svg+xml",
       "description": "F01, canonical vector. Byte-identical to site/src/generated/figures/f01.svg, which is the file the page inlines; the page trims leading and trailing whitespace and changes nothing else.",
-      "bytes": 26492,
-      "sha256": "664e9fe191abda625e57c3da16c71a242603a4018cec01c53ecc975e9b4484b8",
+      "bytes": 26491,
+      "sha256": "dfb42baefb9f1e1792fb02da4e3b4f541f2d60ee5a91511fb922907583e857eb",
       "source_path": "site/src/generated/figures/f01.svg",
-      "source_sha256": "664e9fe191abda625e57c3da16c71a242603a4018cec01c53ecc975e9b4484b8",
+      "source_sha256": "dfb42baefb9f1e1792fb02da4e3b4f541f2d60ee5a91511fb922907583e857eb",
       "identity": "byte-identical to site/src/generated/figures/f01.svg; the page inlines those same bytes with leading and trailing whitespace trimmed",
       "renderer_sha256": "61631d4ac15ddc5ea21dc7ce5ce9a2e91eb794769b174fc5e863edaeaa17a6de",
       "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
@@ -330,10 +330,10 @@
       "figure_id": "F01b",
       "media_type": "image/svg+xml",
       "description": "F01b, canonical vector. Byte-identical to site/src/generated/figures/f01b-observed-range.svg, which is the file the page inlines; the page trims leading and trailing whitespace and changes nothing else.",
-      "bytes": 23057,
-      "sha256": "67988f9fc5f21e76bb2e83eaedadcafa18f0319cd0b0311d22fb83b94ecd1b7e",
+      "bytes": 23054,
+      "sha256": "45afe2a4af9eb063dd122b02539e1b16c4e748aa9b98a5c27302cae3f54f4cc4",
       "source_path": "site/src/generated/figures/f01b-observed-range.svg",
-      "source_sha256": "67988f9fc5f21e76bb2e83eaedadcafa18f0319cd0b0311d22fb83b94ecd1b7e",
+      "source_sha256": "45afe2a4af9eb063dd122b02539e1b16c4e748aa9b98a5c27302cae3f54f4cc4",
       "identity": "byte-identical to site/src/generated/figures/f01b-observed-range.svg; the page inlines those same bytes with leading and trailing whitespace trimmed",
       "renderer_sha256": "61631d4ac15ddc5ea21dc7ce5ce9a2e91eb794769b174fc5e863edaeaa17a6de",
       "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
@@ -366,10 +366,10 @@
       "figure_id": "F02",
       "media_type": "image/svg+xml",
       "description": "F02, canonical vector. Byte-identical to site/src/generated/figures/f02.svg, which is the file the page inlines; the page trims leading and trailing whitespace and changes nothing else.",
-      "bytes": 18366,
-      "sha256": "a4ce1528629724fa1118987d1208e5dfaa464aef0da5f9472d48f233006340ee",
+      "bytes": 18363,
+      "sha256": "83199c5d22f5274cd565a0caee7ddcfe18ba9b0719c048df305f2aaed5d4302a",
       "source_path": "site/src/generated/figures/f02.svg",
-      "source_sha256": "a4ce1528629724fa1118987d1208e5dfaa464aef0da5f9472d48f233006340ee",
+      "source_sha256": "83199c5d22f5274cd565a0caee7ddcfe18ba9b0719c048df305f2aaed5d4302a",
       "identity": "byte-identical to site/src/generated/figures/f02.svg; the page inlines those same bytes with leading and trailing whitespace trimmed",
       "renderer_sha256": "61631d4ac15ddc5ea21dc7ce5ce9a2e91eb794769b174fc5e863edaeaa17a6de",
       "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
@@ -474,10 +474,10 @@
       "figure_id": "F05",
       "media_type": "image/svg+xml",
       "description": "F05, canonical vector. Byte-identical to site/src/generated/figures/f05.svg, which is the file the page inlines; the page trims leading and trailing whitespace and changes nothing else.",
-      "bytes": 34880,
-      "sha256": "c32e9d08b12a06e5ad297c5107b9c891235861c6ddce90b63c4dc0c9a3dcce80",
+      "bytes": 34878,
+      "sha256": "29c4e8353c308c1195da783d7168f4a6eeed62161991d4d10812126338afd064",
       "source_path": "site/src/generated/figures/f05.svg",
-      "source_sha256": "c32e9d08b12a06e5ad297c5107b9c891235861c6ddce90b63c4dc0c9a3dcce80",
+      "source_sha256": "29c4e8353c308c1195da783d7168f4a6eeed62161991d4d10812126338afd064",
       "identity": "byte-identical to site/src/generated/figures/f05.svg; the page inlines those same bytes with leading and trailing whitespace trimmed",
       "renderer_sha256": "61631d4ac15ddc5ea21dc7ce5ce9a2e91eb794769b174fc5e863edaeaa17a6de",
       "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
@@ -619,9 +619,9 @@
       "media_type": "image/svg+xml",
       "description": "F09, canonical vector. Byte-identical to site/src/generated/figures/f09.svg, which is the file the page inlines; the page trims leading and trailing whitespace and changes nothing else.",
       "bytes": 48633,
-      "sha256": "11b830d1643b06c84d00c4c8142688276bddef2709600d905990ecd0d8276acd",
+      "sha256": "7c74e24f8c8142a24caf87805e5028c87c1c0c8d8218e38bb379a4cddffe8a12",
       "source_path": "site/src/generated/figures/f09.svg",
-      "source_sha256": "11b830d1643b06c84d00c4c8142688276bddef2709600d905990ecd0d8276acd",
+      "source_sha256": "7c74e24f8c8142a24caf87805e5028c87c1c0c8d8218e38bb379a4cddffe8a12",
       "identity": "byte-identical to site/src/generated/figures/f09.svg; the page inlines those same bytes with leading and trailing whitespace trimmed",
       "renderer_sha256": "61631d4ac15ddc5ea21dc7ce5ce9a2e91eb794769b174fc5e863edaeaa17a6de",
       "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
@@ -636,10 +636,10 @@
       "figure_id": "F09",
       "media_type": "image/png",
       "description": "F09, raster export (216 dpi, 3x the 72 dpi authoring scale). Byte-identical to site/src/generated/figures/f09.png. It is the same drawing as the SVG rasterised by the reviewed renderer, not the same bytes and not a separate layout; the SVG is the authoritative artefact.",
-      "bytes": 1448391,
-      "sha256": "f355625a269b10dd6fd360bc29d924f1064b8bdd0beef8c353644fbb97474461",
+      "bytes": 1450809,
+      "sha256": "375aa14ac33e8714b9e7f28760461f2a1f4cb5654b18d4956477cbdd60312135",
       "source_path": "site/src/generated/figures/f09.png",
-      "source_sha256": "f355625a269b10dd6fd360bc29d924f1064b8bdd0beef8c353644fbb97474461",
+      "source_sha256": "375aa14ac33e8714b9e7f28760461f2a1f4cb5654b18d4956477cbdd60312135",
       "identity": "byte-identical to site/src/generated/figures/f09.png; the same drawing as figures/f09.svg in a different encoding, not the same bytes",
       "renderer_sha256": "61631d4ac15ddc5ea21dc7ce5ce9a2e91eb794769b174fc5e863edaeaa17a6de",
       "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
