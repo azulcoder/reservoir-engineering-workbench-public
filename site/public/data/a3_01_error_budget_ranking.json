@@ -94,7 +94,7 @@
     ]
   },
   "ranking_stable_under_sigma_factor_two": false,
-  "short_depletion_penalty_f010_over_f050": 5.061588879781202,
+  "short_depletion_penalty_f010_over_f050": 5.061588795889367,
   "noise_free_relative_error": 7.194245199571014e-14,
   "options": [
     {
@@ -113,9 +113,9 @@
       "depletion_fraction": 0.5,
       "pressure_sigma_psia": 45,
       "calibration_bias_present": true,
-      "design_stderr_relative": 0.009760502574940901,
-      "bias_relative": 0.008644603948637197,
-      "total_relative": 0.0184051065235781
+      "design_stderr_relative": 0.009760502559055615,
+      "bias_relative": 0.008644603948635643,
+      "total_relative": 0.018405106507691258
     },
     {
       "option": "wait three more years, to 65 percent depletion",

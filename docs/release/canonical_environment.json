@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0.0",
+  "purpose": "The one environment in which the published A1/A3/A4 snapshots reproduce byte for byte. Canonical means publication reproducibility: it fixes what 'the same numbers' means for this release. It is not a claim about physical truth, field behaviour, or agreement with any external reference.",
+  "basis": {
+    "operating_system": "Debian GNU/Linux 12 (bookworm)",
+    "architecture": "x86_64",
+    "c_library": "GNU libc 2.36-9+deb12u10",
+    "python_implementation": "CPython",
+    "python_version": "3.13.2",
+    "python_compiler": "GCC 12.2.0",
+    "float_repr_style": "short",
+    "float_format": "IEEE 754 binary64"
+  },
+  "image": {
+    "tag_for_humans": "python:3.13.2-bookworm",
+    "reference": "python@sha256:4165118ed569aff9dbd11d5518199e5379d93bf5bf1cdda62eb13593cf66fb68",
+    "index_digest": "sha256:4165118ed569aff9dbd11d5518199e5379d93bf5bf1cdda62eb13593cf66fb68",
+    "linux_amd64_digest": "sha256:c9b4479346862ed0132b920015c8dbca6373fd760c85da63ad2151baa7c6d148",
+    "registry": "docker.io/library/python",
+    "digest_provenance": "resolved from the registry manifest and re-verified before each use; never transcribed from memory"
+  },
+  "command": "PYTHONPATH=src python3 cases/<case>/run.py --out artifacts/<case>/run-canonical",
+  "comparison": {
+    "inside_the_canonical_environment": "exact byte identity of results/summary.json, checked with diff. No tolerance is permitted here.",
+    "outside_it": "scripts/compare_case_outputs.py against docs/release/portability_envelope.json, plus each case's own acceptance criteria. Byte identity is neither required nor claimed."
+  },
+  "how_fragile_this_is": {
+    "measured": "The bare ubuntu-24.04 runner carries glibc 2.39 and CPython 3.13.15 -- two versions away on both axes -- and produces byte-identical output to this container. CPython 3.11 and 3.12 on that runner do too. So the canonical bytes are the Linux x86_64 result rather than a property of one image.",
+    "why_pin_anyway": "Because 'the canonical environment' has to mean one exact thing when it is used to publish, and a digest is the only way to say that. The pin is a definition, not a superstition."
+  },
+  "what_this_is_not": [
+    "not cross-platform bitwise reproducibility: macOS arm64 differs in the last significant figures and is not required to agree bit for bit",
+    "not external validation: nothing here is compared against data this project did not produce",
+    "not field validation",
+    "not commercial-simulator validation",
+    "not peer review"
+  ]
+}

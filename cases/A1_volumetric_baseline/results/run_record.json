@@ -2,8 +2,8 @@
   "schema_version": 1,
   "label": "A1_volumetric_baseline",
   "status": "completed",
-  "started_utc": "2026-09-13T09:14:29Z",
-  "elapsed_seconds": 0.6301834589976352,
+  "started_utc": "2026-09-14T15:09:46Z",
+  "elapsed_seconds": 1.1103434230000033,
   "seed": 20260913,
   "config": {
     "case_id": "A1_volumetric_baseline",
@@ -60,22 +60,18 @@
   "settings_sha256": "c1f60eb3b78a52e6f5be9fe8e85d0269aa1eeb457be18fa30758121b62eb7910",
   "source_revision": {
     "repo_root": ".",
-    "commit": "855fe5447b5f2a87ea006727dd893204a18a2832",
-    "branch": "main",
-    "describe": "855fe54-dirty",
-    "dirty": true,
-    "dirty_paths": [
-      ".gitignore",
-      "CHANGELOG.md",
-      "cases/"
-    ]
+    "commit": null,
+    "branch": null,
+    "describe": null,
+    "dirty": null,
+    "dirty_paths": null
   },
   "environment": {
     "python_version": "3.13.2",
     "python_implementation": "CPython",
-    "python_executable": "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
-    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
-    "machine": "arm64",
+    "python_executable": "/usr/local/bin/python3",
+    "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.36",
+    "machine": "x86_64",
     "imported_package_versions": {
       "argparse": "1.1",
       "decimal": "1.70",
@@ -89,7 +85,7 @@
   "files": [
     {
       "role": "output",
-      "path": "artifacts/A1_volumetric_baseline/run-006/summary.json",
+      "path": "_canon_out/A1_volumetric_baseline/summary.json",
       "sha256": "701e20d50f10ba7e8b82ea0162d3c0014c883a820f30cb2e70d71893ecbb097e",
       "bytes": 25778
     }

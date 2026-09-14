@@ -2,7 +2,7 @@
   "manifest_version": "1.0.0",
   "generated": {
     "renderer": "site/scripts/render-figures.mjs",
-    "renderer_sha256": "0a425736a7fcea4f787d22de66f46b5561ea7cfa6f8e18a1b223f3303dfcfbb1",
+    "renderer_sha256": "61631d4ac15ddc5ea21dc7ce5ce9a2e91eb794769b174fc5e863edaeaa17a6de",
     "note": "the renderer digest is the SITE BUILD revision and is distinct from the numerical-source digests below, which identify the run that produced the numbers"
   },
   "site_build": {
@@ -33,14 +33,14 @@
   },
   "numerical_source": {
     "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json",
-    "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+    "baseline_summary_sha256": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
     "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
     "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506"
   },
   "export": {
     "exporter_path": "scripts/export_presentation_data.py",
-    "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
-    "reconciliation_checks_passed": 43,
+    "exporter_sha256": "cf5916c14bbc6c19bb5913caaa1d8ab3dc1a71586fca178515fdc59c4c31d252",
+    "reconciliation_checks_passed": 51,
     "reconcile_relative_tolerance": 1e-12
   },
   "units": {
@@ -56,26 +56,26 @@
   "data_file_digests": [
     {
       "file": "f01_f02_scenarios.json",
-      "declared": "dd3d8d265ac77a893fa949b37225b76ea6f56259c7cf5ce706d013c04512f499",
-      "measured": "dd3d8d265ac77a893fa949b37225b76ea6f56259c7cf5ce706d013c04512f499",
+      "declared": "8f55de724f7152f07d1d59912a3879a1c45bc71cd51e57c55a45e13331d98ef8",
+      "measured": "8f55de724f7152f07d1d59912a3879a1c45bc71cd51e57c55a45e13331d98ef8",
       "match": true
     },
     {
       "file": "f05_holdout.json",
-      "declared": "4dcf5257b65b55c0a76f8b6305a9a94e1d329ab690be340b6eb691d66ce3b51c",
-      "measured": "4dcf5257b65b55c0a76f8b6305a9a94e1d329ab690be340b6eb691d66ce3b51c",
+      "declared": "d941fbf77f1142d6bedc47836c9b46188b539b4296c265953bcc16a4eec046e3",
+      "measured": "d941fbf77f1142d6bedc47836c9b46188b539b4296c265953bcc16a4eec046e3",
       "match": true
     },
     {
       "file": "f03_bias_sweep.json",
-      "declared": "e4669e92d1d3dddb06baa10c20cf2701b616b1625c7f2ceeb10d56ff3e584b59",
-      "measured": "e4669e92d1d3dddb06baa10c20cf2701b616b1625c7f2ceeb10d56ff3e584b59",
+      "declared": "b222e6ab7ae1befeca0f8ec8e05e744ffff17623ca4ec06bf81c70eef003dd5d",
+      "measured": "b222e6ab7ae1befeca0f8ec8e05e744ffff17623ca4ec06bf81c70eef003dd5d",
       "match": true
     },
     {
       "file": "f04_progressive.json",
-      "declared": "908e1e796c9fba54994d4ad916ce6dc75af4b3594cc1ca146d4d1ad113ae46bb",
-      "measured": "908e1e796c9fba54994d4ad916ce6dc75af4b3594cc1ca146d4d1ad113ae46bb",
+      "declared": "e8778f1482beef3c14e1df4023601686aae761076b823735336e40f71205029d",
+      "measured": "e8778f1482beef3c14e1df4023601686aae761076b823735336e40f71205029d",
       "match": true
     },
     {
@@ -86,20 +86,20 @@
     },
     {
       "file": "f07_z_mismatch.json",
-      "declared": "8adb8d8dc0b0024ca2e6c2085e3040e2d8e1d0e3be894f3efc27638d7db6d0fc",
-      "measured": "8adb8d8dc0b0024ca2e6c2085e3040e2d8e1d0e3be894f3efc27638d7db6d0fc",
+      "declared": "15167ebe06f3fa487a7041b17f414bdd990c3d9abe74f5a5b7f5ad79a620701d",
+      "measured": "15167ebe06f3fa487a7041b17f414bdd990c3d9abe74f5a5b7f5ad79a620701d",
       "match": true
     },
     {
       "file": "f08_refinement.json",
-      "declared": "5e124ef42a76a1e0761b0fbd6ec1b6c9dc552575ea75ccf3b408bfaeb292565e",
-      "measured": "5e124ef42a76a1e0761b0fbd6ec1b6c9dc552575ea75ccf3b408bfaeb292565e",
+      "declared": "82ea9078f473b42a7ae24add57c2ab6ae4bf765498d42379517bae96ce649e15",
+      "measured": "82ea9078f473b42a7ae24add57c2ab6ae4bf765498d42379517bae96ce649e15",
       "match": true
     }
   ],
   "case_summary_digests": {
     "cases/A1_volumetric_baseline/results/summary.json": "701e20d50f10ba7e8b82ea0162d3c0014c883a820f30cb2e70d71893ecbb097e",
-    "cases/A3_uncertainty_experiments/results/summary.json": "0fa6192a68858352f7bacd3ba27b390c148eba8c6240de4c4f9476cc2385d33d"
+    "cases/A3_uncertainty_experiments/results/summary.json": "0cc6ad6decad4465f12fedc91737243283c4d457f96a7f367cae9333b5703e6b"
   },
   "figures": [
     {
@@ -147,24 +147,24 @@
         "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
       },
       "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
-      "numerical_run_id": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
       "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
       "numerical_source_digests": {
         "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
         "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
-        "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+        "baseline_summary_sha256": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
         "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
       },
       "export_code_revision": {
         "exporter_path": "scripts/export_presentation_data.py",
-        "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
-        "reconciliation_checks_passed": 43,
+        "exporter_sha256": "cf5916c14bbc6c19bb5913caaa1d8ab3dc1a71586fca178515fdc59c4c31d252",
+        "reconciliation_checks_passed": 51,
         "reconcile_relative_tolerance": 1e-12
       },
       "exported_data_hashes": [
         {
           "path": "site/src/data/figures/f01_f02_scenarios.json",
-          "sha256": "dd3d8d265ac77a893fa949b37225b76ea6f56259c7cf5ce706d013c04512f499",
+          "sha256": "8f55de724f7152f07d1d59912a3879a1c45bc71cd51e57c55a45e13331d98ef8",
           "matches_contract": true
         }
       ],
@@ -240,24 +240,24 @@
         "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
       },
       "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
-      "numerical_run_id": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
       "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
       "numerical_source_digests": {
         "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
         "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
-        "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+        "baseline_summary_sha256": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
         "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
       },
       "export_code_revision": {
         "exporter_path": "scripts/export_presentation_data.py",
-        "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
-        "reconciliation_checks_passed": 43,
+        "exporter_sha256": "cf5916c14bbc6c19bb5913caaa1d8ab3dc1a71586fca178515fdc59c4c31d252",
+        "reconciliation_checks_passed": 51,
         "reconcile_relative_tolerance": 1e-12
       },
       "exported_data_hashes": [
         {
           "path": "site/src/data/figures/f01_f02_scenarios.json",
-          "sha256": "dd3d8d265ac77a893fa949b37225b76ea6f56259c7cf5ce706d013c04512f499",
+          "sha256": "8f55de724f7152f07d1d59912a3879a1c45bc71cd51e57c55a45e13331d98ef8",
           "matches_contract": true
         }
       ],
@@ -331,24 +331,24 @@
         "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
       },
       "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
-      "numerical_run_id": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
       "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
       "numerical_source_digests": {
         "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
         "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
-        "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+        "baseline_summary_sha256": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
         "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
       },
       "export_code_revision": {
         "exporter_path": "scripts/export_presentation_data.py",
-        "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
-        "reconciliation_checks_passed": 43,
+        "exporter_sha256": "cf5916c14bbc6c19bb5913caaa1d8ab3dc1a71586fca178515fdc59c4c31d252",
+        "reconciliation_checks_passed": 51,
         "reconcile_relative_tolerance": 1e-12
       },
       "exported_data_hashes": [
         {
           "path": "site/src/data/figures/f01_f02_scenarios.json",
-          "sha256": "dd3d8d265ac77a893fa949b37225b76ea6f56259c7cf5ce706d013c04512f499",
+          "sha256": "8f55de724f7152f07d1d59912a3879a1c45bc71cd51e57c55a45e13331d98ef8",
           "matches_contract": true
         }
       ],
@@ -410,8 +410,8 @@
           "unit": "dimensionless",
           "scale": "log",
           "domain": [
-            2.7126212831518613e-9,
-            0.019171394053111523
+            2.712621285927419e-9,
+            0.01917139405308932
           ]
         }
       },
@@ -431,24 +431,24 @@
         "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
       },
       "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
-      "numerical_run_id": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
       "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
       "numerical_source_digests": {
         "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
         "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
-        "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+        "baseline_summary_sha256": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
         "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
       },
       "export_code_revision": {
         "exporter_path": "scripts/export_presentation_data.py",
-        "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
-        "reconciliation_checks_passed": 43,
+        "exporter_sha256": "cf5916c14bbc6c19bb5913caaa1d8ab3dc1a71586fca178515fdc59c4c31d252",
+        "reconciliation_checks_passed": 51,
         "reconcile_relative_tolerance": 1e-12
       },
       "exported_data_hashes": [
         {
           "path": "site/src/data/figures/f03_bias_sweep.json",
-          "sha256": "e4669e92d1d3dddb06baa10c20cf2701b616b1625c7f2ceeb10d56ff3e584b59",
+          "sha256": "b222e6ab7ae1befeca0f8ec8e05e744ffff17623ca4ec06bf81c70eef003dd5d",
           "matches_contract": true
         }
       ],
@@ -468,7 +468,7 @@
       "files": [
         {
           "path": "f03.svg",
-          "bytes": 43074,
+          "bytes": 43071,
           "media_type": "image/svg+xml"
         },
         {
@@ -522,24 +522,24 @@
         "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
       },
       "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
-      "numerical_run_id": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
       "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
       "numerical_source_digests": {
         "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
         "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
-        "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+        "baseline_summary_sha256": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
         "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
       },
       "export_code_revision": {
         "exporter_path": "scripts/export_presentation_data.py",
-        "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
-        "reconciliation_checks_passed": 43,
+        "exporter_sha256": "cf5916c14bbc6c19bb5913caaa1d8ab3dc1a71586fca178515fdc59c4c31d252",
+        "reconciliation_checks_passed": 51,
         "reconcile_relative_tolerance": 1e-12
       },
       "exported_data_hashes": [
         {
           "path": "site/src/data/figures/f04_progressive.json",
-          "sha256": "908e1e796c9fba54994d4ad916ce6dc75af4b3594cc1ca146d4d1ad113ae46bb",
+          "sha256": "e8778f1482beef3c14e1df4023601686aae761076b823735336e40f71205029d",
           "matches_contract": true
         }
       ],
@@ -559,7 +559,7 @@
       "files": [
         {
           "path": "f04.svg",
-          "bytes": 34383,
+          "bytes": 34387,
           "media_type": "image/svg+xml"
         },
         {
@@ -633,24 +633,24 @@
         "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
       },
       "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
-      "numerical_run_id": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
       "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
       "numerical_source_digests": {
         "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
         "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
-        "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+        "baseline_summary_sha256": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
         "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
       },
       "export_code_revision": {
         "exporter_path": "scripts/export_presentation_data.py",
-        "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
-        "reconciliation_checks_passed": 43,
+        "exporter_sha256": "cf5916c14bbc6c19bb5913caaa1d8ab3dc1a71586fca178515fdc59c4c31d252",
+        "reconciliation_checks_passed": 51,
         "reconcile_relative_tolerance": 1e-12
       },
       "exported_data_hashes": [
         {
           "path": "site/src/data/figures/f05_holdout.json",
-          "sha256": "4dcf5257b65b55c0a76f8b6305a9a94e1d329ab690be340b6eb691d66ce3b51c",
+          "sha256": "d941fbf77f1142d6bedc47836c9b46188b539b4296c265953bcc16a4eec046e3",
           "matches_contract": true
         }
       ],
@@ -724,18 +724,18 @@
         "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
       },
       "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
-      "numerical_run_id": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
       "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
       "numerical_source_digests": {
         "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
         "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
-        "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+        "baseline_summary_sha256": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
         "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
       },
       "export_code_revision": {
         "exporter_path": "scripts/export_presentation_data.py",
-        "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
-        "reconciliation_checks_passed": 43,
+        "exporter_sha256": "cf5916c14bbc6c19bb5913caaa1d8ab3dc1a71586fca178515fdc59c4c31d252",
+        "reconciliation_checks_passed": 51,
         "reconcile_relative_tolerance": 1e-12
       },
       "exported_data_hashes": [
@@ -816,24 +816,24 @@
         "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
       },
       "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
-      "numerical_run_id": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
       "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
       "numerical_source_digests": {
         "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
         "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
-        "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+        "baseline_summary_sha256": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
         "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
       },
       "export_code_revision": {
         "exporter_path": "scripts/export_presentation_data.py",
-        "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
-        "reconciliation_checks_passed": 43,
+        "exporter_sha256": "cf5916c14bbc6c19bb5913caaa1d8ab3dc1a71586fca178515fdc59c4c31d252",
+        "reconciliation_checks_passed": 51,
         "reconcile_relative_tolerance": 1e-12
       },
       "exported_data_hashes": [
         {
           "path": "site/src/data/figures/f07_z_mismatch.json",
-          "sha256": "8adb8d8dc0b0024ca2e6c2085e3040e2d8e1d0e3be894f3efc27638d7db6d0fc",
+          "sha256": "15167ebe06f3fa487a7041b17f414bdd990c3d9abe74f5a5b7f5ad79a620701d",
           "matches_contract": true
         }
       ],
@@ -853,7 +853,7 @@
       "files": [
         {
           "path": "f07.svg",
-          "bytes": 15981,
+          "bytes": 15979,
           "media_type": "image/svg+xml"
         },
         {
@@ -886,7 +886,7 @@
           "unit": "dimensionless",
           "scale": "log",
           "domain": [
-            4.605414632985472e-9,
+            4.60541318969554e-9,
             0.004
           ]
         }
@@ -907,24 +907,24 @@
         "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
       },
       "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
-      "numerical_run_id": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
       "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
       "numerical_source_digests": {
         "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
         "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
-        "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+        "baseline_summary_sha256": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
         "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
       },
       "export_code_revision": {
         "exporter_path": "scripts/export_presentation_data.py",
-        "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
-        "reconciliation_checks_passed": 43,
+        "exporter_sha256": "cf5916c14bbc6c19bb5913caaa1d8ab3dc1a71586fca178515fdc59c4c31d252",
+        "reconciliation_checks_passed": 51,
         "reconcile_relative_tolerance": 1e-12
       },
       "exported_data_hashes": [
         {
           "path": "site/src/data/figures/f08_refinement.json",
-          "sha256": "5e124ef42a76a1e0761b0fbd6ec1b6c9dc552575ea75ccf3b408bfaeb292565e",
+          "sha256": "82ea9078f473b42a7ae24add57c2ab6ae4bf765498d42379517bae96ce649e15",
           "matches_contract": true
         }
       ],
@@ -944,12 +944,12 @@
       "files": [
         {
           "path": "f08.svg",
-          "bytes": 37245,
+          "bytes": 37190,
           "media_type": "image/svg+xml"
         },
         {
           "path": "f08.png",
-          "bytes": 677497,
+          "bytes": 652203,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -980,24 +980,24 @@
         "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
       },
       "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
-      "numerical_run_id": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
       "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
       "numerical_source_digests": {
         "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
         "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
-        "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+        "baseline_summary_sha256": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
         "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
       },
       "export_code_revision": {
         "exporter_path": "scripts/export_presentation_data.py",
-        "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
-        "reconciliation_checks_passed": 43,
+        "exporter_sha256": "cf5916c14bbc6c19bb5913caaa1d8ab3dc1a71586fca178515fdc59c4c31d252",
+        "reconciliation_checks_passed": 51,
         "reconcile_relative_tolerance": 1e-12
       },
       "exported_data_hashes": [
         {
           "path": "site/src/data/figures/contract.json",
-          "sha256": "320519b8e2cc57fdd7e441a4cc4ec499372d7a12374d23af2855235fa8fae4b6",
+          "sha256": "6e8eb8af52908f4037bb29e47e59eafe62f177fefdd2de24a0d5ed2519fed9cd",
           "matches_contract": null
         }
       ],
@@ -1022,7 +1022,7 @@
         },
         {
           "path": "f09.png",
-          "bytes": 1457920,
+          "bytes": 1448391,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -1067,18 +1067,18 @@
         "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
       },
       "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
-      "numerical_run_id": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
       "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
       "numerical_source_digests": {
         "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
         "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
-        "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+        "baseline_summary_sha256": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
         "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
       },
       "export_code_revision": {
         "exporter_path": "scripts/export_presentation_data.py",
-        "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
-        "reconciliation_checks_passed": 43,
+        "exporter_sha256": "cf5916c14bbc6c19bb5913caaa1d8ab3dc1a71586fca178515fdc59c4c31d252",
+        "reconciliation_checks_passed": 51,
         "reconcile_relative_tolerance": 1e-12
       },
       "exported_data_hashes": [
@@ -1154,24 +1154,24 @@
         "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
       },
       "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
-      "numerical_run_id": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+      "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
       "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
       "numerical_source_digests": {
         "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
         "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
-        "baseline_summary_sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
+        "baseline_summary_sha256": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
         "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
       },
       "export_code_revision": {
         "exporter_path": "scripts/export_presentation_data.py",
-        "exporter_sha256": "94362af2028c8125b81475484966d55589e81e3e81591eeb86107e81afc4c331",
-        "reconciliation_checks_passed": 43,
+        "exporter_sha256": "cf5916c14bbc6c19bb5913caaa1d8ab3dc1a71586fca178515fdc59c4c31d252",
+        "reconciliation_checks_passed": 51,
         "reconcile_relative_tolerance": 1e-12
       },
       "exported_data_hashes": [
         {
           "path": "cases/A3_uncertainty_experiments/results/summary.json",
-          "sha256": "0fa6192a68858352f7bacd3ba27b390c148eba8c6240de4c4f9476cc2385d33d",
+          "sha256": "0cc6ad6decad4465f12fedc91737243283c4d457f96a7f367cae9333b5703e6b",
           "matches_contract": null,
           "note": "committed case summary, outside the export contract"
         }

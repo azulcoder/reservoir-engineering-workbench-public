@@ -317,45 +317,65 @@ jobs:
         run: python -m pytest -ra
 
   # ---------------------------------------------------------------------------
-  # Stage 2c: every reference-independent case, re-run into a fresh directory.
+  # Stage 2c: the canonical snapshots, reproduced byte for byte in the one environment
+  # that defines them.
+  #
+  # Run 34852530864 failed here because this job used to demand that snapshots produced
+  # on macOS arm64 reproduce byte for byte on a Linux runner. They do not, and they are
+  # not required to: two dozen libm functions are permitted to disagree in their last
+  # place, and a Monte Carlo draw or a Newton iteration turns that into a different
+  # final digit. What IS required is that the published snapshot reproduces exactly in
+  # the environment it was published from. That environment is pinned below by digest.
   # ---------------------------------------------------------------------------
-  synthetic-cases:
-    name: synthetic case reproduction
+  canonical-cases:
+    name: canonical case reproduction (pinned container)
     needs: source-policy
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    # GitHub's default shell inside a container job is `sh -e {0}`, and Debian's sh is
+    # dash, which has no `set -o pipefail`.
+    defaults:
+      run:
+        shell: bash
+    container:
+      # python:3.13.2-bookworm. The tag is for humans; the digest is what determines the
+      # bytes. Resolved from the registry and re-verified before being written here.
+      image: python@sha256:4165118ed569aff9dbd11d5518199e5379d93bf5bf1cdda62eb13593cf66fb68
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-        with:
-          python-version: ${{ env.PRIMARY_PYTHON }}
-
-      - name: Re-run each case and diff its committed snapshot
+      - name: Record the canonical environment
         run: |
           set -uo pipefail
-          fresh="${RUNNER_TEMP}/cases"
-          mkdir -p "${fresh}"
-          reproduced=0
-          status=0
+          {
+            echo "image:  python@sha256:4165118ed569aff9dbd11d5518199e5379d93bf5bf1cdda62eb13593cf66fb68"
+            echo "tag:    python:3.13.2-bookworm"
+            ldd --version | head -1
+            grep -E "^PRETTY_NAME=" /etc/os-release
+            echo "arch:   $(uname -m)"
+            python3 -VV
+          } | tee canonical_environment.txt
 
+      - name: Reproduce each canonical snapshot, byte for byte
+        run: |
+          set -uo pipefail
+          status=0
+          reproduced=0
+          expected=0
           for case_dir in cases/*/; do
             name="$(basename "${case_dir}")"
             snapshot="${case_dir}results/summary.json"
-
-            # The split between reproducible and reference-dependent cases is derived
-            # from the tree, not listed here: a case ships a committed summary.json
-            # exactly when a reader is meant to be able to re-derive its numbers.
+            # A case ships a committed summary.json exactly when a reader is meant to be
+            # able to re-derive its numbers. A2 reads the restricted extract and ships
+            # none, so it is an explained not-run rather than a failure.
             if [ ! -f "${snapshot}" ]; then
               echo "NOT RUN  ${name}: no committed results/summary.json."
-              echo "         This case reads the restricted NIST extract, which a public"
-              echo "         checkout does not hold, so it exits non-zero by design."
               continue
             fi
-
-            out="${fresh}/${name}"
+            expected=$((expected + 1))
+            out="artifacts/${name}/run-canonical"
             echo "::group::${name}"
             if ! PYTHONPATH=src python3 "${case_dir}run.py" --out "${out}"; then
               echo "::error::${name}: run.py failed"
@@ -364,23 +384,100 @@ jobs:
               continue
             fi
             if diff -u "${snapshot}" "${out}/summary.json"; then
-              echo "OK       ${name}: reproduces its committed snapshot byte for byte"
+              echo "OK       ${name}: reproduces its canonical snapshot byte for byte"
               reproduced=$((reproduced + 1))
             else
-              echo "::error::${name}: a fresh run disagrees with results/summary.json."
-              echo "::error::Either the code changed the numbers or the snapshot is stale."
+              echo "::error::${name}: a fresh canonical run disagrees with its committed snapshot."
+              echo "::error::In the canonical environment this comparison has no tolerance."
               status=1
             fi
             echo "::endgroup::"
           done
-
-          # Zero reproduced cases is a failure, not a quiet pass: it means the loop found
-          # nothing, which is what a broken path or a renamed directory looks like.
-          if [ "${reproduced}" -eq 0 ]; then
-            echo "::error::no case was reproduced. An empty reproduction pass is a failure."
+          # A floor of zero would pass a run that found no cases at all, which is what a
+          # renamed directory looks like. Compare against what the tree actually offers.
+          if [ "${reproduced}" -ne "${expected}" ]; then
+            echo "::error::reproduced ${reproduced} of ${expected} cases that ship a snapshot."
             status=1
           fi
-          echo "cases reproduced: ${reproduced}"
+          echo "canonical cases reproduced: ${reproduced} of ${expected}"
+          exit "${status}"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: canonical-outputs
+          path: |
+            artifacts/*/run-canonical/*.json
+            canonical_environment.txt
+          retention-days: 14
+          if-no-files-found: warn
+
+  # ---------------------------------------------------------------------------
+  # Stage 2d: the same cases on other supported platforms, judged on what actually
+  # matters there.
+  #
+  # Not byte identity, and never described as it. Each environment must reach the same
+  # scientific verdict and stay inside a declared numerical envelope. That is a weaker
+  # claim than canonical reproduction and a stronger one than "it ran".
+  # ---------------------------------------------------------------------------
+  portability-cases:
+    name: portability (${{ matrix.os }}, py${{ matrix.python }})
+    needs: source-policy
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-24.04, python: "3.11" }
+          - { os: ubuntu-24.04, python: "3.12" }
+          - { os: ubuntu-24.04, python: "3.13" }
+          # macOS arm64 is where the snapshots were originally authored, so it is the
+          # environment whose divergence from canonical is best understood.
+          - { os: macos-15, python: "3.13" }
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Run each case and check its own scientific criteria
+        run: |
+          set -uo pipefail
+          status=0
+          checked=0
+          for case_dir in cases/*/; do
+            name="$(basename "${case_dir}")"
+            snapshot="${case_dir}results/summary.json"
+            [ -f "${snapshot}" ] || { echo "NOT RUN  ${name}"; continue; }
+            out="${RUNNER_TEMP}/port/${name}"
+            echo "::group::${name}"
+            if ! PYTHONPATH=src python3 "${case_dir}run.py" --out "${out}"; then
+              echo "::error::${name}: run.py failed on this platform"
+              status=1
+              echo "::endgroup::"
+              continue
+            fi
+            # The case's own acceptance criteria, evaluated on this platform, compared
+            # with the canonical verdicts. These are compared exactly: a criterion is a
+            # decision, not a measurement.
+            if ! python3 scripts/compare_case_outputs.py "${snapshot}" "${out}/summary.json" \
+                 --label "${name} on ${{ matrix.os }} py${{ matrix.python }}"; then
+              echo "::error::${name}: portability comparison failed on this platform."
+              status=1
+            else
+              checked=$((checked + 1))
+            fi
+            echo "::endgroup::"
+          done
+          if [ "${checked}" -eq 0 ]; then
+            echo "::error::no case was compared. An empty portability pass is a failure."
+            status=1
+          fi
+          echo "cases compared: ${checked}"
           exit "${status}"
 
   # ---------------------------------------------------------------------------
@@ -388,7 +485,7 @@ jobs:
   # ---------------------------------------------------------------------------
   figure-contract:
     name: figure export and contract
-    needs: [public-core-tests, synthetic-cases]
+    needs: [public-core-tests, canonical-cases, portability-cases]
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:

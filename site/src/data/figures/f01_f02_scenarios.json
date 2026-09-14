@@ -210,6 +210,7 @@
         53.854166666666515,
         54.99999999999984
       ],
+      "true_gas_in_place_scf": 100000000000.0,
       "p_over_z_psia": [
         4344.1956806485505,
         4294.418438475074,
@@ -693,6 +694,7 @@
         53.854166666666515,
         54.99999999999984
       ],
+      "true_gas_in_place_scf": 100000000000.0,
       "p_over_z_psia": [
         4344.1956806485505,
         4294.426551404415,
@@ -959,10 +961,10 @@
         "depletion_fraction_observed": 0.5482687586549827
       },
       "observed_extent_bscf": 54.99999999999984,
-      "relative_gas_in_place_error": 0.003157650910591503,
-      "relative_remaining_gas_error": 0.0070170020235365005,
-      "bias_over_stderr": 88.09812972385838,
-      "invaded_pore_volume_fraction": 0.0035923277277131603,
+      "relative_gas_in_place_error": 0.0031576509105495365,
+      "relative_remaining_gas_error": 0.007017002023443686,
+      "bias_over_stderr": 88.09812971105771,
+      "invaded_pore_volume_fraction": 0.0035923277277130805,
       "terminal_pressure_psia": 1720.5656690203348,
       "max_solver_residual_p_over_z_psia": 3.3633114071562886e-09
     },
@@ -1176,6 +1178,7 @@
         53.854166666666515,
         54.99999999999984
       ],
+      "true_gas_in_place_scf": 100000000000.0,
       "p_over_z_psia": [
         4344.1956806485505,
         4294.4508705638855,
@@ -1442,12 +1445,12 @@
         "depletion_fraction_observed": 0.5431365655882922
       },
       "observed_extent_bscf": 54.99999999999984,
-      "relative_gas_in_place_error": 0.012636664232451578,
-      "relative_remaining_gas_error": 0.02808147607211464,
-      "bias_over_stderr": 87.55063777582548,
-      "invaded_pore_volume_fraction": 0.014092428364526254,
-      "terminal_pressure_psia": 1737.7102096260069,
-      "max_solver_residual_p_over_z_psia": 2.1259438653942198e-09
+      "relative_gas_in_place_error": 0.01263666423254417,
+      "relative_remaining_gas_error": 0.028081476072320033,
+      "bias_over_stderr": 87.55063776837707,
+      "invaded_pore_volume_fraction": 0.014092428364525596,
+      "terminal_pressure_psia": 1737.710209626006,
+      "max_solver_residual_p_over_z_psia": 2.674823917914182e-09
     },
     {
       "productivity_index_bbl_per_day_psi": 0.6,
@@ -1659,6 +1662,7 @@
         53.854166666666515,
         54.99999999999984
       ],
+      "true_gas_in_place_scf": 100000000000.0,
       "p_over_z_psia": [
         4344.1956806485505,
         4294.515577970413,
@@ -1925,12 +1929,12 @@
         "depletion_fraction_observed": 0.5299067130608693
       },
       "observed_extent_bscf": 54.99999999999984,
-      "relative_gas_in_place_error": 0.037918536308146455,
-      "relative_remaining_gas_error": 0.08426341401810267,
-      "bias_over_stderr": 86.26027876800073,
-      "invaded_pore_volume_fraction": 0.04016407993577585,
-      "terminal_pressure_psia": 1781.9342734267161,
-      "max_solver_residual_p_over_z_psia": 1.873559085652232e-09
+      "relative_gas_in_place_error": 0.03791853630810471,
+      "relative_remaining_gas_error": 0.08426341401801007,
+      "bias_over_stderr": 86.26027876610873,
+      "invaded_pore_volume_fraction": 0.04016407993577947,
+      "terminal_pressure_psia": 1781.9342734255765,
+      "max_solver_residual_p_over_z_psia": 1.914486347232014e-09
     },
     {
       "productivity_index_bbl_per_day_psi": 2.0,
@@ -2142,6 +2146,7 @@
         53.854166666666515,
         54.99999999999984
       ],
+      "true_gas_in_place_scf": 100000000000.0,
       "p_over_z_psia": [
         4344.1956806485505,
         4294.74041837093,
@@ -2408,11 +2413,11 @@
         "depletion_fraction_observed": 0.4888778050043536
       },
       "observed_extent_bscf": 54.99999999999984,
-      "relative_gas_in_place_error": 0.125025506108015,
-      "relative_remaining_gas_error": 0.27783445801781004,
-      "bias_over_stderr": 83.55744043624358,
-      "invaded_pore_volume_fraction": 0.11271687755709779,
-      "terminal_pressure_psia": 1919.14466773094,
+      "relative_gas_in_place_error": 0.1250255061080281,
+      "relative_remaining_gas_error": 0.27783445801783935,
+      "bias_over_stderr": 83.55744043625779,
+      "invaded_pore_volume_fraction": 0.11271687755709676,
+      "terminal_pressure_psia": 1919.144667731227,
       "max_solver_residual_p_over_z_psia": 3.049990482395515e-09
     },
     {
@@ -2625,6 +2630,7 @@
         53.854166666666515,
         54.99999999999984
       ],
+      "true_gas_in_place_scf": 100000000000.0,
       "p_over_z_psia": [
         4344.1956806485505,
         4295.3690589416,
@@ -2891,12 +2897,12 @@
         "depletion_fraction_observed": 0.41170640250731433
       },
       "observed_extent_bscf": 54.99999999999984,
-      "relative_gas_in_place_error": 0.3359034415070268,
-      "relative_remaining_gas_error": 0.7464520922378342,
-      "bias_over_stderr": 84.25764775876979,
-      "invaded_pore_volume_fraction": 0.22145708989972296,
-      "terminal_pressure_psia": 2176.0193935896523,
-      "max_solver_residual_p_over_z_psia": 3.334207576699555e-09
+      "relative_gas_in_place_error": 0.33590344150692464,
+      "relative_remaining_gas_error": 0.7464520922376077,
+      "bias_over_stderr": 84.25764775913862,
+      "invaded_pore_volume_fraction": 0.22145708989972618,
+      "terminal_pressure_psia": 2176.0193935896614,
+      "max_solver_residual_p_over_z_psia": 2.6311681722290814e-09
     },
     {
       "productivity_index_bbl_per_day_psi": 20.0,
@@ -3108,6 +3114,7 @@
         53.854166666666515,
         54.99999999999984
       ],
+      "true_gas_in_place_scf": 100000000000.0,
       "p_over_z_psia": [
         4344.1956806485505,
         4297.418307545714,
@@ -3374,11 +3381,11 @@
         "depletion_fraction_observed": 0.3379726357870736
       },
       "observed_extent_bscf": 54.99999999999984,
-      "relative_gas_in_place_error": 0.6273506839367444,
-      "relative_remaining_gas_error": 1.3941126309705378,
-      "bias_over_stderr": 62.46907582310299,
-      "invaded_pore_volume_fraction": 0.30372905854823273,
-      "terminal_pressure_psia": 2430.577752729145,
+      "relative_gas_in_place_error": 0.6273506839363507,
+      "relative_remaining_gas_error": 1.394112630969663,
+      "bias_over_stderr": 62.46907582277478,
+      "invaded_pore_volume_fraction": 0.3037290585482503,
+      "terminal_pressure_psia": 2430.577752729345,
       "max_solver_residual_p_over_z_psia": 3.0713636078871787e-09
     },
     {
@@ -3591,6 +3598,7 @@
         53.854166666666515,
         54.99999999999984
       ],
+      "true_gas_in_place_scf": 100000000000.0,
       "p_over_z_psia": [
         4344.1956806485505,
         4302.188322100081,
@@ -3857,11 +3865,11 @@
         "depletion_fraction_observed": 0.316082642856074
       },
       "observed_extent_bscf": 54.99999999999984,
-      "relative_gas_in_place_error": 0.7400512569443336,
-      "relative_remaining_gas_error": 1.6445583487651794,
-      "bias_over_stderr": 49.599505876503976,
-      "invaded_pore_volume_fraction": 0.3303457899776142,
-      "terminal_pressure_psia": 2528.7637760096122,
+      "relative_gas_in_place_error": 0.7400512569445257,
+      "relative_remaining_gas_error": 1.6445583487656066,
+      "bias_over_stderr": 49.59950587653903,
+      "invaded_pore_volume_fraction": 0.33034578997764363,
+      "terminal_pressure_psia": 2528.7637760093985,
       "max_solver_residual_p_over_z_psia": 3.428340278333053e-09
     }
   ]

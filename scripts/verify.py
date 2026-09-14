@@ -43,6 +43,7 @@ import datetime as dt
 import json
 import os
 import pathlib
+import platform
 import re
 import shlex
 import shutil
@@ -393,8 +394,73 @@ def case_needs_reference_data(case_dir: pathlib.Path) -> bool:
     return any(marker in text for marker in REFERENCE_SOURCE_MARKERS)
 
 
+def in_canonical_environment() -> bool:
+    """Return True when this machine is the environment the snapshots are published from.
+
+    The canonical environment is Linux on x86_64. It is checked by platform rather than by
+    container digest on purpose: a reader who clones this repository onto an ordinary
+    x86_64 Linux box should get the byte comparison, because that is the comparison that
+    holds there. It was measured to hold across glibc 2.36 and 2.39 and across CPython
+    3.11, 3.12 and 3.13, so the useful boundary is the platform, not the image.
+
+    CI pins the image anyway, because "the canonical environment" has to mean one exact
+    thing when it is used to publish, and a digest is the only way to say that.
+    """
+    return platform.system() == "Linux" and platform.machine() in {"x86_64", "AMD64"}
+
+
+def _portability_check(case_dir: pathlib.Path, produced: pathlib.Path) -> Check:
+    """Compare a fresh run against the canonical snapshot semantically, not byte for byte.
+
+    Off the canonical platform, byte identity is the wrong question: libm is permitted to
+    differ in its last place and a Newton iteration turns that into a different final
+    digit. What must hold is that the case reaches the same verdict and stays inside the
+    declared numerical envelope. `scripts/compare_case_outputs.py` owns that judgement and
+    compares every acceptance state exactly.
+    """
+    committed = case_dir / "results" / "summary.json"
+    completed = subprocess.run(  # fixed argv, never a shell
+        [
+            sys.executable,
+            str(REPO_ROOT / "scripts" / "compare_case_outputs.py"),
+            str(committed),
+            str(produced),
+            "--label",
+            case_dir.name,
+        ],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    ok = completed.returncode == 0
+    tail = [line for line in (completed.stdout or "").splitlines() if "max relative" in line]
+    return Check(
+        id=f"case-{case_dir.name}",
+        title=f"{case_dir.name} is numerically portable to this platform",
+        status=PASSED if ok else FAILED,
+        mandatory=True,
+        detail=(
+            "not the canonical environment, so this is the portability comparison and not "
+            "byte identity: every acceptance state matched exactly and every value stayed "
+            "inside the declared envelope" + (f" ({tail[0].strip()})" if ok and tail else "")
+            if ok
+            else "the fresh run falls outside the declared portability envelope; "
+            + (completed.stdout or completed.stderr).strip().splitlines()[-1:][0]
+            if (completed.stdout or completed.stderr).strip()
+            else "the portability comparison failed"
+        ),
+    )
+
+
 def reproduce_case(case_dir: pathlib.Path) -> Check:
-    """Re-run one case into a fresh directory and compare summary.json byte for byte."""
+    """Re-run one case and check it against its committed canonical snapshot.
+
+    Inside the canonical environment that means byte identity, with no tolerance.
+    Outside it that means the portability comparison. Both are mandatory; they are
+    different questions, and reporting them under the same name would hide which one was
+    actually asked.
+    """
     committed = case_dir / "results" / "summary.json"
     with tempfile.TemporaryDirectory(prefix=f"verify-{case_dir.name}-") as temporary:
         out = pathlib.Path(temporary) / "run"
@@ -424,16 +490,19 @@ def reproduce_case(case_dir: pathlib.Path) -> Check:
                 mandatory=True,
                 detail=f"the run produced no summary.json under {out}",
             )
+        if not in_canonical_environment():
+            return _portability_check(case_dir, produced)
         same = produced.read_bytes() == committed.read_bytes()
         return Check(
             id=f"case-{case_dir.name}",
-            title=f"{case_dir.name} reproduces its committed snapshot",
+            title=f"{case_dir.name} reproduces its canonical snapshot",
             status=PASSED if same else FAILED,
             mandatory=True,
             detail=(
-                "fresh run reproduces results/summary.json byte for byte"
+                "canonical environment: the fresh run reproduces results/summary.json byte for byte"
                 if same
-                else "the fresh run disagrees with the committed results/summary.json"
+                else "canonical environment: the fresh run disagrees with the committed "
+                "results/summary.json, and here that comparison has no tolerance"
             ),
         )
 

@@ -38,8 +38,8 @@ export const VERIFICATION = {
      registers one further check, reference-skip-count-drift, so the same tree reports 10
      checks under that flag and 9 without it. An earlier version of this block carried 10
      collected and 9 passed, which was one number from each invocation. */
-  testsCollected: 683,
-  testsPassed: 663,
+  testsCollected: 707,
+  testsPassed: 687,
   testsFailedOrErrored: 0,
   testsSkipped: 20,
   skipReason:
@@ -49,7 +49,7 @@ export const VERIFICATION = {
   mandatoryChecksFailed: 0,
   casesReproduced: "3 of 3, each re-run into a fresh directory and diffed byte for byte",
   figureDataFiles: 7,
-  reconciliationChecks: 43,
+  reconciliationChecks: 51,
   reconcileTolerance: "1e-12 relative",
 } as const;
 

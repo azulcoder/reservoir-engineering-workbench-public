@@ -86,7 +86,10 @@ const description =
       Everything a clone of the public tree can run, with no restricted files and no network.
       It covers the numerical core, the analytic and closed-form identities, the dependency
       policy, and the synthetic studies, which it re-runs from scratch and compares against
-      their committed snapshots byte for byte.
+      their committed snapshots. In the pinned canonical Linux environment that comparison
+      is exact byte identity. On other supported platforms it is a numerical portability
+      gate plus each study's own acceptance criteria, because identical bytes across
+      different C libraries is not a property this project has or needs.
     </p>
     <pre><code>python3 scripts/verify.py --profile public-core</code></pre>
     <p>
@@ -172,7 +175,7 @@ const description =
           scope: "A1, A3 and A4 re-run into fresh directories and diffed against their committed snapshots",
           environment: VERIFICATION.interpreter,
           state: "PASS",
-          note: "byte-identical in all three",
+          note: "byte-identical in all three, in the canonical environment",
           evidence: { label: "Studies", path: "/studies/" },
         },
         {

@@ -364,7 +364,7 @@
     "calibration_relative_gas_in_place_error": 0.11302414269485417,
     "calibration_r_squared": 0.9996408205575404,
     "holdout_rmse_pressure_psia": 15.706950636762556,
-    "holdout_rmse_fraction_of_initial_pressure": 0.003926737659190639,
+    "holdout_rmse_fraction_of_initial_pressure": 0.003926737659193677,
     "initial_pressure_psia_denominator": 4000.0,
     "borrowed_demonstration_gate": 0.01
   }

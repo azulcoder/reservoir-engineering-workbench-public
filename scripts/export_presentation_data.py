@@ -150,6 +150,17 @@ def build_scenarios(case: Any, baseline: dict[str, Any]) -> tuple[dict[str, Any]
         )
         checks += 5
 
+        # The declared constant must agree with what the fit and the reported relative
+        # error imply. This is the check the old downstream division performed implicitly;
+        # doing it here keeps it, and keeps it at full precision rather than after the
+        # value has been rounded for display.
+        reconcile(
+            f"J={productivity_index} true gas in place",
+            case.GAS_IN_PLACE_SCF,
+            fit.gas_in_place_scf / (1.0 + row["relative_gas_in_place_error"]),
+        )
+        checks += 1
+
         fitted = [fit.intercept + fit.slope * g for g in cumulative]
         residuals = [observed_value - f for observed_value, f in zip(p_over_z, fitted, strict=True)]
         step_days = case.HORIZON_DAYS / case.BASE_STEPS
@@ -168,6 +179,16 @@ def build_scenarios(case: Any, baseline: dict[str, Any]) -> tuple[dict[str, Any]
                 "times_years": series([t / 365.25 for t in times_days], "times_years"),
                 "cumulative_gas_scf": series(cumulative, "cumulative_gas_scf"),
                 "cumulative_gas_bscf": series([g / 1.0e9 for g in cumulative], "cumulative_gas_bscf"),
+                # The case's declared true gas in place, carried through rather than left
+                # to be reconstructed downstream. The site used to recover it by dividing
+                # the fitted volume by one plus the relative error, which is algebraically
+                # right and numerically lossy: on one platform that division returned
+                # 100000000000.0 and on another 99999999999.99884, a relative difference of
+                # 1.2e-14. Three of the forty-nine production fractions are exact ties at
+                # four decimals -- 0.20625, 0.34375, 0.48125 -- so that last-place wobble
+                # decided which way the tie rounded and moved a published digit. The
+                # declared constant is identical on every platform and ends that.
+                "true_gas_in_place_scf": finite(case.GAS_IN_PLACE_SCF, "true gas in place"),
                 "p_over_z_psia": series(p_over_z, "p_over_z_psia"),
                 "pressure_psia": series(pressures, "pressure_psia"),
                 "z_factor": series(z_factors, "z_factor"),

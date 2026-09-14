@@ -529,9 +529,55 @@ against that finest level, so the finest level sits at zero by construction and 
 the axis floor with an explicit label rather than silently dropped by the log scale.
 
 **Data table.** Per series, per level: `timestep_days`, `steps`, `terminal_water_influx_bbl`,
-`relative_gas_in_place_error` at full precision, the derived deviation from the finest level,
-and `max_solver_residual_p_over_z_psia`. Plus `error_span_over_refinement` per series and the
-exported `note`.
+`relative_gas_in_place_error` to nine significant figures, the derived deviation from the
+finest level, and `max_solver_residual_p_over_z_psia` presented as the bound `< 1e-8`. Plus
+`error_span_over_refinement` per series and the exported `note`.
+
+**Precision, and why it is not "full".** An earlier version of this specification asked for
+`relative_gas_in_place_error` at full precision and got sixteen significant figures, which is
+the decimal expansion of a double rather than a measurement. The digits past roughly the
+eighth are not stable across the platforms this project supports: the measured spread on
+these values is about 1e-13 relative, which lands inside a sixteen-figure rendering and
+outside a nine-figure one. Nine keeps everything the convergence argument needs — the four
+levels of each series stay visibly distinct, and the deviation column that carries the
+convergence rate is untouched — while printing nothing the comparison can support.
+
+`max_solver_residual_p_over_z_psia` is presented as a bound for a different reason: its exact
+value is zero. It measures how far the solve failed to close, not a property of the
+reservoir, so its digits carry no information about the physics and its leading digits vary
+with the platform. The bound was verified against 96 values — eight refinement levels and
+eight aquifer-strength scenarios, in each of six environments — with the largest observed
+3.43e-09 psia. The renderer throws rather than printing a bound a value does not satisfy.
+
+Both are presentation decisions. The raw values remain at full precision in
+`cases/A4_misleading_fit_counterexample/results/summary.json` and in the exported figure
+data, and neither the solver, its convergence tolerance, the case inputs nor any acceptance
+threshold was touched.
+
+
+---
+
+## Display precision
+
+Public figures show the precision the engineering purpose justifies and the platforms can
+support. Machine precision belongs in the result artifacts, not in a label.
+
+A published numeric representation should be:
+
+- sufficient for the question the figure is asked to answer;
+- identical across the supported platform matrix, so that two readers on different machines
+  do not see different numbers and conclude something changed;
+- no more precise than the digits that are actually stable;
+- precise enough to preserve the distinction the graphic exists to show.
+
+The third and fourth points pull against each other, and that tension is the whole of the
+rule. Cutting digits until a figure stops disagreeing with itself is legitimate; cutting
+them until it stops showing an inconvenient difference is not. This rule exists to remove
+digits that carry no information, never to flatten a spread, hide a sensitivity, or blur two
+results that the figure is meant to distinguish. Where a quantity's exact value is zero — a
+residual, an error against an analytic oracle — a verified bound says more than any number of
+digits, and the bound must be verified across every supported environment before it is
+published.
 
 ---
 

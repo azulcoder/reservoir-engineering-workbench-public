@@ -30,6 +30,7 @@
 import DataTable from "./DataTable.astro";
 import Callout from "./Callout.astro";
 import { scenarios, baseScenario } from "../scripts/scenarios";
+import { residualBound } from "../scripts/residual";
 import { panelsFor } from "../scripts/panels";
 import { download } from "../scripts/public-data";
 import explorerScript from "../scripts/explorer.js?raw";
@@ -144,7 +145,7 @@ function metricRows(s: (typeof cases)[number]) {
     },
     {
       q: "Worst coupled-solve residual",
-      v: `${s.maxSolverResidualPsia.toExponential(2)} psia`,
+      v: `${residualBound(s.maxSolverResidualPsia)} psia`,
       n: "the generator's own arithmetic error, for comparison with the residuals above",
     },
   ];

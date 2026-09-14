@@ -70,7 +70,7 @@ volume. Nothing here is a recoverable volume or a reserve.
 
 | Stage | Subject | State |
 |---|---|---|
-| A | Gas properties and volumetric material balance | **Delivered as 0.2.** Three case studies with committed results that re-run byte-identical; a fourth is blocked in the public profile |
+| A | Gas properties and volumetric material balance | **Delivered as 0.2.** Three case studies with committed results that re-run byte-identical in the canonical environment; a fourth is blocked in the public profile |
 | B | Gas-well pressure transients | **Protocol written, no study executed.** The library ships the diagnostics primitives the protocol lists as available today; there is no Stage B run, result or exhibit |
 | C | Public simulation benchmark (SPE1, SPE3) | **Not started.** No deck acquired, no simulator installed, nothing run |
 | D | Mature-gas decision study | **Not started**, and not scoped beyond a heading |
@@ -81,9 +81,9 @@ Stage A in detail:
 
 | Case | What it establishes | State |
 |---|---|---|
-| A1 volumetric baseline | The p/Z inverse recovers gas in place to the precision the arithmetic allows on noise-free volumetric data: exactly zero relative error at constant Z, +5.4e-14 with a pressure-dependent deviation factor. Its own diagnostic D1 narrows that: a uniform multiplicative error in the ordinate — a wrong standard-volume basis included — leaves the recovered G exactly unchanged, so the exact recovery is evidence only against the defect classes D1 can see | Runs, reproduces byte-identical |
-| A3 uncertainty experiments | An ordinate-side measurement error budget on a synthetic closed tank. Its headline ranking is explicitly **not robust**: a pre-registered inconclusive condition triggered and is reported as inconclusive. What does survive is the structure — a shared calibration bias does not shrink with more surveys while random scatter does, and the *level* of Z is irrelevant to G while its *shape* across the window moves G roughly one for one | Runs, reproduces byte-identical |
-| A4 misleading fit counterexample | The finding above | Runs, reproduces byte-identical |
+| A1 volumetric baseline | The p/Z inverse recovers gas in place to the precision the arithmetic allows on noise-free volumetric data: exactly zero relative error at constant Z, +5.4e-14 with a pressure-dependent deviation factor. Its own diagnostic D1 narrows that: a uniform multiplicative error in the ordinate — a wrong standard-volume basis included — leaves the recovered G exactly unchanged, so the exact recovery is evidence only against the defect classes D1 can see | Runs, reproduces byte-identical in the canonical environment |
+| A3 uncertainty experiments | An ordinate-side measurement error budget on a synthetic closed tank. Its headline ranking is explicitly **not robust**: a pre-registered inconclusive condition triggered and is reported as inconclusive. What does survive is the structure — a shared calibration bias does not shrink with more surveys while random scatter does, and the *level* of Z is irrelevant to G while its *shape* across the window moves G roughly one for one | Runs, reproduces byte-identical in the canonical environment |
+| A4 misleading fit counterexample | The finding above | Runs, reproduces byte-identical in the canonical environment |
 | A2 independent PVT check | The only study that compares this library against values it did not produce | **Blocked in this tree.** Its inputs are not redistributed; `run.py` ships and exits 1 when they are absent, and its protocol, report and results are excluded |
 
 Stage B's protocol is `docs/protocols/stage_b_pta_protocol.md`. A protocol is a design
@@ -98,7 +98,9 @@ code agrees with itself" and "this code agrees with something it did not produce
 **public-core** is everything a clone of this tree can run, with no restricted files and no
 network. It covers the numerical core, the analytic and closed-form identities, the
 dependency policy, and the three synthetic cases, which it re-runs from scratch and
-compares against their committed snapshots byte for byte. It is a self-consistency and
+compares against their committed snapshots. In the pinned canonical Linux environment
+that comparison is exact byte identity; on other supported platforms it is a numerical
+portability gate plus each case's own acceptance criteria. It is a self-consistency and
 reproducibility result. It is not external validation, and nothing here should describe it
 as validated, benchmarked against reality, or field-proven.
 
@@ -113,18 +115,18 @@ Measured on 2026-09-14, `python3 scripts/verify.py --profile public-core --cases
 | Quantity | Measured |
 |---|---|
 | checks collected / passed / mandatory failed | 9 / 9 / 0 |
-| tests collected | 683 |
-| tests passed | 663 |
+| tests collected | 707 |
+| tests passed | 687 |
 | tests failed or errored | 0 |
 | tests skipped | 20 |
 | reference-dependent tests, not run | 20 |
 | reference-dependent checks, not run | 2 |
-| synthetic cases reproduced byte-identical | 3 of 3 |
+| synthetic cases reproduced byte-identical, in the canonical environment | 3 of 3 |
 
-The two runners report the same suite differently: `python3 scripts/check.py` prints "683
+The two runners report the same suite differently: `python3 scripts/check.py` prints "707
 run, 0 failed, 20 skipped" because `unittest` counts a skipped test in `testsRun`, and
-`python3 -m pytest -q` prints "663 passed, 20 skipped" because pytest does not. 683 minus
-20 is 663.
+`python3 -m pytest -q` prints "687 passed, 20 skipped" because pytest does not. 707 minus
+20 is 687.
 
 Adding `--expect-reference-skips 20` registers one further check,
 `reference-skip-count-drift`, so the same tree reports 10 checks under that flag and 9
@@ -333,7 +335,7 @@ check, and what the history does and does not prove.
 ```
 src/reservoir_lab/   the library: gas properties, material balance, aquifer, pseudopressure,
                      diagnostics, regression, units, numerics, provenance, validation
-tests/               683 tests; oracles under tests/oracles/
+tests/               707 tests; oracles under tests/oracles/
 cases/               A1, A2, A3, A4 — protocol, run.py, report, decision memo, results
 scripts/             verify.py, check.py, check_public_release.py, check_repository.py,
                      export_presentation_data.py, fetch_nist_reference.py, run_demo.py

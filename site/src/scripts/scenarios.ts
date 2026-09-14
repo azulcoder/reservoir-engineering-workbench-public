@@ -56,6 +56,8 @@ interface RawScenario {
   residual_p_over_z_psia: number[];
   fit: RawFit;
   observed_extent_bscf: number;
+  /** The case's declared true gas in place, carried through by the exporter. */
+  true_gas_in_place_scf: number;
   relative_gas_in_place_error: number;
   relative_remaining_gas_error: number;
   bias_over_stderr: number;
@@ -138,7 +140,31 @@ async function build(): Promise<Scenario[]> {
 
   const truths: number[] = [];
   const out = raw.map((s): Scenario => {
-    const trueScf = s.fit.gas_in_place_scf / (1 + s.relative_gas_in_place_error);
+    /* The case's declared true gas in place, read rather than reconstructed.
+     *
+     * This used to be recovered as fit.gas_in_place_scf / (1 + relative error). That is
+     * algebraically correct and numerically lossy: the same division returned exactly
+     * 100000000000.0 on macOS arm64 and 99999999999.99884 in the canonical Linux
+     * environment, a relative difference of 1.2e-14. Harmless on its own, except that
+     * three of the forty-nine production fractions are exact ties at four decimals
+     * (0.20625, 0.34375, 0.48125), so that last-place wobble decided which way the tie
+     * rounded and moved a digit a reader can see. The exported constant is identical on
+     * every platform.
+     *
+     * The division is kept as a consistency check rather than discarded, because it was
+     * doing real work: it tied the declared truth to the fit and the reported error. If
+     * those stop agreeing, that is a defect and this says so instead of rounding it away.
+     */
+    const trueScf = s.true_gas_in_place_scf;
+    const impliedScf = s.fit.gas_in_place_scf / (1 + s.relative_gas_in_place_error);
+    const disagreement = Math.abs(trueScf - impliedScf) / Math.max(Math.abs(trueScf), 1);
+    if (!(disagreement < 1e-7)) {
+      fail(
+        `case J = ${s.productivity_index_bbl_per_day_psi} declares true gas in place ` +
+          `${trueScf} scf, but its fit and relative error imply ${impliedScf} scf, a ` +
+          `relative disagreement of ${disagreement.toExponential(3)}. These must agree.`,
+      );
+    }
     truths.push(trueScf);
     const r = s.residual_p_over_z_psia;
     if (r.length !== s.n_observations) {

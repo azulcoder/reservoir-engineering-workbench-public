@@ -5,66 +5,66 @@
       {
         "timestep_days": 30.4375,
         "steps": 144,
-        "terminal_water_influx_bbl": 8359648.259782059,
-        "relative_gas_in_place_error": 0.125025506108015,
+        "terminal_water_influx_bbl": 8359648.259781984,
+        "relative_gas_in_place_error": 0.1250255061080281,
         "max_solver_residual_p_over_z_psia": 3.049990482395515e-9
       },
       {
         "timestep_days": 15.21875,
         "steps": 288,
-        "terminal_water_influx_bbl": 8359681.594085301,
-        "relative_gas_in_place_error": 0.1250260956003295,
-        "max_solver_residual_p_over_z_psia": 2.2323547455016524e-9
+        "terminal_water_influx_bbl": 8359681.5940852165,
+        "relative_gas_in_place_error": 0.12502609560041966,
+        "max_solver_residual_p_over_z_psia": 2.5302142603322864e-9
       },
       {
         "timestep_days": 7.609375,
         "steps": 576,
-        "terminal_water_influx_bbl": 8359689.927612976,
-        "relative_gas_in_place_error": 0.12502624297302622,
-        "max_solver_residual_p_over_z_psia": 3.4356162359472364e-9
+        "terminal_water_influx_bbl": 8359689.927612796,
+        "relative_gas_in_place_error": 0.12502624297306086,
+        "max_solver_residual_p_over_z_psia": 2.8289832698646933e-9
       },
       {
         "timestep_days": 3.8046875,
         "steps": 1152,
-        "terminal_water_influx_bbl": 8359692.010992094,
-        "relative_gas_in_place_error": 0.1250262798163433,
+        "terminal_water_influx_bbl": 8359692.0109921,
+        "relative_gas_in_place_error": 0.12502627981636638,
         "max_solver_residual_p_over_z_psia": 3.218701749574393e-9
       }
     ],
-    "error_span_over_refinement": 7.737083282943757e-7
+    "error_span_over_refinement": 7.73708338286383e-7
   },
   "J_60": {
     "levels": [
       {
         "timestep_days": 30.4375,
         "steps": 144,
-        "terminal_water_influx_bbl": 24500098.549250454,
-        "relative_gas_in_place_error": 0.7400512569443336,
+        "terminal_water_influx_bbl": 24500098.549252633,
+        "relative_gas_in_place_error": 0.7400512569445257,
         "max_solver_residual_p_over_z_psia": 3.428340278333053e-9
       },
       {
         "timestep_days": 15.21875,
         "steps": 288,
-        "terminal_water_influx_bbl": 24500740.082147714,
-        "relative_gas_in_place_error": 0.7400663999101724,
+        "terminal_water_influx_bbl": 24500740.08215016,
+        "relative_gas_in_place_error": 0.7400663999099857,
         "max_solver_residual_p_over_z_psia": 3.0850060284137726e-9
       },
       {
         "timestep_days": 7.609375,
         "steps": 576,
-        "terminal_water_influx_bbl": 24500900.492650982,
-        "relative_gas_in_place_error": 0.7400702034704669,
-        "max_solver_residual_p_over_z_psia": 3.030436346307397e-9
+        "terminal_water_influx_bbl": 24500900.49265303,
+        "relative_gas_in_place_error": 0.7400702034702509,
+        "max_solver_residual_p_over_z_psia": 2.8867361834272742e-9
       },
       {
         "timestep_days": 3.8046875,
         "steps": 1152,
-        "terminal_water_influx_bbl": 24500940.596983116,
-        "relative_gas_in_place_error": 0.7400711554686725,
-        "max_solver_residual_p_over_z_psia": 3.331479092594236e-9
+        "terminal_water_influx_bbl": 24500940.59698321,
+        "relative_gas_in_place_error": 0.7400711554683921,
+        "max_solver_residual_p_over_z_psia": 2.972683432744816e-9
       }
     ],
-    "error_span_over_refinement": 0.000019898524338923806
+    "error_span_over_refinement": 0.000019898523866412887
   },
   "note": "The finest computation is a numerical comparator, not an exact solution."
 }

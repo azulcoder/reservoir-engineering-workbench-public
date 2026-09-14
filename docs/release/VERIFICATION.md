@@ -23,7 +23,20 @@ something it did not produce".
 Everything a clone of the public tree can run, with no restricted files and no network.
 It covers the numerical core, the analytic and closed-form identities, the dependency
 policy, and the synthetic case studies, which it re-runs from scratch and compares
-against their committed snapshots byte for byte.
+against their committed snapshots.
+
+How that comparison is made depends on where it runs, and the difference is the point.
+Inside the canonical environment -- Linux on x86_64, defined by digest in
+`docs/release/canonical_environment.json` -- it is exact byte identity, checked with
+`diff`, with no tolerance. Anywhere else it is `scripts/compare_case_outputs.py`: every
+acceptance state, seed, threshold and identifier compared exactly, and every computed
+float checked against the declared envelope in `docs/release/portability_envelope.json`.
+
+These are different claims and the runner reports them under different names. Requiring
+identical bytes across operating systems would be requiring something this project does
+not have and does not need: two dozen libm functions are permitted to disagree in their
+last place, and a Monte Carlo draw or a Newton iteration turns that into a different
+final digit without moving any conclusion.
 
     python3 scripts/verify.py --profile public-core
 
@@ -91,13 +104,13 @@ Case reproduction, each run into a fresh directory and diffed against its commit
 
 | Case                              | Wall time | Result                    |
 | --------------------------------- | --------- | ------------------------- |
-| A1_volumetric_baseline            | 0.8 s     | byte-identical            |
-| A3_uncertainty_experiments        | 15 s      | byte-identical            |
-| A4_misleading_fit_counterexample  | 12 s      | byte-identical            |
+| A1_volumetric_baseline            | 0.8 s     | byte-identical in the canonical environment |
+| A3_uncertainty_experiments        | 15 s      | byte-identical in the canonical environment |
+| A4_misleading_fit_counterexample  | 12 s      | byte-identical in the canonical environment |
 
 Figure data for the site, re-exported into a scratch directory and diffed against what
 is committed under `site/src/data/figures`: seven figure files plus `contract.json`, all
-byte-identical, with 43 reconciliation checks recorded by the exporter.
+byte-identical, with 51 reconciliation checks recorded by the exporter.
 
 ## What is NOT RUN in public-core, and why
 
@@ -257,7 +270,7 @@ significant figures.
 
 Two things about that failure are worth recording, because they decide what kind of
 problem it is. First, every case's own scientific acceptance criteria **passed** in the
-failing run: A3 reported 10 of 10 met and A4 17 of 17, the same as on macOS, and `run.py`
+failing run: A3 reported 9 of 9 met and A4 10 of 10, the same as on macOS, and `run.py`
 exited zero for both. Only the byte comparison failed. Second, the divergence is ordinary
 floating-point portability: 24 libm functions were measured to differ between the two
 platforms by 1 to 4 units in the last place, while `math.fsum` and the Mersenne Twister

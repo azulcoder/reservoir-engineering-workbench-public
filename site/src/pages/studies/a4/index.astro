@@ -14,6 +14,7 @@ import DataTable from "../../../components/DataTable.astro";
 import Callout from "../../../components/Callout.astro";
 import ExplorerScenarios from "../../../components/ExplorerScenarios.astro";
 import { checkedExhibit } from "../../../scripts/exhibits";
+import { residualBound } from "../../../scripts/residual";
 import { baseScenario, truth } from "../../../scripts/scenarios";
 import { download, downloads } from "../../../scripts/public-data";
 import { NAV, GATE, FOUR_STATEMENTS, NOT_RUN } from "../../../scripts/site";
@@ -217,7 +218,7 @@ const f08Rows = (["J_2", "J_60"] as const).flatMap((k) =>
     steps: String(l.steps),
     we: l.terminal_water_influx_bbl.toFixed(0),
     err: `${(l.relative_gas_in_place_error * 100).toFixed(6)}`,
-    res: l.max_solver_residual_p_over_z_psia.toExponential(2),
+    res: residualBound(l.max_solver_residual_p_over_z_psia),
   })),
 );
 

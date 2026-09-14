@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import copy
 import pathlib
+import re
 import sys
 import unittest
 
@@ -275,6 +276,46 @@ class AcceptanceTests(Mixin, unittest.TestCase):
                 yield o
 
         self.assertEqual(counted, len(list(leaves(REFERENCE))), "every leaf must land in exactly one class")
+
+
+class PublishedResidualBoundTests(unittest.TestCase):
+    """The published solver-residual bound must be one number, stated once.
+
+    It is declared twice for unavoidable reasons: the figure renderer is a Node script
+    that cannot import the site's TypeScript, so each carries its own constant. Two
+    constants that must agree and are never compared are a defect waiting to happen, so
+    this compares them.
+    """
+
+    RENDERER = REPO_ROOT / "site" / "scripts" / "render-figures.mjs"
+    SITE_MODULE = REPO_ROOT / "site" / "src" / "scripts" / "residual.ts"
+
+    def _declared(self, path: pathlib.Path, name: str) -> str:
+        text = path.read_text(encoding="utf-8")
+        match = re.search(rf"{name}\s*=\s*([0-9eE.+-]+)\s*;", text)
+        self.assertIsNotNone(match, f"{path.name} does not declare {name}")
+        return match.group(1)
+
+    def test_the_two_declarations_agree(self) -> None:
+        renderer = self._declared(self.RENDERER, "RESIDUAL_BOUND_PSIA")
+        site = self._declared(self.SITE_MODULE, "RESIDUAL_BOUND_PSIA")
+        self.assertEqual(
+            float(renderer),
+            float(site),
+            "the figure renderer and the site publish different solver-residual bounds",
+        )
+
+    def test_the_bound_is_the_one_that_was_verified(self) -> None:
+        """1e-8 is not arbitrary: 96 measured values sit below it, the largest at 3.43e-09."""
+        self.assertEqual(float(self._declared(self.SITE_MODULE, "RESIDUAL_BOUND_PSIA")), 1e-8)
+
+    def test_both_guards_refuse_to_overstate_the_bound(self) -> None:
+        """Each declaration must throw rather than print a bound its value does not meet."""
+        for path in (self.RENDERER, self.SITE_MODULE):
+            with self.subTest(path=path.name):
+                text = path.read_text(encoding="utf-8")
+                self.assertIn("throw new Error", text, f"{path.name} has no guard")
+                self.assertIn("RESIDUAL_BOUND_PSIA", text)
 
 
 if __name__ == "__main__":

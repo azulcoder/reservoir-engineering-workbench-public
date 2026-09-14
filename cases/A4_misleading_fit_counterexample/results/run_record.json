@@ -2,8 +2,8 @@
   "schema_version": 1,
   "label": "A4 misleading p/Z fit counterexample",
   "status": "completed",
-  "started_utc": "2026-09-13T09:21:05Z",
-  "elapsed_seconds": 11.325894833993516,
+  "started_utc": "2026-09-14T15:10:13Z",
+  "elapsed_seconds": 18.434415987999998,
   "seed": 20260913,
   "config": {
     "case_id": "A4_misleading_fit_counterexample",
@@ -117,22 +117,18 @@
   "settings_sha256": "d1f2da892bb02ff1b46026a7f22a9bb13410f30b9989076307ad4076b61af4d5",
   "source_revision": {
     "repo_root": ".",
-    "commit": "855fe5447b5f2a87ea006727dd893204a18a2832",
-    "branch": "main",
-    "describe": "855fe54-dirty",
-    "dirty": true,
-    "dirty_paths": [
-      ".gitignore",
-      "CHANGELOG.md",
-      "cases/"
-    ]
+    "commit": null,
+    "branch": null,
+    "describe": null,
+    "dirty": null,
+    "dirty_paths": null
   },
   "environment": {
     "python_version": "3.13.2",
     "python_implementation": "CPython",
-    "python_executable": "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
-    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
-    "machine": "arm64",
+    "python_executable": "/usr/local/bin/python3",
+    "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.36",
+    "machine": "x86_64",
     "imported_package_versions": {
       "argparse": "1.1",
       "decimal": "1.70",
@@ -146,27 +142,27 @@
   "files": [
     {
       "role": "output",
-      "path": "artifacts/A4_misleading_fit_counterexample/run-006/summary.json",
-      "sha256": "43d5f59c6427318c67da9bfc27fbd00bef10a97197be8e6262ed14f790863aaf",
-      "bytes": 39279
+      "path": "_canon_out/A4_misleading_fit_counterexample/summary.json",
+      "sha256": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
+      "bytes": 39273
     },
     {
       "role": "output",
-      "path": "artifacts/A4_misleading_fit_counterexample/run-006/summary.txt",
-      "sha256": "1b2c1af7b01b876498926a44b504fbed7f61755ba0a080f8a18a4c8be390a977",
-      "bytes": 5339
+      "path": "_canon_out/A4_misleading_fit_counterexample/summary.txt",
+      "sha256": "07e642aa1c3210e5c8c65a840de47fa984baf21a22abbabcfea36c4614b4857f",
+      "bytes": 5337
     }
   ],
   "metrics": {
     "verdict": "ESTABLISHED: high-R-squared volumetric fits with material, drifting gas-in-place bias",
     "base_r_squared": 0.9998594933759798,
-    "base_relative_gas_in_place_error": 0.125025506108015,
-    "worst_relative_gas_in_place_error": 0.7400512569443336,
+    "base_relative_gas_in_place_error": 0.1250255061080281,
+    "worst_relative_gas_in_place_error": 0.7400512569445257,
     "worst_solver_residual_p_over_z_psia": 3.428340278333053e-09,
     "known_influx_oracle_worst_relative_error": 3.599776032814361e-11,
-    "sigma_pressure_at_expected_t_equals_critical_psi": 12.492799837518593,
+    "sigma_pressure_at_expected_t_equals_critical_psi": 12.492799837552456,
     "half_power_sigma_pressure_psi": 11.22887323943662,
-    "holdout_rmse_fraction_of_initial_pressure": 0.003926737659190639
+    "holdout_rmse_fraction_of_initial_pressure": 0.003926737659193677
   },
   "notes": [
     "Synthetic throughout. The generator is a coupled Fetkovich water-drive tank; the estimator is the volumetric p/Z x-intercept. They are structurally different models in separate library modules and share no balance or fitting code.",

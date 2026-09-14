@@ -2137,6 +2137,54 @@ function buildF07(data) {
 
 /* ---------- F08 ---------- */
 
+/** The bound F08 publishes for the solver convergence residual, in psia of p/Z. */
+const RESIDUAL_BOUND_PSIA = 1e-8;
+
+/**
+ * Present a solver convergence residual as a bound rather than as digits.
+ *
+ * The exact value of this residual is zero: it measures how far the solve failed to
+ * close, not a property of the reservoir. Printing it to four significant figures
+ * asserts a precision the cross-platform comparison does not support - the same residual
+ * computed on macOS arm64 and on Linux x86_64 agrees only in order of magnitude, because
+ * two dozen libm functions are permitted to disagree in their last place and a Newton
+ * iteration turns that into a different stopping point. Four digits of such a number are
+ * platform noise dressed as a measurement.
+ *
+ * So the figure states what is both true and stable everywhere it was measured: the
+ * residual is below 1e-8 psia. That bound was checked against 48 values - eight
+ * refinement levels in each of six environments, spanning the pinned canonical
+ * container, ordinary Ubuntu runners on CPython 3.11, 3.12 and 3.13, and macOS arm64 -
+ * with the largest observed 3.44e-09 psia, a factor of 2.9 inside the bound.
+ *
+ * The full-precision value stays in the case summary and in the exported figure data.
+ * Nothing is rounded, quantised or hidden; only the label changes. The guard below fails
+ * the build rather than printing a bound some future value does not satisfy.
+ */
+function residualBoundLabel(value) {
+  if (!(Math.abs(value) < RESIDUAL_BOUND_PSIA)) {
+    throw new Error(
+      `F08: max_solver_residual_p_over_z_psia is ${value}, which is not below the ` +
+        `published bound of ${RESIDUAL_BOUND_PSIA} psia. Re-establish the bound against ` +
+        `every supported environment rather than widening it.`,
+    );
+  }
+  return `< ${RESIDUAL_BOUND_PSIA.toExponential(0)}`;
+}
+
+/**
+ * Significant figures used for the relative gas-in-place error in the F08 table.
+ *
+ * Nine, not the sixteen this table used to print. Sixteen is the full repr of a double,
+ * and the digits past about the eighth are not stable across the supported platforms:
+ * the measured cross-platform spread on these values is around 1e-13 relative, which
+ * lands inside a sixteen-digit rendering and outside a nine-digit one. Nine keeps every
+ * digit the convergence argument needs - the four refinement levels of each series stay
+ * visibly distinct, and the deviation column that carries the convergence rate is
+ * unaffected - while printing nothing the comparison cannot support.
+ */
+const RELATIVE_ERROR_SIGNIFICANT_FIGURES = 9;
+
 function buildF08(data) {
   const where = "F08";
   const note = req(data, "note", where);
@@ -2263,9 +2311,9 @@ function buildF08(data) {
         l.dt.toFixed(4),
         String(l.steps),
         l.influx.toFixed(3),
-        l.err.toPrecision(16),
+        l.err.toPrecision(RELATIVE_ERROR_SIGNIFICANT_FIGURES),
         l.dev === 0 ? "0 exactly (comparator)" : l.dev.toExponential(3),
-        l.solver.toExponential(3),
+        residualBoundLabel(l.solver),
       ]),
     ),
     note: "Successive-halving ratios of the deviation are about 4.2 and 5.0, consistent with a second-order scheme; the comparator is the finest computed level and not an exact solution.",

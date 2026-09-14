@@ -1,7 +1,8 @@
 # Canonical snapshot migration
 
-Proposed, not applied. This records what changes if the committed A3 and A4 snapshots are
-regenerated in a pinned canonical environment, and what was measured before deciding.
+Applied. This records what changed when the committed A1, A3 and A4 snapshots were
+regenerated in the pinned canonical environment, and what was measured before deciding.
+The environment itself is defined in `docs/release/canonical_environment.json`.
 
 ## Why a migration is needed
 
@@ -88,7 +89,7 @@ tested. `A2` has no committed snapshot and is unaffected.
 | structural changes | 0 | 0 |
 | maximum relative difference | 1.6574e-08 | 2.3746e-08 |
 | median relative difference | 3.27e-13 | 2.595e-13 |
-| acceptance criteria | 10, none changed | 17, none changed |
+| acceptance criteria | 9, all met, none changed | 10, all met, none changed |
 
 ### The near-zero cases
 
@@ -107,10 +108,19 @@ against.
 
 ## Effects
 
-**Acceptance criteria.** None changes state, on any environment. A1 reports 26 of 37 true
-everywhere, including the same eleven `detected_at_A1_gate` flags that are deliberately
-false — that is the study's finding, not a failure. A3 reports 10 of 10 and A4 17 of 17
-on the canonical container, on macOS arm64, and on Linux with CPython 3.11, 3.12 and 3.13.
+**Acceptance criteria.** None changes state, on any environment. Each case declares its
+own block -- A1 in `criteria`, A3 in `acceptance`, A4 in `acceptance` -- and every one of
+them passes: **A1 9 of 9, A3 9 of 9, A4 10 of 10**, with `all_criteria_met` and
+`all_acceptance_criteria_met` true, on the canonical container, on macOS arm64, and on
+Linux with CPython 3.11, 3.12 and 3.13.
+
+An earlier draft of this document reported "A1 26 of 37". That figure was wrong and is
+withdrawn. It came from a reporting script that counted every boolean whose path
+contained `pass`, `met`, `criter` or `gate`, which swept in eleven
+`diagnostic_d1_defect_sensitivity` flags named `detected_at_A1_gate`. Those are not
+acceptance criteria: the diagnostic injects a defect and records whether the A1 gate
+would have caught it, so `false` there is the study's finding about the gate's blind
+spots, not a failing criterion. A1 has nine criteria and all nine pass.
 
 **Thresholds, configuration, inputs, equations.** Unchanged. A tree-wide diff of the
 proposed migration touches the two snapshots and the artefacts generated from them, and
@@ -150,6 +160,37 @@ conclusion, a ranking, a trend or the geometry of the plot.
 
 But both are numbers a reader can see, and they change. That is a condition the owner
 reserved to themselves, so this migration stops here rather than deciding it.
+
+## Every visible change, classified
+
+Measured by rendering the same figures and the same pages from both datasets and
+comparing the output, not by reading the source JSON.
+
+| class | count | what |
+| --- | --- | --- |
+| APPROVED_DISPLAY_PRECISION | 2 | the solver residual now shows the verified bound `< 1e-8` at 24 label sites; `relative_gas_in_place_error` shows 9 significant figures instead of 16 at 8 sites |
+| CANONICAL_FLOAT_NOISE_NOT_VISIBLE | 3 | 886 figure labels with zero non-digest changes; SVG coordinates shifted by at most 1e-08 user units; no numeric cell in any page or the explorer differs |
+| DOCUMENTATION_UPDATE | 3 | 8 sha256 digests in the provenance figure and methods page; two download file sizes; 13 digests in the frozen baseline |
+| **MATERIAL_SCIENTIFIC_CHANGE** | **0** | — |
+
+### One fix that was not a display change
+
+Three of the forty-nine production fractions on the A4 page moved a digit -- 0.2062 to
+0.2063, 0.3437 to 0.3438, 0.4812 to 0.4813 -- which is far too large to be float noise
+and needed explaining rather than accepting.
+
+The cause was a derivation, not the migration. The site recovered the case's true gas in
+place as `fit.gas_in_place_scf / (1 + relative_gas_in_place_error)`, which is
+algebraically right and numerically lossy: that division returned exactly
+100000000000.0 on macOS and 99999999999.99884 in the canonical environment. The three
+affected fractions are exact ties at four decimals -- 0.20625, 0.34375, 0.48125 -- so a
+1.2e-14 wobble in the denominator decided which way the tie rounded.
+
+The case declares its true gas in place directly. The exporter now carries that constant
+through and reconciles it against the back-derivation, which is the consistency the
+division used to provide; the site reads it instead of recomputing it. The reconciliation
+count went from 43 to 51, one per scenario. The three fractions now render identically on
+both platforms, and no other displayed value moved.
 
 ## Interpretation
 

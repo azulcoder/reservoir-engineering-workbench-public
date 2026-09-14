@@ -2,8 +2,8 @@
   "schema_version": 1,
   "label": "A3 gas-in-place uncertainty experiments",
   "status": "completed",
-  "started_utc": "2026-09-13T09:15:42Z",
-  "elapsed_seconds": 14.209778707998339,
+  "started_utc": "2026-09-14T15:09:47Z",
+  "elapsed_seconds": 25.651601125000006,
   "seed": 20260913,
   "config": {
     "case_id": "A3_uncertainty_experiments",
@@ -84,22 +84,18 @@
   "settings_sha256": "944b4043747f920632584724f9cf601dd9429486e487770d16af511b1642379a",
   "source_revision": {
     "repo_root": ".",
-    "commit": "855fe5447b5f2a87ea006727dd893204a18a2832",
-    "branch": "main",
-    "describe": "855fe54-dirty",
-    "dirty": true,
-    "dirty_paths": [
-      ".gitignore",
-      "CHANGELOG.md",
-      "cases/"
-    ]
+    "commit": null,
+    "branch": null,
+    "describe": null,
+    "dirty": null,
+    "dirty_paths": null
   },
   "environment": {
     "python_version": "3.13.2",
     "python_implementation": "CPython",
-    "python_executable": "/Library/Frameworks/Python.framework/Versions/3.13/bin/python3",
-    "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
-    "machine": "arm64",
+    "python_executable": "/usr/local/bin/python3",
+    "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.36",
+    "machine": "x86_64",
     "imported_package_versions": {
       "argparse": "1.1",
       "decimal": "1.70",
@@ -132,8 +128,8 @@
     {
       "role": "source",
       "path": "src/reservoir_lab/gas_properties.py",
-      "sha256": "8d75243361150a631d207489fd3218d539f47ca65fc39270f1d7166f1659172a",
-      "bytes": 30809
+      "sha256": "ae7f183a8f17940e2c7552ea9d5ee7122536e0dec5ae3dfd65bd8c05ef4b0c63",
+      "bytes": 31813
     },
     {
       "role": "source",
@@ -155,14 +151,14 @@
     },
     {
       "role": "output",
-      "path": "artifacts/A3_uncertainty_experiments/run-006/summary.json",
-      "sha256": "0fa6192a68858352f7bacd3ba27b390c148eba8c6240de4c4f9476cc2385d33d",
-      "bytes": 42906
+      "path": "_canon_out/A3_uncertainty_experiments/summary.json",
+      "sha256": "0cc6ad6decad4465f12fedc91737243283c4d457f96a7f367cae9333b5703e6b",
+      "bytes": 42905
     }
   ],
   "metrics": {
     "noise_free_relative_error": 7.194245199571014e-14,
-    "random_noise_relative_sd": 0.01413175066523484,
+    "random_noise_relative_sd": 0.014131750665234808,
     "psig_relative_shift": -0.005036730205453366,
     "correlation_choice_relative_shift": 0.003325806950919441,
     "multiplicative_z_relative_shift": 3.0517578125e-16,
