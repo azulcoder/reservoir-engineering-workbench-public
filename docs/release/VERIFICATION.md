@@ -228,12 +228,49 @@ script and every verification job depends on it, so a policy failure stops the p
 At the time of writing that gate reports failures, all of them in files owned by other
 work in progress, none in the files this document covers.
 
-## Hosted CI status: not run
+## Hosted CI status: run, and the first one failed
 
-There is no git remote and no hosted repository. `.github/workflows/ci.yml` and
-`.github/workflows/pages.yml` have never executed, there is no build badge, and there is
-nothing to link to. Every number in this document was produced by running the same
-commands locally by hand.
+Hosted execution has now happened, so the sentence that used to stand here -- that
+nothing had ever run -- is withdrawn rather than quietly edited away.
+
+### Run 34852530864, attempt 1, commit `d2ef03316c6a3678af5fcd527e752ca86b4e4880`
+
+The first hosted verification of this repository, triggered by the push of
+`release/rc-close` on 2026-09-14. Runner `ubuntu-24.04` (image 20260907.300, Ubuntu
+24.04.5 LTS), CPython 3.13.15.
+
+| job | conclusion |
+| --- | --- |
+| source and data policy | passed |
+| public-core (stdlib runner, py3.11 / py3.12 / py3.13) | passed |
+| public-core (pytest runner) | passed |
+| **synthetic case reproduction** | **failed** |
+| figure export and contract | skipped, because its dependency failed |
+| plan the base matrix | skipped |
+| site build and browser QA | skipped |
+
+The failure was not a regression and not a defect. `synthetic case reproduction` re-runs
+each case and compares the result with its committed snapshot using `diff`, which allows
+no tolerance. The committed snapshots were produced on macOS arm64; the runner is Linux
+x86_64. A1 reproduced byte for byte. A3 and A4 did not, differing in their last few
+significant figures.
+
+Two things about that failure are worth recording, because they decide what kind of
+problem it is. First, every case's own scientific acceptance criteria **passed** in the
+failing run: A3 reported 10 of 10 met and A4 17 of 17, the same as on macOS, and `run.py`
+exited zero for both. Only the byte comparison failed. Second, the divergence is ordinary
+floating-point portability: 24 libm functions were measured to differ between the two
+platforms by 1 to 4 units in the last place, while `math.fsum` and the Mersenne Twister
+integer stream are bit-identical, which rules out summation order, seeding and draw
+order.
+
+The run is left in the record. A gate that fails when the thing it tests is untrue is
+working, and deleting the evidence of it working would be the wrong kind of tidy.
+`docs/release/CANONICAL_SNAPSHOT_MIGRATION.md` carries the measurements and what follows
+from them.
+
+Every other number in this document was produced by running the same commands locally by
+hand.
 
 `ci.yml` is written so that the cases are executed rather than linted: a job that only
 ran `ruff check cases/` would go green on a case study that no longer reproduces its own

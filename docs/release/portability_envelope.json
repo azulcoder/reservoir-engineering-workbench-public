@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0.0",
+  "purpose": "Declared tolerances for the cross-platform portability comparison of case outputs. This is NOT a scientific acceptance criterion and is never used for canonical reproduction, which is byte identity checked with diff. It answers one question: running the same case implementation on a different operating system, C library and CPU, did the published scientific result survive?",
+  "not_a_threshold": "No reservoir-engineering acceptance criterion is expressed here, and none was altered to accommodate these numbers. Each case evaluates its own criteria independently on every environment, and those criterion states are compared EXACTLY, not within a tolerance.",
+  "measured_basis": {
+    "method": "A1, A3 and A4 were run from scratch on every environment below and compared leaf by leaf against the canonical container. The tolerance was then chosen from the measured spread, not chosen first and justified afterwards.",
+    "environments": [
+      "canonical container python:3.13.2-bookworm (Debian 12, glibc 2.36, x86_64) - the reference",
+      "ubuntu-24.04 runner, CPython 3.11 - byte-identical to canonical",
+      "ubuntu-24.04 runner, CPython 3.12 - byte-identical to canonical",
+      "ubuntu-24.04 runner, CPython 3.13.15 (glibc 2.39) - byte-identical to canonical",
+      "macos-15 runner, arm64, CPython 3.13 - the only environment that diverges"
+    ],
+    "worst_observed_relative_difference": 2.3746e-08,
+    "worst_observed_case": "A4_misleading_fit_counterexample .timestep_refinement.J_60.error_span_over_refinement",
+    "second_worst": "A3_uncertainty_experiments .results.E7_ranking.short_depletion_penalty_f010_over_f050 at 1.6574e-08",
+    "cause": "Ordinary rounding differences between platform libm implementations. Twenty-four transcendental functions were measured to differ by 1 to 4 units in the last place between macOS arm64 and Linux x86_64; math.fsum, math.log, math.sqrt, math.hypot and the Mersenne Twister integer stream are bit-identical, which rules out summation order, seeding and draw order. random.gauss diverges only because it is composed of cos, sin and log."
+  },
+  "default_float": {
+    "relative": 1e-07,
+    "absolute": 1e-12,
+    "why": "Chosen against four measured bounds rather than to make a particular run pass. It sits 4.2x above the worst difference actually observed (2.37e-08), so genuine platform noise passes. It sits 5x below the precision at which this site displays anything (six significant figures, so a rendered value is sensitive at about 5e-07). It sits 2e4 below the margin by which A3's own best-option ranking is decided (best_option_margin_relative = 2.00e-03), so no ordering can reverse inside it. And it sits about 8.6e6 below the tightest acceptance-criterion margin measured (0.864), so no criterion can change state inside it. A failure requires BOTH the relative and the absolute tolerance to be exceeded, so a difference below 1e-12 in absolute terms never fails on its own."
+  },
+  "zero_valued_fields": [
+    {
+      "match": "^max_solver_residual_p_over_z_psia$",
+      "absolute": 1e-06,
+      "scale_note": "reservoir pressures of 1e3 to 1e4 psia, so this floor is about 1e-10 of the working scale",
+      "why": "A solver convergence residual. Its exact value is zero, so a relative difference divides by the noise being measured: the observed values are around 3e-09 psia and two environments disagreeing there produced an apparent 21 percent relative difference that means nothing."
+    },
+    {
+      "match": "^terminal_relative_error$",
+      "absolute": 1e-10,
+      "scale_note": "a dimensionless error against an exact analytic oracle; the observed values are at most 3e-13",
+      "why": "Error against an exact oracle, so the exact value is zero. One environment produced 1.11e-16 where another produced 0.0, which is a relative difference of exactly 1.0 and carries no information."
+    }
+  ],
+  "exact_float_fields": [
+    {"match": "^seed$", "why": "a seed is an identifier, not a computed quantity"},
+    {"match": "^threshold$|^limit$|^bound$|^target$|^tolerance$", "why": "an acceptance threshold is configuration; if it moves, the criterion moved"},
+    {"match": "^confidence$|^alpha$", "why": "declared statistical configuration"}
+  ],
+  "exact_subtrees": [
+    "^\\.config(\\.|\\[|$)",
+    "^\\.case_id$",
+    "^\\.case_type$",
+    "\\.acceptance(\\[\\d+\\])?\\.(id|name|statement|criterion)$"
+  ]
+}
