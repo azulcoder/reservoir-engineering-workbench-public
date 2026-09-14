@@ -488,20 +488,34 @@ jobs:
     needs: [public-core-tests, canonical-cases, portability-cases]
     runs-on: ubuntu-24.04
     timeout-minutes: 15
+    # In the canonical container, for the same reason the case snapshots are. The exporter
+    # recomputes fitted values, residuals, the holdout z series and its RMSE from the case
+    # summaries, so its output is as platform-sensitive as they are. The committed figure
+    # data is a canonical artefact and is byte-compared where that comparison means
+    # something. This job is pure Python and needs nothing the image lacks.
+    defaults:
+      run:
+        shell: bash
+    container:
+      image: python@sha256:4165118ed569aff9dbd11d5518199e5379d93bf5bf1cdda62eb13593cf66fb68
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
-        with:
-          python-version: ${{ env.PRIMARY_PYTHON }}
 
       - name: Re-export the figure data into a scratch directory
         run: |
           PYTHONPATH=src python3 scripts/export_presentation_data.py \
             --out "${RUNNER_TEMP}/export" \
             --site-data "${RUNNER_TEMP}/figures"
+
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: always()
+        with:
+          name: canonical-figure-export
+          path: ${{ runner.temp }}/figures
+          retention-days: 14
+          if-no-files-found: warn
 
       - name: Committed figure data matches a fresh export
         # The exporter reconciles every value it writes against the audited case summary
