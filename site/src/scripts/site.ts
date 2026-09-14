@@ -61,7 +61,7 @@ export const NOT_RUN = {
   hostedCi:
     "Hosted continuous integration runs and is green: the suite across three CPython versions, the case studies reproduced byte for byte in a digest-pinned Linux container, the same cases re-run on four other environments and checked for numerical portability, and the browser suite on three engines at both base paths. It is not external validation: every check is this repository testing itself. The run identifiers are in the verification record.",
   deployment:
-    "No deployment has occurred. The site build runs locally and the deployment target is supplied to it as configuration; with no origin configured the build omits the canonical link and the Open Graph block rather than inventing a domain.",
+    "This site is deployed to GitHub Pages from a manually dispatched workflow, bound to one commit, and the artefact that is published is the one the browser suite ran against: it is built once, fingerprinted, tested, and the fingerprint is re-checked before upload. Deployment is not evidence about the engineering. It means the pages are reachable, nothing more.",
   externalValidation:
     "The public profile is not externally validated. It compares the code against its own committed snapshots, its own analytic limits and its own closed forms. A profile that cannot see an independent reference cannot tell you the library is right about the physical world.",
   peerReview:

@@ -287,9 +287,11 @@ Listed rather than omitted, so that the absence is visibly deliberate.
   checked for numerical portability, and the browser suite runs on three engines at both
   base paths. All of it is this repository testing itself. The run identifiers and the
   measured numbers are in [docs/release/VERIFICATION.md](docs/release/VERIFICATION.md).
-- **No deployment.** No site has been published. `pages.yml` is deliberately inert: one
-  `workflow_dispatch` trigger, configuration variables that do not exist, a typed human
-  acknowledgement, and a build step that fails rather than uploading an empty directory.
+- **Deployment is not evidence.** The site is published to GitHub Pages by a manually
+  dispatched workflow, bound to one commit, behind a typed human acknowledgement and three
+  repository variables. The artefact deployed is the one the browser suite ran against:
+  built once, fingerprinted, tested, and the fingerprint re-checked before upload. That
+  the pages are reachable says nothing about whether the engineering is right.
 - **No human peer review.** Every review pass in this project's history — the numerical
   pass, the interpretation pass, the claims audit — was conducted under a different role by
   the same author. Different role names do not create independent expertise or independent
