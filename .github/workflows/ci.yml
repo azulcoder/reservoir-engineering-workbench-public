@@ -809,6 +809,21 @@ jobs:
           fi
           echo "committed figures and downloads are byte for byte what the sequence produces"
 
+      # Rasterised output is produced by the Node toolchain and depends on the platform's
+      # font stack, so the committed PNGs are canonical to this runner in the same way the
+      # case snapshots are canonical to the pinned container. When they drift, the bytes
+      # this runner produced are what the tree should hold, so upload them rather than
+      # leaving the next person to guess at them.
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: failure()
+        with:
+          name: canonical-generated-${{ matrix.leg.dist }}
+          path: |
+            site/src/generated
+            site/public/data
+          retention-days: 14
+          if-no-files-found: warn
+
       - name: Fingerprint the build
         working-directory: site
         # The digest of every file, and a digest over that listing. It is recorded before
