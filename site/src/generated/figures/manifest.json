@@ -2,7 +2,7 @@
   "manifest_version": "1.0.0",
   "generated": {
     "renderer": "site/scripts/render-figures.mjs",
-    "renderer_sha256": "61631d4ac15ddc5ea21dc7ce5ce9a2e91eb794769b174fc5e863edaeaa17a6de",
+    "renderer_sha256": "6f502e8ef2764bbcc54e17b38ceb731bbdea4a64e43f03fdba0a6e4bb20710e7",
     "note": "the renderer digest is the SITE BUILD revision and is distinct from the numerical-source digests below, which identify the run that produced the numbers"
   },
   "site_build": {
@@ -189,7 +189,7 @@
         },
         {
           "path": "f01.png",
-          "bytes": 564855,
+          "bytes": 561566,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -282,7 +282,7 @@
         },
         {
           "path": "f01b-observed-range.png",
-          "bytes": 478070,
+          "bytes": 479059,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -373,7 +373,7 @@
         },
         {
           "path": "f02.png",
-          "bytes": 445378,
+          "bytes": 443133,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -473,7 +473,7 @@
         },
         {
           "path": "f03.png",
-          "bytes": 769540,
+          "bytes": 766665,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -564,7 +564,7 @@
         },
         {
           "path": "f04.png",
-          "bytes": 611027,
+          "bytes": 609144,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -675,7 +675,7 @@
         },
         {
           "path": "f05.png",
-          "bytes": 689872,
+          "bytes": 687863,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -766,7 +766,7 @@
         },
         {
           "path": "f06.png",
-          "bytes": 683495,
+          "bytes": 677914,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -858,7 +858,7 @@
         },
         {
           "path": "f07.png",
-          "bytes": 523687,
+          "bytes": 516737,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -949,7 +949,7 @@
         },
         {
           "path": "f08.png",
-          "bytes": 653759,
+          "bytes": 652203,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -1017,12 +1017,12 @@
       "files": [
         {
           "path": "f09.svg",
-          "bytes": 48632,
+          "bytes": 49077,
           "media_type": "image/svg+xml"
         },
         {
           "path": "f09.png",
-          "bytes": 1456566,
+          "bytes": 1471418,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -1110,7 +1110,7 @@
         },
         {
           "path": "a1-01.png",
-          "bytes": 768745,
+          "bytes": 755432,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -1197,7 +1197,7 @@
         },
         {
           "path": "a3-01.png",
-          "bytes": 633806,
+          "bytes": 625590,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }

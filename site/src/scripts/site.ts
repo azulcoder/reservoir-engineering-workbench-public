@@ -59,7 +59,7 @@ export const VERIFICATION = {
  */
 export const NOT_RUN = {
   hostedCi:
-    "No hosted continuous-integration run stands behind the results on this site. Every one of them was produced on the author's own machine. Hosted execution status is recorded, with the run it describes, in the verification record rather than asserted here.",
+    "Hosted continuous integration runs and is green: the suite across three CPython versions, the case studies reproduced byte for byte in a digest-pinned Linux container, the same cases re-run on four other environments and checked for numerical portability, and the browser suite on three engines at both base paths. It is not external validation: every check is this repository testing itself. The run identifiers are in the verification record.",
   deployment:
     "No deployment has occurred. The site build runs locally and the deployment target is supplied to it as configuration; with no origin configured the build omits the canonical link and the Open Graph block rather than inventing a domain.",
   externalValidation:

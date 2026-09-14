@@ -295,11 +295,9 @@ is missing or contains anything that is not an exact `==` pin, rather than falli
 to an unpinned install.
 
 The declared Python matrix is 3.11, 3.12 and 3.13, matching `requires-python` and the
-classifiers in `pyproject.toml`. Only CPython 3.13.2 has actually been exercised, and
-only on macOS, by hand. Until the matrix runs somewhere, "supported" means declared, not
-demonstrated. The byte-identical case reproduction in particular is a claim measured on
-3.13.2 alone, which is why CI runs the reproduction on the pinned primary version rather
-than across the matrix.
+classifiers in `pyproject.toml`, and it has now run. All three execute the suite on the
+hosted runner, and all three re-run the case studies in the portability job. "Supported"
+is demonstrated rather than declared.
 
 `pages.yml` is configured and deliberately inert. Its only trigger is
 `workflow_dispatch`, it requires repository configuration variables that do not exist,
@@ -308,6 +306,52 @@ placeholder that fails rather than uploading an empty directory, and it uploads
 `site/dist` and nothing else. Read-only permissions at the workflow level; only the
 deploy job is granted `pages: write` and `id-token: write`. No account name, repository
 name or domain is invented anywhere in it.
+
+### Run 34873212118, attempt 1, commit `6f212ea96192716f2109e7f99d4cbe1e7a139b31`
+
+Green. Fourteen jobs, no skips among the required ones. 2026-09-14T17:11:18Z to
+17:21:42Z.
+
+**Canonical reproduction.** Inside `python@sha256:4165118ed569aff9dbd11d5518199e5379d93bf5bf1cdda62eb13593cf66fb68`
+(`python:3.13.2-bookworm`, Debian GNU/Linux 12, GNU libc 2.36-9+deb12u10, x86_64,
+CPython 3.13.2 built with GCC 12.2.0): **A1, A3 and A4 each reproduce their committed
+snapshot byte for byte**, 3 of 3. A2 is an explained not-run, because it reads the
+reference extract and ships no snapshot. The comparison is `diff`, with no tolerance.
+
+**Portability.** The same cases re-run from scratch outside that container, judged on
+each case's own acceptance criteria and on the semantic comparator rather than on bytes:
+
+| environment | A1 | A3 | A4 | worst relative difference |
+| --- | --- | --- | --- | --- |
+| ubuntu-24.04, CPython 3.11 | pass | pass | pass | 0.0 (byte-identical) |
+| ubuntu-24.04, CPython 3.12 | pass | pass | pass | 0.0 (byte-identical) |
+| ubuntu-24.04, CPython 3.13 | pass | pass | pass | 0.0 (byte-identical) |
+| macos-15, arm64, CPython 3.13 | pass | pass | pass | 2.374603e-08 |
+
+The largest difference anywhere was `2.374603e-08` on A4's
+`timestep_refinement.J_60.error_span_over_refinement`, and `1.657421e-08` on A3's
+`results.E7_ranking.short_depletion_penalty_f010_over_f050`. Both sit inside the declared
+envelope of 1e-7, which was chosen from measurement and not from what would pass; the
+basis is in `docs/release/portability_envelope.json`.
+
+**Counts, measured in that run.** 707 tests collected, 687 passed, 0 failed, 20 skipped,
+across CPython 3.11, 3.12 and 3.13 on the stdlib runner and again under pytest. 9 of 9
+checks. Browser QA 487 passed, 0 failed, 2 skipped on each of the two base paths, across
+Chromium, Firefox and WebKit, with the skip policy clean on both. Built-site fingerprints:
+`901780340dc2bf831f17237c749fe9cedf271078c56ad24936da974a3504612d` at the root base and
+`56f51e5a4c22bc74424ab05724d4d361e90100e61172deae7f727ab05fca0688` at the project base,
+81 files each.
+
+**What it took to get there.** Four bounded corrections between the failed run and this
+one, none of them scientific: the figure export moved into the canonical container for
+the same reason the snapshots did; `ldd --version | head -1` was replaced because `head`
+closing the pipe gave the step SIGPIPE and an intermittent exit 141; the published
+figures were re-rendered on the Linux toolchain, since rasterisation depends on the
+platform's font stack; and the explorer legend was given `max-width: 100%` after three
+engines agreed it forced a horizontal scrollbar at 200 percent text on a 320px viewport.
+That last one is a real accessibility defect that predates this work and had never been
+caught, because the browser job had never run before -- the pipeline had always stopped
+at the case reproduction above it.
 
 ## What has not been verified
 

@@ -281,11 +281,12 @@ Listed rather than omitted, so that the absence is visibly deliberate.
   shared input format would not be evidence of it, and none is offered.
 - **No external validation of the library.** The one study that compares it against values
   it did not produce cannot run here, for the data-rights reason above.
-- **No hosted continuous integration behind the numbers above.** Every measurement in
-  this README was produced locally, on one machine. Whether `.github/workflows/ci.yml` and
-  `pages.yml` have executed on a hosted runner, and for which revision, is recorded in
-  [docs/release/VERIFICATION.md](docs/release/VERIFICATION.md) rather than asserted here.
-  No build badge is shown for a run that is not reported there.
+- **Hosted continuous integration runs, and it is still not external validation.** The
+  suite executes on three CPython versions, the case studies reproduce byte for byte in a
+  digest-pinned Linux container, the same cases re-run on four other environments and are
+  checked for numerical portability, and the browser suite runs on three engines at both
+  base paths. All of it is this repository testing itself. The run identifiers and the
+  measured numbers are in [docs/release/VERIFICATION.md](docs/release/VERIFICATION.md).
 - **No deployment.** No site has been published. `pages.yml` is deliberately inert: one
   `workflow_dispatch` trigger, configuration variables that do not exist, a typed human
   acknowledgement, and a build step that fails rather than uploading an empty directory.
