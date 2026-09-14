@@ -1424,9 +1424,9 @@ class ViscosityTests(unittest.TestCase):
     enormous margin. What this comparison canNOT do is discriminate the X constant
     3.448 from the erroneous 3.488 that circulates in one secondary source: the two
     constants give mean errors that both sit inside the correlation's own quoted
-    accuracy, and are separated by far less than it. That constant rests on the documentary evidence recorded in
-    ``docs/evidence/viscosity.md``, not on this test, and it is worth saying plainly
-    rather than implying the suite pins it.
+    accuracy, and are separated by far less than it. That constant rests on the
+    documentary evidence recorded in ``docs/evidence/viscosity.md``, not on this
+    test, and it is worth saying plainly rather than implying the suite pins it.
 
     Margin, stated because it is the thinnest in the file. The eight percent per-point
     gate leaves less headroom over the observed worst point than any other comparison

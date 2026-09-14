@@ -39,11 +39,11 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 import pathlib
 import statistics
 import sys
-import math
 import warnings
 from typing import Any
 

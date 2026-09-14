@@ -113,18 +113,18 @@ Measured on 2026-09-14, `python3 scripts/verify.py --profile public-core --cases
 | Quantity | Measured |
 |---|---|
 | checks collected / passed / mandatory failed | 9 / 9 / 0 |
-| tests collected | 667 |
-| tests passed | 647 |
+| tests collected | 683 |
+| tests passed | 663 |
 | tests failed or errored | 0 |
 | tests skipped | 20 |
 | reference-dependent tests, not run | 20 |
 | reference-dependent checks, not run | 2 |
 | synthetic cases reproduced byte-identical | 3 of 3 |
 
-The two runners report the same suite differently: `python3 scripts/check.py` prints "667
+The two runners report the same suite differently: `python3 scripts/check.py` prints "683
 run, 0 failed, 20 skipped" because `unittest` counts a skipped test in `testsRun`, and
-`python3 -m pytest -q` prints "647 passed, 20 skipped" because pytest does not. 667 minus
-20 is 647.
+`python3 -m pytest -q` prints "663 passed, 20 skipped" because pytest does not. 683 minus
+20 is 663.
 
 Adding `--expect-reference-skips 20` registers one further check,
 `reference-skip-count-drift`, so the same tree reports 10 checks under that flag and 9
@@ -333,7 +333,7 @@ check, and what the history does and does not prove.
 ```
 src/reservoir_lab/   the library: gas properties, material balance, aquifer, pseudopressure,
                      diagnostics, regression, units, numerics, provenance, validation
-tests/               667 tests; oracles under tests/oracles/
+tests/               683 tests; oracles under tests/oracles/
 cases/               A1, A2, A3, A4 — protocol, run.py, report, decision memo, results
 scripts/             verify.py, check.py, check_public_release.py, check_repository.py,
                      export_presentation_data.py, fetch_nist_reference.py, run_demo.py
