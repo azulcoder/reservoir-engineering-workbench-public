@@ -34,5 +34,11 @@
     "not field validation",
     "not commercial-simulator validation",
     "not peer review"
-  ]
+  ],
+  "rasterised_artefacts": {
+    "what": "site/src/generated/figures/*.png and their published copies",
+    "environment": "the ubuntu-24.04 GitHub runner with the Node version pinned in .github/workflows/ci.yml (NODE_VERSION)",
+    "why_separate": "Rasterisation is done by the Node toolchain and depends on the platform's font stack, so it has a different canonical environment from the Python case snapshots. The SVGs those PNGs are rendered from are identical across platforms apart from one coordinate in f06 differing by 1.1e-13 user units.",
+    "gate": "the site-release job re-runs the canonical sequence and fails if any committed generated file changes; on drift it uploads what the runner produced"
+  }
 }
