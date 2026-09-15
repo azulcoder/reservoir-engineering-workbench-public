@@ -194,7 +194,7 @@
         },
         {
           "path": "f01.png",
-          "bytes": 561566,
+          "bytes": 564855,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -287,7 +287,7 @@
         },
         {
           "path": "f01b-observed-range.png",
-          "bytes": 479059,
+          "bytes": 478070,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -378,7 +378,7 @@
         },
         {
           "path": "f02.png",
-          "bytes": 443133,
+          "bytes": 445378,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -478,7 +478,7 @@
         },
         {
           "path": "f03.png",
-          "bytes": 766665,
+          "bytes": 769540,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -569,7 +569,7 @@
         },
         {
           "path": "f04.png",
-          "bytes": 609144,
+          "bytes": 611027,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -680,7 +680,7 @@
         },
         {
           "path": "f05.png",
-          "bytes": 687863,
+          "bytes": 689872,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -771,7 +771,7 @@
         },
         {
           "path": "f06.png",
-          "bytes": 677914,
+          "bytes": 683495,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -863,7 +863,7 @@
         },
         {
           "path": "f07.png",
-          "bytes": 516737,
+          "bytes": 523687,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -954,7 +954,7 @@
         },
         {
           "path": "f08.png",
-          "bytes": 652203,
+          "bytes": 653759,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -1027,7 +1027,7 @@
         },
         {
           "path": "f09.png",
-          "bytes": 1471418,
+          "bytes": 1478187,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -1115,7 +1115,7 @@
         },
         {
           "path": "a1-01.png",
-          "bytes": 755432,
+          "bytes": 768745,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -1202,7 +1202,7 @@
         },
         {
           "path": "a3-01.png",
-          "bytes": 625590,
+          "bytes": 633806,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -1293,7 +1293,7 @@
         },
         {
           "path": "b1-01.png",
-          "bytes": 484403,
+          "bytes": 485989,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -1383,7 +1383,7 @@
         },
         {
           "path": "b1-02.png",
-          "bytes": 567195,
+          "bytes": 570466,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -1473,7 +1473,7 @@
         },
         {
           "path": "b1-03.png",
-          "bytes": 579264,
+          "bytes": 585122,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -1558,12 +1558,12 @@
       "files": [
         {
           "path": "b1-04.svg",
-          "bytes": 27744,
+          "bytes": 27748,
           "media_type": "image/svg+xml"
         },
         {
           "path": "b1-04.png",
-          "bytes": 571834,
+          "bytes": 574408,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -1653,7 +1653,7 @@
         },
         {
           "path": "b1-05.png",
-          "bytes": 564978,
+          "bytes": 567989,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
