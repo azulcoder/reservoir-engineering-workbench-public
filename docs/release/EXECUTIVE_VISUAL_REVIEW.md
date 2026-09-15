@@ -242,11 +242,16 @@ ignored.
 ## Review artefacts
 
     docs/release/visual-review/before/   15 captures against 22394a9b as deployed
-    docs/release/visual-review/after/    the same 15 against this branch
+    docs/release/visual-review/after/    18 against this branch
 
-Pairs worth looking at first: `home.png`, `b1-visibility.png` (the clipped table against
-the classification), `b1.png`, `studies.png`, `a4.png`, and the three `-375.png` phone
-captures.
+Fifteen are before/after pairs. Three are after-only — `a4-supporting.png`,
+`a4-holdout.png`, `a4-technical.png` — because those sections did not exist before this
+pass; the nearest before-state for all three is the single undifferentiated Evidence
+section visible in `before/a4-hero.png`.
+
+**Recommended owner review order:** `b1-visibility.png` (the clipped verdict column against
+the classification that replaced it), `a4.png`, `home.png`, `studies.png`, `a4-supporting.png`,
+`a4-375.png`, `b1-375.png`.
 
 ## Local preview
 
