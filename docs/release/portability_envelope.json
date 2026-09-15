@@ -36,14 +36,32 @@
     }
   ],
   "exact_float_fields": [
-    {"match": "^seed$", "why": "a seed is an identifier, not a computed quantity"},
-    {"match": "^threshold$|^limit$|^bound$|^target$|^tolerance$", "why": "an acceptance threshold is configuration; if it moves, the criterion moved"},
-    {"match": "^confidence$|^alpha$", "why": "declared statistical configuration"}
+    {
+      "match": "^seed$",
+      "why": "a seed is an identifier, not a computed quantity"
+    },
+    {
+      "match": "^threshold$|^limit$|^bound$|^target$|^tolerance$",
+      "why": "an acceptance threshold is configuration; if it moves, the criterion moved"
+    },
+    {
+      "match": "^confidence$|^alpha$",
+      "why": "declared statistical configuration"
+    }
   ],
   "exact_subtrees": [
     "^\\.config(\\.|\\[|$)",
     "^\\.case_id$",
     "^\\.case_type$",
     "\\.acceptance(\\[\\d+\\])?\\.(id|name|statement|criterion)$"
+  ],
+  "platform_dependent_digests": [
+    {
+      "match": "^metrics_sha256$",
+      "why": "A SHA-256 taken over the case's own floating-point payload. It is an integrity device for the canonical environment, where it is compared byte for byte along with every other byte and no tolerance applies. Across platforms it can only report that something differs, because a single one-ULP difference anywhere in the payload changes every bit of the hash. That question is already answered, leaf by leaf and with the magnitude attached, by this comparison itself, which is strictly stronger than the digest: excluding the digest removes no detection power, whereas comparing it exactly would fail every case that touches a divergent libm function for a reason that has nothing to do with the reservoir engineering.",
+      "detection_is_not_lost_because": "B1 carries 1100 float leaves, all of which are compared individually against the declared envelope. A corrupted payload changes at least one of them and is caught there. A payload the digest would flag but the leaf comparison would not does not exist, because the digest is computed from those same leaves.",
+      "still_reported": "The comparator counts digest fields and prints the differing reference and candidate values, so an excluded digest is visible in the report rather than silently dropped.",
+      "measured_when_added": "Introduced for case B1. On ubuntu-24.04 CPython 3.13 against the macOS-produced reference, B1 showed 1100 float fields with a worst relative difference of 1.113506e-10 and a worst absolute difference of 1.776357e-15 -- three orders of magnitude inside the 1e-07 envelope -- while metrics_sha256 differed completely. That contrast is the whole argument for this rule."
+    }
   ]
 }

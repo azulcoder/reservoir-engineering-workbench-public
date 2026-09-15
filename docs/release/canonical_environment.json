@@ -36,9 +36,12 @@
     "not peer review"
   ],
   "rasterised_artefacts": {
-    "what": "site/src/generated/figures/*.png and their published copies",
+    "what": "site/src/generated/figures/*.png and *.svg and their published copies under site/public/data/figures/, plus manifest.json and index.json, which record their byte counts",
     "environment": "the ubuntu-24.04 GitHub runner with the Node version pinned in .github/workflows/ci.yml (NODE_VERSION)",
-    "why_separate": "Rasterisation is done by the Node toolchain and depends on the platform's font stack, so it has a different canonical environment from the Python case snapshots. The SVGs those PNGs are rendered from are identical across platforms apart from one coordinate in f06 differing by 1.1e-13 user units.",
-    "gate": "the site-release job re-runs the canonical sequence and fails if any committed generated file changes; on drift it uploads what the runner produced"
+    "why_separate": "Rasterisation is done by the Node toolchain and depends on the platform's font stack, so it has a different canonical environment from the Python case snapshots. Two SVGs also differ: f06 by one coordinate at 1.1e-13 user units, and b1-04 likewise, because the geometry itself is computed in floating point and not only the rasterisation.",
+    "gate": "the site-release job re-runs the canonical sequence and fails if any committed generated file changes; on drift it uploads what the runner produced",
+    "harvesting_procedure": "When these drift, take the runner's output from the canonical-generated-dist-* artifact and rsync it over site/src/generated/ and site/public/data/. Verified reproducible: two separate hosted runs produced byte-identical PNGs, SVGs and manifest.",
+    "do_not_run_npm_build_afterwards": "`npm run build` in site/ begins with `node scripts/render-figures.mjs`, so it re-renders every figure on the local machine and silently undoes a harvest. This cost two CI cycles: the harvested bytes were correct on disk and were overwritten before the commit. Verify a harvest with `npx astro build` and `npx playwright test` instead -- the Playwright webServer runs `npx astro build`, not `npm run build`, so the suite is safe. Confirm the bytes survived by hashing one PNG before and after.",
+    "manifest_couples_them": "manifest.json records each PNG's byte count, so the rasters cannot be reverted independently of it. Harvest the whole generated tree together or not at all."
   }
 }

@@ -41,6 +41,16 @@ So the comparison is split by what the field means rather than by its type alone
   NON-FINITE NaN and the infinities are compared exactly, including sign. A NaN that
              becomes a number, or an infinity that changes sign, is a structural change.
 
+  DIGEST     A content hash taken over floating-point values. It is an integrity device
+             for the canonical environment, where it is compared byte for byte along with
+             everything else, and it is meaningless across platforms: a one-ULP difference
+             anywhere in the payload changes every bit of the hash, so it can report only
+             "something differs", which is what this comparison is already measuring leaf
+             by leaf and in far more detail. Excluding it therefore costs no detection
+             power -- the leaf comparison is strictly stronger than the digest it replaces
+             -- and a path must be declared in the envelope to land here. The count and the
+             differing values are still reported, so the digest cannot go quiet.
+
 Nothing is skipped silently. Every leaf lands in exactly one class and every class is
 counted in the report, so a field cannot vanish from the comparison by not matching a
 rule.
@@ -63,6 +73,7 @@ EXACT = "exact"
 FLOAT = "float"
 NEAR_ZERO = "near-zero"
 NON_FINITE = "non-finite"
+DIGEST = "digest"
 
 
 @dataclass
@@ -93,11 +104,13 @@ class Report:
     float_fields: int = 0
     near_zero_fields: int = 0
     non_finite_fields: int = 0
+    digest_fields: int = 0
     max_abs: float = 0.0
     max_abs_path: str = ""
     max_rel: float = 0.0
     max_rel_path: str = ""
     near_zero_paths: list[tuple[str, float, float]] = field(default_factory=list)
+    digests_differing: list[tuple[str, str, str]] = field(default_factory=list)
     findings: list[Finding] = field(default_factory=list)
 
     @property
@@ -129,6 +142,13 @@ def classify(path: str, envelope: dict) -> tuple[str, dict]:
         if re.search(rule["match"], name):
             return NEAR_ZERO, rule
     return FLOAT, envelope["default_float"]
+
+
+def is_declared_digest(path: str, envelope: dict) -> bool:
+    """Return True when a path is declared a content hash over floating-point values."""
+    return any(
+        re.search(rule["match"], leaf_name(path)) for rule in envelope.get("platform_dependent_digests", [])
+    )
 
 
 def is_exact_by_path(path: str, envelope: dict) -> bool:
@@ -206,6 +226,14 @@ def compare(reference: Any, candidate: Any, envelope: dict) -> Report:
             continue
 
         if isinstance(a, str) or isinstance(b, str):
+            if is_declared_digest(path, envelope):
+                # Declared in the envelope as a hash over floating-point values. It is
+                # counted and, when it differs, reported -- but a difference here is not a
+                # finding, because every float it covers was just compared individually.
+                report.digest_fields += 1
+                if a != b:
+                    report.digests_differing.append((path, str(a), str(b)))
+                continue
             report.exact_fields += 1
             if type(a) is not type(b) or a != b:
                 report.findings.append(Finding("string-changed", path, a, b, "a declarative field changed"))
@@ -336,6 +364,12 @@ def render(report: Report, label: str, verbose: bool = False) -> str:
         f"  float fields      {report.float_fields}",
         f"  near-zero fields  {report.near_zero_fields}",
         f"  non-finite fields {report.non_finite_fields}",
+        f"  digest fields     {report.digest_fields}"
+        + (
+            f" ({len(report.digests_differing)} differ, as a hash over floats must when any float differs)"
+            if report.digests_differing
+            else ""
+        ),
     ]
     if report.float_fields:
         lines.append(f"  max absolute      {report.max_abs:.6e}   at {report.max_abs_path or '-'}")

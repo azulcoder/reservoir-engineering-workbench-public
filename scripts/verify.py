@@ -73,6 +73,24 @@ PUBLIC_RELEASE_CHECK = SCRIPTS / "check_public_release.py"
 # an "expected" skip is one this policy explains, and every other skip fails the run.
 REFERENCE_SKIP_SENTINEL = "NIST reference extract not present"
 
+# The second, and only other, declared reason a skip is permitted. An oracle that
+# corroborates a result already checked by an in-tree oracle may live behind an optional
+# dependency, because the stdlib runner deliberately installs nothing and a hard import
+# there would make the dependency-free claim false. Such a test must skip with this
+# sentinel so the skip is counted, named and reported rather than silently tolerated.
+#
+# The bar for adding an id here is that the check is CORROBORATING: something else in the
+# tree must already be testing the same property unconditionally. An id that is the only
+# test of a property does not belong here -- that would be a check nobody runs, wearing a
+# declaration. The registry maps the id to the unconditional check it corroborates.
+OPTIONAL_ORACLE_SENTINEL = "OPTIONAL ORACLE ABSENT"
+OPTIONAL_ORACLES: dict[str, str] = {
+    "mpmath": (
+        "corroborates the exponential integral, which tests/test_transient.py already "
+        "checks unconditionally against a stdlib decimal oracle and an asymptotic oracle"
+    ),
+}
+
 # Field names in MANIFEST.json belong to the data-policy stream. The manifest must
 # record a citation obligation; which of these keys carries it is that stream's call.
 CITATION_KEYS = ("citation_required", "attribution_required")
@@ -115,8 +133,10 @@ class TestCounts:
     errored: int = 0
     skipped: int = 0
     reference_dependent_skipped: int = 0
+    optional_oracle_skipped: int = 0
     mandatory_collected: int = 0
     unexpected_skips: list[str] = field(default_factory=list)
+    optional_oracles_absent: list[str] = field(default_factory=list)
 
 
 def _import_check_module():
@@ -285,6 +305,19 @@ def run_test_suite(pattern: str = "test_*.py") -> tuple[TestCounts, unittest.Tes
     for test, reason in result.skipped:
         if REFERENCE_SKIP_SENTINEL in reason:
             counts.reference_dependent_skipped += 1
+        elif OPTIONAL_ORACLE_SENTINEL in reason:
+            # The sentinel alone is not enough: the id must be one this policy knows
+            # about, so that adding an optional dependency is a deliberate edit here
+            # rather than a sentence someone wrote into a test.
+            declared = next((name for name in OPTIONAL_ORACLES if f"[{name}]" in reason), None)
+            if declared is None:
+                counts.unexpected_skips.append(
+                    f"{test.id()}: claims {OPTIONAL_ORACLE_SENTINEL} but names no "
+                    f"registered oracle; known ids are {sorted(OPTIONAL_ORACLES)}"
+                )
+            else:
+                counts.optional_oracle_skipped += 1
+                counts.optional_oracles_absent.append(f"{declared} ({test.id()})")
         else:
             counts.unexpected_skips.append(f"{test.id()}: {reason}")
     counts.mandatory_collected = counts.collected - counts.reference_dependent_skipped
@@ -335,15 +368,43 @@ def test_suite_checks(counts: TestCounts, expect_reference_skips: int | None) ->
     checks.append(
         Check(
             id="no-unexpected-skips",
-            title="every skip is explained by the reference-data policy",
+            title="every skip carries a reason this policy declares",
             status=PASSED if not counts.unexpected_skips else FAILED,
             mandatory=True,
             detail=(
-                "all skips carry the reference-extract-absent reason"
+                "every skip carries a declared reason"
                 if not counts.unexpected_skips
                 else "unexplained skips: " + "; ".join(counts.unexpected_skips)
             ),
             count=len(counts.unexpected_skips),
+        )
+    )
+
+    # Reported, never failed. An absent optional oracle is a corroboration that did not
+    # happen, and a reader is entitled to see that rather than infer it from a count that
+    # went quiet. The run it is absent on is the stdlib runner, which installs nothing on
+    # purpose; the pytest runner installs requirements-dev.lock and this check reads zero.
+    checks.append(
+        Check(
+            id="optional-oracles-present",
+            title="corroborating oracles behind optional dependencies",
+            status=PASSED,
+            mandatory=False,
+            detail=(
+                "every declared optional oracle ran"
+                if not counts.optional_oracles_absent
+                else (
+                    "not installed here, so the corroboration did not run: "
+                    + "; ".join(counts.optional_oracles_absent)
+                    + ". The properties themselves are checked unconditionally elsewhere: "
+                    + "; ".join(
+                        f"{name} -- {why}"
+                        for name, why in OPTIONAL_ORACLES.items()
+                        if any(entry.startswith(name) for entry in counts.optional_oracles_absent)
+                    )
+                )
+            ),
+            count=counts.optional_oracle_skipped,
         )
     )
 
@@ -846,6 +907,12 @@ def _assemble(
             "tests_passed": counts.passed,
             "tests_failed": counts.failed + counts.errored,
             "tests_skipped": counts.skipped,
+            # Split out because they move with the environment while the rest do not.
+            # A published count must be a property of the tree, not of whichever runner
+            # happened to have an optional development dependency installed.
+            "tests_reference_skipped": counts.reference_dependent_skipped,
+            "tests_optional_oracle_skipped": counts.optional_oracle_skipped,
+            "tests_passed_with_oracles": counts.passed + counts.optional_oracle_skipped,
             "not_run_tests": not_run_tests,
             "not_run_checks": not_run_checks,
         },

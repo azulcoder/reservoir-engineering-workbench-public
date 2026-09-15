@@ -50,6 +50,7 @@ REFERENCE = {
         {"id": "AC2", "statement": "invented", "observed": 0.5, "threshold": 1.0, "met": True},
     ],
     "all_acceptance_criteria_met": True,
+    "metrics_sha256": "9f" * 32,
 }
 
 
@@ -259,10 +260,14 @@ class AcceptanceTests(Mixin, unittest.TestCase):
         self.assertLess(rel, 5e-07, "the envelope must stay below six-significant-figure display sensitivity")
 
     def test_report_counts_every_field(self) -> None:
-        """No leaf may fall outside all four comparison classes."""
+        """No leaf may fall outside all five comparison classes."""
         report = self.compare_to_reference(copy.deepcopy(REFERENCE))
         counted = (
-            report.exact_fields + report.float_fields + report.near_zero_fields + report.non_finite_fields
+            report.exact_fields
+            + report.float_fields
+            + report.near_zero_fields
+            + report.non_finite_fields
+            + report.digest_fields
         )
 
         def leaves(o):
@@ -276,6 +281,80 @@ class AcceptanceTests(Mixin, unittest.TestCase):
                 yield o
 
         self.assertEqual(counted, len(list(leaves(REFERENCE))), "every leaf must land in exactly one class")
+
+
+class DigestExclusionTests(Mixin, unittest.TestCase):
+    """The digest rule must be narrow: it excludes one field and blinds nothing else.
+
+    A content hash over floating-point values cannot survive a one-ULP difference, so
+    comparing it exactly across platforms fails for a reason that has nothing to do with
+    the engineering. Excluding it is only defensible because the leaf-by-leaf comparison
+    is strictly stronger than the digest -- these tests are what makes that a checked
+    claim rather than an assertion.
+    """
+
+    def test_a_digest_difference_alone_is_accepted(self) -> None:
+        self.assert_accepted(
+            self.mutate(lambda c: c.__setitem__("metrics_sha256", "00" * 32)),
+            "a digest that differs while every value it covers is unchanged",
+        )
+
+    def test_the_digest_is_counted_and_reported_not_dropped(self) -> None:
+        report = self.compare_to_reference(self.mutate(lambda c: c.__setitem__("metrics_sha256", "00" * 32)))
+        self.assertEqual(report.digest_fields, 1)
+        self.assertEqual(len(report.digests_differing), 1)
+        path, reference, candidate = report.digests_differing[0]
+        self.assertEqual(path, ".metrics_sha256")
+        self.assertNotEqual(reference, candidate)
+
+    def test_an_unchanged_digest_is_still_counted(self) -> None:
+        report = self.compare_to_reference(copy.deepcopy(REFERENCE))
+        self.assertEqual(report.digest_fields, 1)
+        self.assertEqual(report.digests_differing, [])
+
+    def test_the_digest_does_not_hide_a_float_outside_the_envelope(self) -> None:
+        def mutator(candidate):
+            candidate["metrics_sha256"] = "00" * 32
+            candidate["results"]["gas_in_place_scf"] = perturb(REFERENCE["results"]["gas_in_place_scf"], 1e-5)
+
+        self.assert_rejected(
+            self.mutate(mutator), "outside-envelope", "a moved float behind a changed digest"
+        )
+
+    def test_the_digest_does_not_hide_a_flipped_criterion(self) -> None:
+        def mutator(candidate):
+            candidate["metrics_sha256"] = "00" * 32
+            candidate["acceptance"][0]["met"] = False
+
+        self.assert_rejected(
+            self.mutate(mutator), "verdict-changed", "a flipped criterion behind a changed digest"
+        )
+
+    def test_an_undeclared_string_is_still_compared_exactly(self) -> None:
+        self.assert_rejected(
+            self.mutate(lambda c: c.__setitem__("case_type", "field")),
+            "string-changed",
+            "a declarative string that is not a declared digest",
+        )
+
+    def test_only_the_declared_name_is_excluded(self) -> None:
+        """A different hash field must not inherit the exclusion by resembling one."""
+
+        def mutator(candidate):
+            candidate["config_sha256"] = "11" * 32
+
+        candidate = self.mutate(mutator)
+        report = self.compare_to_reference(candidate)
+        self.assertFalse(report.ok, "an undeclared hash field must be an exact comparison")
+
+    def test_the_envelope_states_why_detection_is_not_lost(self) -> None:
+        """The rule is only acceptable with its argument attached, so require it."""
+        rules = ENVELOPE.get("platform_dependent_digests", [])
+        self.assertTrue(rules, "the digest rule must be declared in the envelope, not in code")
+        for rule in rules:
+            for key in ("why", "detection_is_not_lost_because", "still_reported"):
+                self.assertIn(key, rule)
+                self.assertGreater(len(rule[key]), 80, f"{key} must carry a real argument")
 
 
 class PublishedResidualBoundTests(unittest.TestCase):

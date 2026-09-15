@@ -29,7 +29,7 @@ export const SITE_NAME = "Gas Reservoir Performance Lab";
  * `docs/release/VERIFICATION.md`. Re-measured in this candidate tree before publication.
  */
 export const VERIFICATION = {
-  date: "2026-09-14",
+  date: "2026-09-15",
   interpreter: "CPython 3.13.2 on macOS, darwin arm64",
   profile: "public-core",
   /* The counts below are from `python3 scripts/verify.py --profile public-core
@@ -38,16 +38,23 @@ export const VERIFICATION = {
      registers one further check, reference-skip-count-drift, so the same tree reports 10
      checks under that flag and 9 without it. An earlier version of this block carried 10
      collected and 9 passed, which was one number from each invocation. */
-  testsCollected: 707,
-  testsPassed: 687,
+  testsCollected: 791,
+  testsPassed: 771,
   testsFailedOrErrored: 0,
   testsSkipped: 20,
   skipReason:
     "the reference-dependent tests in tests/test_gas_properties.py, which compare computed deviation factors, densities and viscosities against a NIST Chemistry WebBook extract this repository does not redistribute",
-  checksCollected: 9,
-  checksPassed: 9,
+  /* testsSkipped counts the reference-dependent skips only, and testsPassed counts the
+     suite with every declared optional oracle present. Both are deliberately not the raw
+     totals: one corroborating check, the mpmath cross-check of the exponential integral,
+     is a development-only pin, so a runner that installs nothing reports one more skip
+     and one fewer pass on an identical tree. A published number has to be a property of
+     the tree rather than of the machine, and verify.py reports the optional-oracle count
+     separately rather than letting it move these. */
+  checksCollected: 11,
+  checksPassed: 11,
   mandatoryChecksFailed: 0,
-  casesReproduced: "3 of 3, each re-run into a fresh directory and diffed byte for byte",
+  casesReproduced: "4 of 4, each re-run into a fresh directory and diffed byte for byte",
   figureDataFiles: 7,
   reconciliationChecks: 51,
   reconcileTolerance: "1e-12 relative",

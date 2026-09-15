@@ -2937,6 +2937,454 @@ async function emitPng(id, svgText) {
   return { path, bytes: buffer.length, scale: "216 dpi, 3x the 72 dpi authoring scale" };
 }
 
+
+/* ---------- B1-01: the diagnostic log-log plot ---------- */
+
+function buildB1Diagnostic(summary) {
+  const where = "B1-01";
+  const base = req(summary, "b1_0_mathematical_baseline", where);
+  const s = req(base, "series", where);
+  const window = req(base, "window", where);
+  const der = req(base, "derivative", where);
+
+  const dp = s.time_hours.map((t, i) => ({ t, v: fin(s.drawdown_psi[i], `${where}: dp[${i}]`) }));
+  const dv = s.derivative_time_hours.map((t, i) => ({ t, v: fin(s.derivative_psi[i], `${where}: dv[${i}]`) }));
+  const ideal = fin(req(der, "ideal_plateau_psi", where), `${where}: plateau`);
+  const lo = Math.min(...dv.map((d) => d.v)) * 0.55;
+  const hi = Math.max(...dp.map((d) => d.v)) * 1.6;
+
+  const plot = panel(
+    {
+      width: W,
+      height: 430,
+      marginLeft: 92,
+      marginRight: 250,
+      marginTop: 26,
+      marginBottom: 58,
+      x: { type: "log", domain: [s.time_hours[0] * 0.85, s.time_hours[s.time_hours.length - 1] * 1.15], label: "elapsed time, hours →", labelAnchor: "center", labelOffset: 44 },
+      y: { type: "log", domain: [lo, hi], label: "↑ psi" },
+      marks: [
+        grid("y"),
+        Plot.ruleY([ideal], { stroke: C.ink, strokeDasharray: DASH.truth, strokeWidth: 1.4 }),
+        Plot.text([{ t: s.time_hours[0], v: ideal }], { x: "t", y: "v", text: () => `ideal plateau ${ideal.toPrecision(6)} psi = 70.6 qBμ/kh`, fontSize: FS.label, fill: C.ink3, textAnchor: "start", dy: -12 }),
+        Plot.line(dp, { x: "t", y: "v", stroke: C.observed, strokeWidth: 2 }),
+        Plot.dot(dp.filter((_, i) => i % 6 === 0), { x: "t", y: "v", r: 3.2, fill: C.observed }),
+        Plot.line(dv, { x: "t", y: "v", stroke: C.model, strokeWidth: 2 }),
+        Plot.dot(dv.filter((_, i) => i % 6 === 0), { x: "t", y: "v", r: 3.2, symbol: "diamond", fill: C.model }),
+        Plot.text([{ t: dp[dp.length - 1].t, v: dp[dp.length - 1].v }], { x: "t", y: "v", text: () => "drawdown Δp", fontSize: FS.label, fill: C.observed, textAnchor: "start", dx: 12 }),
+        Plot.text([{ t: dv[dv.length - 1].t, v: dv[dv.length - 1].v }], { x: "t", y: "v", text: () => "Bourdet derivative dΔp/dln t", fontSize: FS.label, fill: C.model, textAnchor: "start", dx: 12 }),
+      ],
+    },
+    where,
+  );
+
+  const title = "B1-01 — the diagnostic: a flat derivative is what infinite-acting radial flow looks like";
+  const subtitle = `Synthetic drawdown and its Bourdet derivative, both on logarithmic axes, over t_D from ${window.first_dimensionless_time.toExponential(2)} to ${window.last_dimensionless_time.toExponential(2)}. The derivative is flat because the response is a straight line on a semilog plot, which is the definition of the regime. Smoothing L = ${der.smoothing_l}.`;
+  const description = `Log-log diagnostic plot for the synthetic B1 drawdown. The upper curve is the pressure drop, rising steadily from about ${dp[0].v.toFixed(1)} to ${dp[dp.length - 1].v.toFixed(1)} psi across the window. The lower curve is the Bourdet derivative with respect to natural-log time, which is flat across the whole window at close to ${ideal.toPrecision(6)} psi, the value 70.6 q B mu / k h takes at the declared properties. A dashed rule marks that ideal plateau. The derivative sits just below the rule everywhere, by at most ${(der.max_deficit_from_ideal_relative * 100).toPrecision(3)} percent, which is the known 1/(8 t_D) deficit of the line-source solution and not an error. Full values in the data table below.`;
+
+  return {
+    id: "b1-01",
+    node: frame({
+      title,
+      subtitle,
+      legend: [
+        { label: "drawdown Δp, psi", color: C.observed, dash: "none", symbol: "circle" },
+        { label: "Bourdet derivative, psi per natural-log cycle", color: C.model, dash: "none", symbol: "diamond" },
+        { label: "ideal plateau 70.6 qBμ/kh", color: C.ink, dash: DASH.truth, symbol: "none" },
+      ],
+      sections: [plot],
+      notes: [
+        description,
+        `The derivative is deliberately compared against (1/2)exp(-1/(4 t_D)) rather than against the round 1/2. The deficit from 1/2 is a real feature of the line-source solution, worth ${(der.max_deficit_from_ideal_relative * 100).toPrecision(3)} percent here, and testing against 1/2 would hide that systematic difference inside whatever tolerance was generous enough to pass. Measured against the closed form the worst error is ${der.max_relative_error_against_closed_form.toExponential(2)} relative.`,
+        "A flat derivative identifies the regime; it does not identify the reservoir. Any model that produces radial flow over this window would look the same here, which is why B1 claims nothing beyond the model it declares.",
+        "Synthetic data. No gauge, no well, no field. Source: cases/B1_iarf_known_answer/results/summary.json.",
+      ],
+    }),
+    title,
+    description,
+    meta: {
+      figure_id: "B1-01",
+      case_id: "B1_iarf_known_answer",
+      selector: `cases/B1_iarf_known_answer/results/summary.json /b1_0_mathematical_baseline/series, ${dp.length} pressure points and ${dv.length} derivative points`,
+      data_files: ["cases/B1_iarf_known_answer/results/summary.json"],
+      axes: {
+        x: { quantity: "elapsed time", unit: "hours", scale: "log", domain: [s.time_hours[0], s.time_hours[s.time_hours.length - 1]] },
+        y: { quantity: "pressure drop and its log-time derivative", unit: "psi", scale: "log", domain: [lo, hi] },
+      },
+      transformations: [
+        "the derivative is the Bourdet three-point estimator with respect to natural-log time, L = " + der.smoothing_l,
+        "no smoothing beyond that L, no resampling, no interpolation; every exported point is drawn",
+      ],
+      uncertainty: "none: this figure is noise-free synthetic data. The only band-like feature is the gap between the derivative and its ideal plateau, which is a deterministic property of the solution and is labelled as such.",
+      question: "Does the synthetic response actually show infinite-acting radial flow over the window the protocol declared?",
+      caveat: "A flat derivative is necessary for this interpretation and nowhere near sufficient to identify a reservoir. Wellbore storage is zero by design here, so the early-time distortion a real test would show is absent.",
+    },
+  };
+}
+
+/* ---------- B1-02: the specialized semilog analysis ---------- */
+
+function buildB1Semilog(summary) {
+  const where = "B1-02";
+  const base = req(summary, "b1_0_mathematical_baseline", where);
+  const s = req(base, "series", where);
+  const fit = req(base, "fit", where);
+  const rec = req(base, "recovery", where);
+
+  const pts = s.time_hours.map((t, i) => ({ t, v: fin(s.drawdown_psi[i], `${where}: dp[${i}]`), f: s.fitted_line_psi[i] }));
+  const lo = Math.min(...pts.map((d) => d.v)) - 6;
+  const hi = Math.max(...pts.map((d) => d.v)) + 14;
+
+  const plot = panel(
+    {
+      width: W,
+      height: 400,
+      marginLeft: 92,
+      marginRight: 230,
+      marginTop: 26,
+      marginBottom: 58,
+      x: { type: "log", domain: [s.time_hours[0] * 0.85, s.time_hours[s.time_hours.length - 1] * 1.15], label: "elapsed time, hours →", labelAnchor: "center", labelOffset: 44 },
+      y: { domain: [lo, hi], label: "↑ drawdown Δp, psi" },
+      marks: [
+        grid("y"),
+        Plot.line(pts, { x: "t", y: "f", stroke: C.model, strokeWidth: 2, strokeDasharray: DASH.truth }),
+        Plot.dot(pts.filter((_, i) => i % 4 === 0), { x: "t", y: "v", r: 3.4, fill: C.observed }),
+        Plot.text([pts[Math.floor(pts.length * 0.62)]], { x: "t", y: "f", text: () => `fitted line, slope ${Math.abs(fit.slope_psi_per_cycle).toPrecision(6)} psi per log cycle`, fontSize: FS.label, fill: C.model, textAnchor: "start", dx: 10, dy: -16 }),
+      ],
+    },
+    where,
+  );
+
+  const table = tableSection({
+    columns: [
+      { label: "quantity", width: 300, emphasis: true },
+      { label: "known truth", width: 180 },
+      { label: "recovered", width: 220, mono: true },
+      { label: "error", width: 180 },
+      { label: "threshold", width: 120 },
+    ],
+    rows: [
+      ["permeability, md", rec.permeability_md_true.toPrecision(6), rec.permeability_md_recovered.toPrecision(9), rec.permeability_thickness_relative_error.toExponential(3) + " relative", "1e-04"],
+      ["permeability-thickness, md·ft", rec.permeability_thickness_true.toPrecision(6), rec.permeability_thickness_recovered.toPrecision(9), rec.permeability_thickness_relative_error.toExponential(3) + " relative", "1e-04"],
+      ["skin, dimensionless", rec.skin_true.toPrecision(6), rec.skin_recovered.toPrecision(9), rec.skin_absolute_error.toExponential(3) + " absolute", "1e-03"],
+    ],
+    note: "Thresholds are the pre-registered B1 criteria, derived from the semilog approximation error before the run and recorded in protocol.md section 6. The recovered values are printed to nine significant figures because the agreement is the result; the errors are five to six orders of magnitude inside the thresholds.",
+  });
+
+  const title = "B1-02 — the specialized analysis: one straight line carries both answers";
+  const subtitle = `The same data on a semilog axis, where infinite-acting radial flow is a straight line. Its slope gives permeability and its position at one hour gives skin. R² = ${fit.r_squared.toPrecision(9)}, residual standard error ${fit.residual_standard_error_psi.toExponential(3)} psi.`;
+  const description = `Semilog plot of the synthetic drawdown against elapsed time, with the least-squares straight line fitted over the declared interpretation window. The points lie on the line to within ${fit.residual_standard_error_psi.toExponential(2)} psi. The slope is ${Math.abs(fit.slope_psi_per_cycle).toPrecision(6)} psi per log cycle, which gives a permeability of ${rec.permeability_md_recovered.toPrecision(9)} md against a known ${rec.permeability_md_true} md. The line extrapolated to one hour gives a skin of ${rec.skin_recovered.toPrecision(9)} against a known ${rec.skin_true}. The table below states both alongside the thresholds that were declared before the run.`;
+
+  return {
+    id: "b1-02",
+    node: frame({
+      title,
+      subtitle,
+      legend: [
+        { label: "synthetic observation", color: C.observed, dash: "hidden", symbol: "circle" },
+        { label: "fitted semilog line", color: C.model, dash: DASH.truth, symbol: "none" },
+      ],
+      sections: [plot, table],
+      notes: [
+        description,
+        "The one-hour value is read from the fitted line, not from whichever measurement happens to lie nearest one hour. On a logarithmic axis a single point carries the local noise of one reading straight into the skin, while the line carries the whole window. In B1 the data are noise-free so the two nearly agree; in B1.2 they do not.",
+        "A separate recovery-versus-truth figure was considered and dropped as redundant: at these errors the two bars would be indistinguishable and the table says it more honestly.",
+        "Synthetic data. Source: cases/B1_iarf_known_answer/results/summary.json, /b1_0_mathematical_baseline.",
+      ],
+    }),
+    title,
+    description,
+    meta: {
+      figure_id: "B1-02",
+      case_id: "B1_iarf_known_answer",
+      selector: "cases/B1_iarf_known_answer/results/summary.json /b1_0_mathematical_baseline/series and /fit",
+      data_files: ["cases/B1_iarf_known_answer/results/summary.json"],
+      axes: {
+        x: { quantity: "elapsed time", unit: "hours", scale: "log", domain: [s.time_hours[0], s.time_hours[s.time_hours.length - 1]] },
+        y: { quantity: "drawdown", unit: "psi", scale: "linear", domain: [lo, hi] },
+      },
+      transformations: ["ordinary least squares of drawdown against log10 of elapsed time over the declared window; no weighting, no outlier rejection, no window search"],
+      uncertainty: "the residual standard error of the fit is reported, and it is conditional on the straight-line model being the right one. It is not an uncertainty about permeability and it does not become one by being small.",
+      question: "Does the specialized straight line recover the permeability and skin that generated the data?",
+      caveat: "Noise-free. The window was declared in the protocol before the run and was not selected by looking at the fit, which is the step that carries the judgement in a real interpretation.",
+    },
+  };
+}
+
+/* ---------- B1-03: what actually limits a clean interpretation ---------- */
+
+function buildB1Sampling(summary) {
+  const where = "B1-03";
+  const block = req(summary, "b1_1_sampling_and_placement", where);
+  const density = req(block, "density_sweep", where);
+  const placement = req(block, "placement_sweep", where);
+
+  const dRows = density.map((r) => ({ n: r.points_per_decade, v: fin(r.permeability_thickness_relative_error, `${where}: density`) }));
+  const pRows = placement.map((r) => ({ n: r.window_start_dimensionless_time, v: fin(r.permeability_thickness_relative_error, `${where}: placement`), p: r.predicted_bias_one_over_ten_t_d }));
+  const all = [...dRows.map((d) => d.v), ...pRows.map((d) => d.v), ...pRows.map((d) => d.p)];
+  const lo = Math.min(...all) * 0.5;
+  const hi = Math.max(...all) * 2;
+
+  const left = panel(
+    {
+      width: W / 2 - 10, height: 350, marginLeft: 86, marginRight: 30, marginTop: 40, marginBottom: 58,
+      x: { type: "log", domain: [1.6, 260], label: "points per decade →", labelAnchor: "center", labelOffset: 44 },
+      y: { type: "log", domain: [lo, hi], label: "↑ relative error in kh" },
+      marks: [
+        grid("y"),
+        Plot.line(dRows, { x: "n", y: "v", stroke: C.context, strokeWidth: 2 }),
+        Plot.dot(dRows, { x: "n", y: "v", r: 4, fill: C.context }),
+        Plot.text([{ n: 20, v: hi * 0.45 }], { x: "n", y: "v", text: () => "density: flat", fontSize: FS.panel, fill: C.ink3, textAnchor: "middle" }),
+      ],
+    },
+    where + "-density",
+  );
+  const right = panel(
+    {
+      width: W / 2 - 10, height: 350, marginLeft: 86, marginRight: 30, marginTop: 40, marginBottom: 58,
+      x: { type: "log", domain: [7, 1400], label: "dimensionless time at the window start →", labelAnchor: "center", labelOffset: 44 },
+      y: { type: "log", domain: [lo, hi], label: null },
+      marks: [
+        grid("y"),
+        Plot.line(pRows, { x: "n", y: "p", stroke: C.ink, strokeWidth: 1.4, strokeDasharray: DASH.truth }),
+        Plot.line(pRows, { x: "n", y: "v", stroke: C.model, strokeWidth: 2 }),
+        Plot.dot(pRows, { x: "n", y: "v", r: 4, symbol: "diamond", fill: C.model }),
+        Plot.text([{ n: 100, v: hi * 0.45 }], { x: "n", y: "v", text: () => "placement: 1/t_D", fontSize: FS.panel, fill: C.ink3, textAnchor: "middle" }),
+      ],
+    },
+    where + "-placement",
+  );
+
+  const table = tableSection({
+    columns: [
+      { label: "sweep", width: 220, emphasis: true },
+      { label: "range tested", width: 260 },
+      { label: "kh error, best", width: 170, mono: true },
+      { label: "kh error, worst", width: 170, mono: true },
+      { label: "spread", width: 130 },
+    ],
+    rows: [
+      ["points per decade", `${dRows[0].n} to ${dRows[dRows.length - 1].n}`, Math.min(...dRows.map((d) => d.v)).toExponential(3), Math.max(...dRows.map((d) => d.v)).toExponential(3), `${block.density_error_spread_ratio.toPrecision(3)}x`],
+      ["window start t_D", `${pRows[pRows.length - 1].n} down to ${pRows[0].n}`, Math.min(...pRows.map((d) => d.v)).toExponential(3), Math.max(...pRows.map((d) => d.v)).toExponential(3), `${block.placement_error_spread_ratio.toPrecision(4)}x`],
+    ],
+    note: "Both sweeps hold the physics fixed and change only how the data are looked at. The protocol predicted this result before the run: density would barely matter and placement would follow 1/(10 t_D). The dashed line on the right is that prediction, which tracks the observed bias and sits about a factor of two above it.",
+  });
+
+  const title = "B1-03 — how many points hardly matters; where the window sits matters a hundredfold";
+  const subtitle = `Two sweeps over the same noise-free response. Point density moves the permeability error by ${block.density_error_spread_ratio.toPrecision(3)}x across a hundredfold change in sampling. Window placement moves it by ${block.placement_error_spread_ratio.toPrecision(4)}x.`;
+  const description = `Two logarithmic panels sharing a vertical axis of relative error in permeability-thickness. On the left, points per decade from 2 to 200: the curve is almost flat, running from ${Math.max(...dRows.map((d) => d.v)).toExponential(2)} down to ${Math.min(...dRows.map((d) => d.v)).toExponential(2)}, a change of only ${block.density_error_spread_ratio.toPrecision(3)} times. On the right, the dimensionless time at which the interpretation window starts, from 10 to 1000: the error falls by two orders of magnitude, from ${Math.max(...pRows.map((d) => d.v)).toExponential(2)} to ${Math.min(...pRows.map((d) => d.v)).toExponential(2)}, following a dashed line that is the 1/(10 t_D) bias predicted in the protocol. Full values in the table below.`;
+
+  return {
+    id: "b1-03",
+    node: frame({
+      title,
+      subtitle,
+      legend: [
+        { label: "sampling density sweep", color: C.context, dash: "none", symbol: "circle" },
+        { label: "window placement sweep", color: C.model, dash: "none", symbol: "diamond" },
+        { label: "predicted 1/(10 t_D) bias", color: C.ink, dash: DASH.truth, symbol: "none" },
+      ],
+      sections: [left, right, table],
+      notes: [
+        description,
+        "Least squares on an almost-exact straight line does not care how many points lie on it, which is why the left panel is flat. It would not be flat with noise present, and B1-04 is where the point count starts to earn its keep.",
+        "The right panel is the semilog approximation showing itself. Starting the window earlier includes data where the line-source solution has not yet become a straight line, and the fitted slope tilts accordingly.",
+        "Synthetic, noise-free. Source: cases/B1_iarf_known_answer/results/summary.json, /b1_1_sampling_and_placement.",
+      ],
+    }),
+    title,
+    description,
+    meta: {
+      figure_id: "B1-03",
+      case_id: "B1_iarf_known_answer",
+      selector: "cases/B1_iarf_known_answer/results/summary.json /b1_1_sampling_and_placement, 7 density points and 5 placement points",
+      data_files: ["cases/B1_iarf_known_answer/results/summary.json"],
+      axes: {
+        x: { quantity: "points per decade, then dimensionless time at window start", unit: "dimensionless", scale: "log", domain: [2, 1000] },
+        y: { quantity: "relative error in recovered permeability-thickness", unit: "dimensionless", scale: "log", domain: [lo, hi] },
+      },
+      transformations: ["none beyond the logarithmic axes; every swept value is drawn"],
+      uncertainty: "none: both sweeps are deterministic and noise-free. The dashed line is an analytic prediction made before the run, not a fit to these points.",
+      question: "Of sampling density and window placement, which one actually limits a clean interpretation?",
+      caveat: "Noise-free only. The conclusion that density barely matters is specific to that; with a gauge in the loop the point count sets how much of the noise averages out.",
+    },
+  };
+}
+
+/* ---------- B1-04: noise ---------- */
+
+function buildB1Noise(summary) {
+  const where = "B1-04";
+  const block = req(summary, "b1_2_pressure_noise", where);
+  const levels = req(block, "levels", where);
+  const rows = levels.map((r) => ({
+    s: fin(r.sigma_psi, `${where}: sigma`),
+    mean: fin(r.kh_relative_error_mean, `${where}: mean`),
+    p95: fin(r.kh_relative_error_p95, `${where}: p95`),
+    sk: fin(r.skin_absolute_error_mean, `${where}: skin`),
+  }));
+  const lo = Math.min(...rows.map((r) => r.mean)) * 0.5;
+  const hi = Math.max(...rows.map((r) => r.p95)) * 2;
+
+  const plot = panel(
+    {
+      width: W, height: 380, marginLeft: 92, marginRight: 250, marginTop: 26, marginBottom: 58,
+      x: { type: "log", domain: [0.07, 14], label: "gauge noise standard deviation, psi →", labelAnchor: "center", labelOffset: 44 },
+      y: { type: "log", domain: [lo, hi], label: "↑ relative error in kh" },
+      marks: [
+        grid("y"),
+        Plot.line(rows, { x: "s", y: "p95", stroke: C.context, strokeWidth: 1.6, strokeDasharray: DASH.truth }),
+        Plot.dot(rows, { x: "s", y: "p95", r: 3.6, symbol: "square", fill: C.context }),
+        Plot.line(rows, { x: "s", y: "mean", stroke: C.model, strokeWidth: 2 }),
+        Plot.dot(rows, { x: "s", y: "mean", r: 4.2, fill: C.model }),
+        Plot.text([rows[rows.length - 1]], { x: "s", y: "mean", text: () => "mean over 200 seeds", fontSize: FS.label, fill: C.model, textAnchor: "start", dx: 12 }),
+        Plot.text([rows[rows.length - 1]], { x: "s", y: "p95", text: () => "95th percentile", fontSize: FS.label, fill: C.context, textAnchor: "start", dx: 12 }),
+      ],
+    },
+    where,
+  );
+
+  const table = tableSection({
+    columns: [
+      { label: "gauge sigma, psi", width: 160, emphasis: true },
+      { label: "kh relative error, mean", width: 210, mono: true },
+      { label: "Monte Carlo s.e. of that mean", width: 240, mono: true },
+      { label: "kh relative error, p95", width: 190, mono: true },
+      { label: "skin absolute error, mean", width: 200, mono: true },
+    ],
+    rows: levels.map((r) => [
+      r.sigma_psi.toPrecision(3),
+      r.kh_relative_error_mean.toExponential(3),
+      r.kh_relative_error_monte_carlo_se.toExponential(2),
+      r.kh_relative_error_p95.toExponential(3),
+      r.skin_absolute_error_mean.toExponential(3),
+    ]),
+    note: `200 replicates per level, seeds ${block.levels[0].seed_base} through ${block.levels[0].seed_base + 199}, fixed in the protocol rather than drawn here. The Monte Carlo standard error is a property of the replicate count and says nothing about the reservoir. For scale: the drawdown across the window is ${block.signal_for_scale.drawdown_across_window_psi.toPrecision(4)} psi and the semilog slope is ${block.signal_for_scale.semilog_slope_psi_per_cycle.toPrecision(4)} psi per cycle.`,
+  });
+
+  const title = "B1-04 — what a gauge costs";
+  const subtitle = `Additive zero-mean Gaussian pressure error, four levels, 200 fixed seeds each. Permeability error rises from ${rows[0].mean.toExponential(2)} at ${rows[0].s} psi to ${rows[rows.length - 1].mean.toExponential(2)} at ${rows[rows.length - 1].s} psi, roughly in proportion to sigma.`;
+  const description = `Log-log plot of the relative error in recovered permeability-thickness against the standard deviation of the added pressure noise. Two curves: the mean over 200 seeds, and the 95th percentile of the same 200. Both rise close to linearly with sigma, from about ${rows[0].mean.toExponential(2)} at 0.1 psi to about ${rows[rows.length - 1].mean.toExponential(2)} at 10 psi for the mean, with the 95th percentile between two and three times the mean throughout. The table gives every value together with the Monte Carlo standard error of each mean.`;
+
+  return {
+    id: "b1-04",
+    node: frame({
+      title,
+      subtitle,
+      legend: [
+        { label: "mean over 200 seeds", color: C.model, dash: "none", symbol: "circle" },
+        { label: "95th percentile of the same 200", color: C.context, dash: DASH.truth, symbol: "square" },
+      ],
+      sections: [plot, table],
+      notes: [
+        description,
+        "Four separate things are kept apart here and none of them is merged into a single band: the numerical error of the solution, the bias of the semilog approximation, the scatter the gauge adds, and the standard error of the Monte Carlo mean. Only the third depends on sigma, and it is the only one this figure shows.",
+        "The noise is on pressure only, independent between readings, and zero-mean. A real gauge drifts, quantises, and correlates its errors in time, and none of that is modelled here.",
+        "Synthetic. Source: cases/B1_iarf_known_answer/results/summary.json, /b1_2_pressure_noise.",
+      ],
+    }),
+    title,
+    description,
+    meta: {
+      figure_id: "B1-04",
+      case_id: "B1_iarf_known_answer",
+      selector: "cases/B1_iarf_known_answer/results/summary.json /b1_2_pressure_noise/levels, 4 sigma levels of 200 replicates",
+      data_files: ["cases/B1_iarf_known_answer/results/summary.json"],
+      axes: {
+        x: { quantity: "gauge noise standard deviation", unit: "psi", scale: "log", domain: [0.1, 10] },
+        y: { quantity: "relative error in recovered permeability-thickness", unit: "dimensionless", scale: "log", domain: [lo, hi] },
+      },
+      transformations: ["mean and 95th percentile taken across 200 seeded replicates at each level; no smoothing across levels"],
+      uncertainty: "the Monte Carlo standard error of each mean is tabulated. It describes how well 200 replicates pin the mean, not how well the method knows the permeability.",
+      question: "How fast does the recovery degrade as the gauge gets worse?",
+      caveat: "One noise model: additive, independent, zero-mean, Gaussian, on pressure only. Drift, quantisation and time-correlated error are not represented and would not behave like this.",
+    },
+  };
+}
+
+/* ---------- B1-05: the negative control ---------- */
+
+function buildB1NegativeControl(summary) {
+  const where = "B1-05";
+  const block = req(summary, "b1_3_negative_control", where);
+  const s = req(block, "series", where);
+  const rec = req(block, "recovery", where);
+
+  const pts = s.time_hours.map((t, i) => ({ t, v: fin(s.drawdown_psi[i], `${where}: dp[${i}]`), f: s.fitted_line_psi[i] }));
+  const lo = Math.min(...pts.map((d) => d.v)) - 4;
+  const hi = Math.max(...pts.map((d) => d.v)) + 10;
+
+  const plot = panel(
+    {
+      width: W, height: 380, marginLeft: 92, marginRight: 240, marginTop: 26, marginBottom: 58,
+      x: { type: "log", domain: [s.time_hours[0] * 0.85, s.time_hours[s.time_hours.length - 1] * 1.15], label: "elapsed time, hours →", labelAnchor: "center", labelOffset: 44 },
+      y: { domain: [lo, hi], label: "↑ drawdown Δp, psi" },
+      marks: [
+        grid("y"),
+        Plot.line(pts, { x: "t", y: "f", stroke: C.model, strokeWidth: 2, strokeDasharray: DASH.truth }),
+        Plot.dot(pts.filter((_, i) => i % 4 === 0), { x: "t", y: "v", r: 3.4, fill: C.observed }),
+        Plot.text([pts[Math.floor(pts.length * 0.5)]], { x: "t", y: "f", text: () => `R² = ${block.r_squared.toPrecision(6)} — and the answer is wrong by ${(rec.permeability_thickness_relative_error * 100).toPrecision(3)} percent`, fontSize: FS.label, fill: C.ink3, textAnchor: "middle", dy: -22 }),
+      ],
+    },
+    where,
+  );
+
+  const table = tableSection({
+    columns: [
+      { label: "quantity", width: 300, emphasis: true },
+      { label: "known truth", width: 170 },
+      { label: "recovered here", width: 210, mono: true },
+      { label: "error", width: 200 },
+      { label: "B1 threshold", width: 140 },
+    ],
+    rows: [
+      ["permeability, md", "50.0", rec.permeability_md_recovered.toPrecision(6), (rec.permeability_thickness_relative_error * 100).toPrecision(3) + " percent", "0.01 percent"],
+      ["skin, dimensionless", "3.5", rec.skin_recovered.toPrecision(6), rec.skin_absolute_error.toPrecision(3) + " absolute", "1e-03"],
+      ["fit quality R²", "—", block.r_squared.toPrecision(9), "looks excellent", "not a criterion"],
+    ],
+    note: "The interpretation window here is t_D from 1 to 10, where the semilog approximation is invalid by construction. The permeability is wrong by more than nine hundred times the B1 threshold, and by more than the looser five-percent target PLAN.md proposed for a clean case. Nothing in the residuals says so.",
+  });
+
+  const title = "B1-05 — the negative control: an excellent fit to the wrong window";
+  const subtitle = `The same interpretation applied where infinite-acting radial flow has not developed. R² = ${block.r_squared.toPrecision(6)}, residual standard error ${block.residual_standard_error_psi.toPrecision(3)} psi, permeability wrong by ${(rec.permeability_thickness_relative_error * 100).toPrecision(3)} percent.`;
+  const description = `Semilog plot of the same synthetic response, but over a window at dimensionless time 1 to 10 instead of the declared one. The points still lie on a straight line to the eye and to the fit statistics: R² is ${block.r_squared.toPrecision(6)} and the residual standard error is ${block.residual_standard_error_psi.toPrecision(3)} psi. The recovered permeability is ${rec.permeability_md_recovered.toPrecision(6)} md against a known 50.0 md, an error of ${(rec.permeability_thickness_relative_error * 100).toPrecision(3)} percent, and the skin is off by ${rec.skin_absolute_error.toPrecision(3)}. The table sets both against the thresholds the protocol declared.`;
+
+  return {
+    id: "b1-05",
+    node: frame({
+      title,
+      subtitle,
+      legend: [
+        { label: "synthetic observation", color: C.observed, dash: "hidden", symbol: "circle" },
+        { label: "fitted line — plausible and wrong", color: C.model, dash: DASH.truth, symbol: "none" },
+      ],
+      sections: [plot, table],
+      notes: [
+        description,
+        "This is the figure B1 exists to produce. A high R² is a statement about how well a line fits points, and it remains high when the line has no business being there. The acceptance criterion catches it; the fit statistic does not, and neither does the eye.",
+        "What would have caught it in practice is the diagnostic in B1-01: over this window the derivative has not yet flattened, so the regime the straight line assumes is visibly absent. That is what the derivative is for, and it is why the specialized plot is never read on its own.",
+        "Synthetic, noise-free. The failure here is not noise and not sampling; it is fitting a model outside the regime where it holds. Source: cases/B1_iarf_known_answer/results/summary.json, /b1_3_negative_control.",
+      ],
+    }),
+    title,
+    description,
+    meta: {
+      figure_id: "B1-05",
+      case_id: "B1_iarf_known_answer",
+      selector: "cases/B1_iarf_known_answer/results/summary.json /b1_3_negative_control",
+      data_files: ["cases/B1_iarf_known_answer/results/summary.json"],
+      axes: {
+        x: { quantity: "elapsed time", unit: "hours", scale: "log", domain: [s.time_hours[0], s.time_hours[s.time_hours.length - 1]] },
+        y: { quantity: "drawdown", unit: "psi", scale: "linear", domain: [lo, hi] },
+      },
+      transformations: ["ordinary least squares of drawdown against log10 elapsed time, over a window declared invalid in advance"],
+      uncertainty: "the residual standard error is reported and is small, which is the point: it is conditional on a model that does not apply here, and a small conditional scatter carries no information about whether the condition holds.",
+      question: "Can the acceptance machinery reject an interpretation that looks entirely convincing?",
+      caveat: "A deliberately invalid window on otherwise clean data. It shows one failure mode out of many; wellbore storage, boundaries and rate-history errors produce different ones and are not represented.",
+    },
+  };
+}
+
 async function main() {
   const contract = JSON.parse(await readFile(join(DATA_DIR, "contract.json"), "utf8"));
 
@@ -2966,6 +3414,8 @@ async function main() {
   const a3Path = join(REPO_ROOT, "cases", "A3_uncertainty_experiments", "results", "summary.json");
   const a1Summary = JSON.parse(await readFile(a1Path, "utf8"));
   const a3Summary = JSON.parse(await readFile(a3Path, "utf8"));
+  const b1Path = join(REPO_ROOT, "cases", "B1_iarf_known_answer", "results", "summary.json");
+  const b1Summary = JSON.parse(await readFile(b1Path, "utf8"));
 
   const figures = [
     buildF01(scenarios),
@@ -2980,6 +3430,11 @@ async function main() {
     buildF09(contract, digests, "Every figure-data digest in the table was recomputed by the renderer at build time and matched."),
     buildA1(a1Summary),
     buildA3(a3Summary),
+    buildB1Diagnostic(b1Summary),
+    buildB1Semilog(b1Summary),
+    buildB1Sampling(b1Summary),
+    buildB1Noise(b1Summary),
+    buildB1NegativeControl(b1Summary),
   ];
 
   await mkdir(OUT_DIR, { recursive: true });

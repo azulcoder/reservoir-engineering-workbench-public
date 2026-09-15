@@ -696,6 +696,75 @@ async function main() {
     "full",
   );
 
+  /* --- B1 --------------------------------------------------------- */
+  const b1 = await readJson(join(REPO, "cases", "B1_iarf_known_answer", "results", "summary.json"));
+  const b1Base = b1.b1_0_mathematical_baseline;
+  if (!b1Base) throw new Error("B1 summary has no b1_0_mathematical_baseline block");
+  const b1Series = b1Base.series;
+  const b1PressureRows = b1Series.time_hours.map((hours, i) => ({
+    time_hours: hours,
+    dimensionless_time: b1Series.dimensionless_time[i],
+    drawdown_psi: b1Series.drawdown_psi[i],
+    fitted_line_psi: b1Series.fitted_line_psi[i],
+    residual_psi: b1Series.residual_psi[i],
+  }));
+  await emit(
+    "b1_pressure_and_fit.csv",
+    csv(
+      [
+        num("time_hours"),
+        num("dimensionless_time"),
+        num("drawdown_psi"),
+        num("fitted_line_psi"),
+        num("residual_psi"),
+      ],
+      b1PressureRows,
+    ),
+    "B1 synthetic drawdown over the declared interpretation window, with the fitted semilog line and its residual.",
+    "full",
+  );
+
+  const b1DerivativeRows = b1Series.derivative_time_hours.map((hours, i) => ({
+    time_hours: hours,
+    derivative_psi: b1Series.derivative_psi[i],
+    analytic_derivative_psi: b1Series.analytic_derivative_psi[i],
+  }));
+  await emit(
+    "b1_derivative.csv",
+    csv([num("time_hours"), num("derivative_psi"), num("analytic_derivative_psi")], b1DerivativeRows),
+    "B1 Bourdet derivative against the closed form (1/2)exp(-1/(4 t_D)), which is exact and is not what the algorithm computes.",
+    "full",
+  );
+
+  const b1Visibility = b1.diagnostic_defect_visibility;
+  if (!b1Visibility) throw new Error("B1 summary has no diagnostic_defect_visibility block");
+  await emit(
+    "b1_defect_visibility.csv",
+    csv(
+      [
+        num("defect"),
+        num("kind"),
+        num("permeability_thickness_relative_error"),
+        num("permeability_relative_error"),
+        num("skin_absolute_error"),
+        num("r_squared"),
+        num("derivative_versus_fit_relative_difference"),
+        num("visible_without_truth"),
+        num("materially_wrong"),
+      ],
+      b1Visibility.rows,
+    ),
+    "B1 seeded analyst errors, each scored against the truth and against the two diagnostics available without it. Post-hoc, not pre-registered and not gated.",
+    "full",
+  );
+
+  await emitJson(
+    "b1_summary.json",
+    b1,
+    "B1 case summary: every value of the committed canonical snapshot, including each criterion flag and both ungated diagnostics. Re-serialised by this emitter rather than copied byte for byte, so a whole-numbered float such as 0.0 is written 0; the numbers themselves are unchanged.",
+    "full",
+  );
+
   /* --- downloadable copies of the exhibits themselves ---------------
    * The SVG a reader downloads must be the file the page inlined, byte for byte, or the
    * download is a different artefact wearing the same name. These are copies, not

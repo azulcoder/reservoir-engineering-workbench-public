@@ -22,13 +22,14 @@ const base = await baseScenario();
 const contents = [
   { id: "flagship", label: "Flagship case" },
   { id: "supporting", label: "Supporting studies" },
+  { id: "transient", label: "Pressure transient" },
   { id: "unavailable", label: "Not available publicly" },
   { id: "status", label: "Status at a glance" },
   { id: "roadmap", label: "Not yet done" },
 ];
 
 const description =
-  "Four synthetic gas material-balance studies: the flagship counterexample A4, the supporting studies A1 and A3, and A2, whose public exhibits are withheld on rights grounds.";
+  "Four synthetic gas material-balance studies plus the first pressure-transient case: the flagship counterexample A4, the supporting studies A1 and A3, A2 whose exhibits are withheld on rights grounds, and B1.";
 ---
 
 <BaseLayout
@@ -41,9 +42,10 @@ const description =
   <h1>Studies</h1>
 
   <p class="lede">
-    Four studies. One is the flagship; two support it and are worth reading for what they
+    Five studies. One is the flagship; two support it and are worth reading for what they
     found rather than for what their titles promise; one cannot ship its exhibits in the
-    public profile because its inputs are someone else's data.
+    public profile because its inputs are someone else's data; and one, B1, opens a second
+    stage on a different problem — pressure transient rather than material balance.
   </p>
 
   <section id="flagship" aria-labelledby="flagship-h">
@@ -138,6 +140,39 @@ const description =
     </article>
   </section>
 
+  <section id="transient" aria-labelledby="transient-h">
+    <h2 id="transient-h">Pressure transient</h2>
+
+    <article class="card" aria-labelledby="card-b1">
+      <p class="eyebrow">B1 — infinite-acting radial flow, known answer</p>
+      <h3 id="card-b1">
+        <a href={href("/studies/b1/")}>What the diagnostics cannot see</a>
+      </h3>
+      <p>
+        The semilog straight-line interpretation recovers a known permeability-thickness to a
+        relative error of 1.56e-06 and a known skin to 1.59e-05, on a synthetic constant-rate
+        drawdown with no measurement error. Every threshold was derived analytically and
+        committed before the code that produced the numbers.
+      </p>
+      <p>
+        The recovery is the uninteresting half.
+        <strong>
+          Five of ten seeded analyst errors put a reported number materially wrong while
+          leaving every diagnostic available without the answer completely silent
+        </strong>
+        {" "}— a unit error on rate puts kh 59 percent out at an r-squared of 1 to eight
+        decimals. Window placement was also measured to dominate sampling density by three
+        orders of magnitude, and the negative control fails by 9.35 percent while returning an
+        r-squared of 0.9993.
+      </p>
+      <p class="card__meta">
+        Synthetic. Wellbore storage is zero by declared design, which is the study's largest
+        gap: it says nothing about finding where radial flow begins on real data. No
+        commercial well-test package has been compared against.
+      </p>
+    </article>
+  </section>
+
   <section id="unavailable" aria-labelledby="unavailable-h">
     <h2 id="unavailable-h">Not available in the public profile</h2>
 
@@ -207,11 +242,19 @@ const description =
           evidence: { label: "Availability page", path: "/studies/a2/" },
         },
         {
+          check: "B1 — infinite-acting radial flow",
+          scope: "Recovery of a known permeability and skin, plus a seeded-defect visibility diagnostic",
+          environment: "digest-pinned Linux container, reproduced on four further environments",
+          state: "PASS",
+          note: "9 of 9 pre-registered criteria; the negative control fails as required; the defect-visibility diagnostic is post-hoc and not gated",
+          evidence: { label: "Case page", path: "/studies/b1/" },
+        },
+        {
           check: "Hosted continuous integration",
-          scope: "Any check running anywhere other than the author's machine",
-          environment: "not run anywhere",
-          state: "NOT RUN",
-          note: "no hosted run is reported here; every check above ran on the author's own machine",
+          scope: "The suite, canonical reproduction and cross-platform portability, run off the author's machine",
+          environment: "GitHub-hosted runners: three CPython versions, one pinned container, four portability environments",
+          state: "PASS",
+          note: "green, and it is still this repository testing itself rather than external validation",
           evidence: { label: "Methods", path: "/methods/" },
         },
         {
@@ -240,8 +283,11 @@ const description =
 
     <ul>
       <li>
-        <strong>Stage B — pressure-transient analysis.</strong> A written protocol exists in
-        the repository under <code>docs/protocols/</code>. No run, no results, no exhibits.
+        <strong>Stage B — pressure-transient analysis, partly done.</strong> B1 is complete
+        and has a case page above. B2 through B6 are not started: wellbore storage and the
+        problem of finding the radial-flow window rather than being handed it; build-up and
+        superposition; boundaries; real-gas pseudopressure and pseudotime; and a field-data
+        case. None of them has been run, and B1 establishes nothing about any of them.
       </li>
       <li>
         <strong>Stage C and Stage D.</strong> Not started, and not scoped beyond a heading.

@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "label": "B1_iarf_known_answer",
+  "status": "completed",
+  "started_utc": "2026-09-15T00:07:19Z",
+  "elapsed_seconds": 0.10494455799999969,
+  "seed": 20260915,
+  "config": {
+    "truth": {
+      "permeability_md": 50.0,
+      "thickness_ft": 40.0,
+      "porosity": 0.18,
+      "total_compressibility_per_psi": 1.5e-05,
+      "viscosity_cp": 1.2,
+      "formation_volume_factor": 1.25,
+      "wellbore_radius_ft": 0.35,
+      "initial_pressure_psia": 4000.0,
+      "rate_stb_per_day": 350.0,
+      "skin": 3.5,
+      "wellbore_storage_bbl_per_psi": 0.0
+    },
+    "window_first_hour": 1.0,
+    "window_last_hour": 48.0,
+    "points_per_decade": 50,
+    "smoothing_l": 0.1,
+    "noise_sigmas_psi": [
+      0.1,
+      0.5,
+      2.0,
+      10.0
+    ],
+    "noise_replicates": 200,
+    "noise_seed_base": 20260915,
+    "protocol": {
+      "path": "cases/B1_iarf_known_answer/protocol.md",
+      "commit": "f308adcad51997a3e05f99a3f60c433fc97e2bf7",
+      "blob_digest": "5712b07982e67c1543b2f3c489e1d7fd1b2ff11f"
+    },
+    "thresholds": {
+      "C1_forward_oracle_relative": 1e-12,
+      "C2_constant_relative": 0.0001,
+      "C3_kh_relative": 0.0001,
+      "C4_skin_absolute": 0.001,
+      "C5_derivative_relative": 1e-06,
+      "C7_negative_control_min_kh_error": 0.0001
+    }
+  },
+  "config_sha256": "071a4ad502c2dc044ec24649fd657752e3b389c379186c4252335fef0840a30c",
+  "settings": {
+    "python_float": "IEEE 754 binary64",
+    "dependencies": "standard library only",
+    "protocol": "cases/B1_iarf_known_answer/protocol.md"
+  },
+  "settings_sha256": "12d10afcfabb625acbd532ec19205b7267f305ba04344e9f98a2ac7fed0a88ad",
+  "source_revision": {
+    "repo_root": ".",
+    "commit": null,
+    "branch": null,
+    "describe": null,
+    "dirty": null,
+    "dirty_paths": null
+  },
+  "environment": {
+    "python_version": "3.13.2",
+    "python_implementation": "CPython",
+    "python_executable": "/usr/local/bin/python3",
+    "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.36",
+    "machine": "x86_64",
+    "imported_package_versions": {
+      "argparse": "1.1",
+      "decimal": "1.70",
+      "json": "2.0.9",
+      "platform": "1.0.8",
+      "re": "2.2.1",
+      "reservoir_lab": "0.2.0",
+      "zlib": "1.0"
+    }
+  },
+  "files": [
+    {
+      "role": "output",
+      "path": "artifacts/B1_iarf_known_answer/run-canonical/summary.json",
+      "sha256": "a1649194b8b8754a04feeffef8f94dd2ae9ff00392e9154cee0accc35ec5ba8d",
+      "bytes": 45052
+    }
+  ],
+  "metrics": {
+    "permeability_thickness_relative_error": 1.5640766750948386e-06,
+    "skin_absolute_error": 1.5943715645949652e-05,
+    "negative_control_kh_relative_error": 0.09350383223687868
+  },
+  "notes": [],
+  "limitations": []
+}

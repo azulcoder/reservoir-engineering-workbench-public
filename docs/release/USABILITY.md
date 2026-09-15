@@ -90,7 +90,7 @@ below as that.
 
 ## Tasks
 
-Read the prompt aloud, verbatim. All seven tasks are given to both profiles.
+Read the prompt aloud, verbatim. All eight tasks are given to both profiles.
 
 ### 1. Identify the study question
 
@@ -227,6 +227,36 @@ equally correct answer.
 outcome: they notice that `--out` names a fresh directory and that runs are not overwritten.
 
 **What a failure would mean.** Reproducibility is being asserted rather than offered.
+
+### 8. Say what the recovery does not prove
+
+Added when study B1 was published. Every other task on this script is about finding
+something; this one is about whether a reader takes a precise number at more than its
+worth, which is the failure the whole site is written against.
+
+**Prompt.** "This study says it recovered a permeability to six significant figures. Would
+you trust a permeability this tool reported on a real well? Why, or why not?"
+
+**Path.** B1 page. The lede states the recovery and immediately states that five of ten
+seeded analyst errors are materially wrong and completely silent. The
+"What the diagnostics cannot see" section carries the table and the callout that nothing
+inside a well-test interpretation can validate its own inputs. The limitations section
+carries the zero-wellbore-storage gap.
+
+**Correct outcome.** They say no, or a heavily qualified yes, and can name at least one
+reason from the page — a wrong rate or thickness would not show up, the data is synthetic,
+wellbore storage is absent, or the window was handed to the estimator. Record which reason
+they reach first, because that tells us which part of the page is actually doing the work.
+
+**A failure to record precisely.** If they answer "yes, six significant figures is very
+accurate", the page has published a precise number without its scope attached, and the
+defect-visibility table — the thing the page is built around — is not reaching the reader.
+That is a page change, not a participant error: the number would need to move below the
+caveat, or the caveat above the number.
+
+**What a failure would mean.** The site's central editorial claim is that precision and
+trustworthiness are different properties. If a reader leaves believing otherwise, that claim
+is decorative.
 
 ## Recording sheet
 
