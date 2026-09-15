@@ -1161,12 +1161,24 @@ tbody tr:nth-child(even) {
   font-size: var(--text-lg);
 }
 
-/* Evidence a reviewer checks, not a finding a reader is meant to carry away. */
-.figure--technical {
+/* Evidence a reviewer checks, not a finding a reader is meant to carry away.
+   A diagnostic figure answers "could this have been detected?" rather than "what went
+   wrong?"; it carries the same weight as technical and is named apart because the two
+   answer different questions. */
+.figure--technical,
+.figure--diagnostic {
   margin-block: var(--space-6);
 }
 
-.figure--technical .figure__title {
+.figure--technical .figure__title,
+.figure--diagnostic .figure__title {
   font-size: var(--text-base);
   color: var(--c-ink-2);
+}
+
+/* A figure whose canonical SVG already draws its own title: the page keeps the number as
+   the visible identifier and the title becomes the accessible name only. Nothing is
+   stripped from the graphic and nothing is hidden from assistive technology. */
+.figure__head--quiet {
+  margin-block-end: var(--space-2);
 }

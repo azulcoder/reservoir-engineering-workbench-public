@@ -72,7 +72,7 @@
       "path": "/studies/a4/",
       "width": 1440,
       "fullPage": false,
-      "anchor": "#evidence",
+      "anchor": "#hero",
       "what": "A4 hero figure: is the conclusion visible in one figure?"
     },
     {
@@ -80,8 +80,32 @@
       "path": "/studies/a4/",
       "width": 1440,
       "fullPage": false,
-      "anchor": "#limits",
-      "what": "A4 major result / limitations section"
+      "anchor": "#implication",
+      "what": "A4 engineering implication"
+    },
+    {
+      "file": "a4-supporting.png",
+      "path": "/studies/a4/",
+      "width": 1440,
+      "fullPage": false,
+      "anchor": "#behaviour",
+      "what": "A4 primary supporting evidence"
+    },
+    {
+      "file": "a4-holdout.png",
+      "path": "/studies/a4/",
+      "width": 1440,
+      "fullPage": false,
+      "anchor": "#holdout",
+      "what": "A4 holdout section"
+    },
+    {
+      "file": "a4-technical.png",
+      "path": "/studies/a4/",
+      "width": 1440,
+      "fullPage": false,
+      "anchor": "#technical",
+      "what": "A4 transition into technical evidence"
     },
     {
       "file": "b1.png",

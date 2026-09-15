@@ -260,7 +260,16 @@ test.describe("long labels", () => {
       for (const el of Array.from(
         document.querySelectorAll<HTMLElement>("h1, h2, h3, .eyebrow, .figure__title, legend"),
       )) {
-        if (el.scrollWidth > el.clientWidth + 1 && getComputedStyle(el).overflowX !== "auto") {
+        const style = getComputedStyle(el);
+        /* An element that is deliberately visually hidden -- a figure title kept in the DOM
+           as an accessible name while the canonical SVG draws its own title -- has no visible
+           text to clip. It sits in a 1px clipped box by construction, which would otherwise
+           be reported here as a clipped label on every such figure. Detected by its geometry
+           rather than by a class name, so the exemption cannot be claimed by adding a class
+           to something that really is cut off. */
+        const visuallyHidden = el.clientWidth <= 1 || style.clipPath === "inset(50%)";
+        if (visuallyHidden) continue;
+        if (el.scrollWidth > el.clientWidth + 1 && style.overflowX !== "auto") {
           out.push(`${el.tagName.toLowerCase()} "${(el.textContent ?? "").slice(0, 40)}"`);
         }
       }

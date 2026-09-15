@@ -60,17 +60,33 @@ export interface Props {
    *
    *   hero        the one figure that carries the study's conclusion. One per study.
    *   supporting  needed to follow the argument, but not the conclusion itself.
+   *   diagnostic  evidence about whether the fault could have been detected, rather than
+   *               about the fault itself. Weighted like technical; separated because the
+   *               question it answers is a different one and a reader benefits from
+   *               knowing which of the two they are looking at.
    *   technical   the detail a reviewer checks. Set smaller and quieter.
    *
    * The purpose is that a reader should never have to work out which of nine equally
    * weighted figures contains the finding.
    */
-  role?: "hero" | "supporting" | "technical";
+  role?: "hero" | "supporting" | "diagnostic" | "technical";
+  /**
+   * Suppress the page-level title visually while keeping it as the figure's accessible
+   * name. Use this where the canonical SVG already draws its own title and the section
+   * heading above it carries the narrative meaning, so that two titles are not competing
+   * for the same attention.
+   *
+   * The canonical graphic is never edited and its metadata is never stripped: the title
+   * stays in the DOM, stays the target of aria-labelledby, and stays available to a screen
+   * reader, a printer and forced-colours mode. Only its visual duplication is removed.
+   */
+  titleVisible?: boolean;
 }
 
 const {
   id,
   role = "supporting",
+  titleVisible = true,
   number = id.toUpperCase(),
   title,
   svg,
@@ -100,9 +116,11 @@ const frameLabel = `${number}, ${title}`;
   aria-labelledby={titleId}
   aria-describedby={descId}
 >
-  <div class="figure__head">
+  <div class:list={["figure__head", !titleVisible && "figure__head--quiet"]}>
     <span class="eyebrow">{number}</span>
-    <Heading class="figure__title" id={titleId}>{title}</Heading>
+    <Heading
+      class:list={["figure__title", !titleVisible && "visually-hidden"]}
+      id={titleId}>{title}</Heading>
   </div>
 
   {/* The frame scrolls horizontally on a narrow viewport; the page never does.

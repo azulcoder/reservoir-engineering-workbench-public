@@ -367,7 +367,11 @@ pass and has not had one. Shipping untested dark values would defeat the purpose
 the light ones.
 
 **D29. A figure carries a role, and the role changes weight only.** `Figure` takes
-`role="hero" | "supporting" | "technical"`. A hero is the one figure that carries a study's
+`role="hero" | "supporting" | "diagnostic" | "technical"`. A diagnostic figure answers
+"could this have been detected?" rather than "what went wrong?"; it is weighted like
+technical and named apart because a reader benefits from knowing which of the two questions
+they are looking at. A4 uses all four: one hero, three supporting, four diagnostic, one
+technical. A hero is the one figure that carries a study's
 conclusion, and there is normally one per study; a technical figure is evidence a reviewer
 checks. The role changes margin and title size. It does not change the caption, the caveat,
 the long description, the data table, the downloads or the accessible name, and it never
@@ -391,6 +395,25 @@ a reader could not see. It is now four groups keyed on the experiment's own two 
 silent-and-wrong group is marked three ways: a count, a heading that says "and nothing showed
 it" in words, and the reserved contrast colour. Colour is the third channel and never the
 only one. The full scored table is preserved in the technical-evidence section.
+
+**D32. The canonical figure keeps its own title; the page heading carries the narrative.**
+Every canonical SVG draws its own title, and the page was also printing that same string as
+a heading directly above it — two titles competing for one piece of attention, nine times on
+A4. The renderer is frozen and the graphic is never edited, so this is solved at the page
+level: `Figure` takes `titleVisible={false}`, which moves the page-level title into
+`.visually-hidden` while it stays in the DOM, stays the target of `aria-labelledby`, and
+stays available to a screen reader, a printer and forced-colours mode. Nothing is stripped
+from the graphic and nothing is hidden from assistive technology; only the visual duplication
+goes. The section heading above the figure then does the narrative work — "A convincing line,
+the wrong inventory" — while the figure's own title continues to carry its scientific
+identity.
+
+**D33. A flagship study is read at three depths, and the page is ordered by them.**
+Executive brief (question, finding, why it matters, biggest limitation — never behind a
+disclosure), then the evidence a reservoir engineer needs to follow the argument, then the
+technical evidence a reviewer checks. Content moves between depths; it is never deleted. The
+test of the ordering is whether a reader scanning only the headings gets the argument, which
+is why headings state findings rather than naming document parts.
 
 ## 11. What this research does not guarantee
 

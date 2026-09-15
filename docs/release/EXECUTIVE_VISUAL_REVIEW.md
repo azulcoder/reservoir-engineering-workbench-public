@@ -1,6 +1,10 @@
-# Executive visual refactor — review candidate
+# Executive visual refactor — review candidate v2
 
 **Status: READY FOR OWNER REVIEW. Not merged, not deployed.**
+
+v2 brings A4 to the same standard as B1. The v1 scorecard named A4's noise as the
+weakest dimension on the site and said the restructure was larger than it looked; this is
+that work.
 
 Branch `design/executive-visual-refactor`, from `22394a9b` (the published main, CI and
 Pages both green at that commit).
@@ -122,15 +126,16 @@ that says "and nothing showed it" in words.
 No framework, no icon package, no remote font, no CDN dependency, no analytics. The
 architecture is unchanged.
 
-| Page | Before | After | Delta |
-| --- | --- | --- | --- |
-| home | 34,930 B | 36,154 B | +1,224 B |
-| studies index | 16,574 B | 13,213 B | **−3,361 B** |
-| A4 | 574,700 B | 576,845 B | +2,145 B |
-| B1 | 166,800 B | 171,093 B | +4,293 B |
-| methods | 77,867 B | 77,886 B | +19 B |
+| Page | Before (main) | v1 | v2 | Delta from main |
+| --- | --- | --- | --- | --- |
+| home | 34,930 B | 36,154 B | 36,205 B | +1,275 B |
+| studies index | 16,574 B | 13,213 B | 13,213 B | **−3,361 B** |
+| A4 | 574,700 B | 576,845 B | 581,861 B | +7,161 B |
+| B1 | 166,800 B | 171,093 B | 171,312 B | +4,512 B |
+| methods | 77,867 B | 77,886 B | 77,886 B | +19 B |
 
-Net +4,320 B across five pages, about +0.3 percent. The built site is 14 MB before and
+Net +9,606 B across five pages, about +0.7 percent. A4's increase is the executive brief,
+the metric row and the new section prose; nothing was added to the figures. The built site is 14 MB before and
 after; it is dominated by figure rasters, which this pass did not touch.
 
 ## Scorecard
@@ -159,19 +164,21 @@ canonical-figure harvest into a presentation pass. Deliberately not done here.
 
 | Dimension | Score | Note |
 | --- | --- | --- |
-| Message | 5 | "The fit is excellent and the answer is badly wrong" |
-| Hierarchy | 4 | Brief and comparison precede the first figure |
-| Noise | 3 | **Weakest.** Still nine figures and the longest page on the site |
-| Figure clarity | 4 | F01 is hero; F03–F08 are technical |
-| Decision relevance | 4 | Implication in the brief |
-| Limits | 5 | Biggest limitation is in the first viewport |
-| Mobile | 4 | Brief stacks cleanly |
-| Accessibility | 5 | Unchanged and passing |
+| Message | 5 | Title states the finding; the brief states it in one sentence |
+| Hierarchy | 5 | The contents rail now reads as the argument, in order |
+| Noise | 4 | Technical depth moved into one section; see the caveat below |
+| Figure clarity | 4 | One hero, three supporting, four diagnostic, one technical; double-titling removed |
+| Decision relevance | 5 | A dedicated engineering-implication section with a conditional recommendation |
+| Limits | 5 | Biggest limitation in the first viewport; the full set and the four-statements scoping retained |
+| Mobile | 4 | The brief stacks cleanly; wide plots keep their own scroll region |
+| Accessibility | 5 | 504 tests pass; suppressed titles stay in the accessibility tree |
 
-**Weakest: noise.** A4 carries a scenario explorer, a decision memo, a references section
-and nine figures. This pass re-weighted them but did not restructure the page into the
-executive-brief / hero / key-evidence / technical-evidence shape the way B1 was. That is
-the obvious next piece of work and it is larger than it looks.
+**Weakest: noise and figure clarity, both 4.** The hero section still measures about 940
+words, but roughly 150 of those are page prose — the rest is the figure component's own
+apparatus plus five or six lines of footnote drawn inside the canonical SVG. The renderer
+is frozen in this pass, so the in-frame text cannot be reduced. What could be fixed at page
+level was: the duplicate page-level title on all nine figures, and a caveat callout I had
+added that restated the figure's own caveat.
 
 ### B1
 
@@ -188,6 +195,49 @@ the obvious next piece of work and it is larger than it looks.
 
 **Weakest: figure clarity and noise, jointly.** The four technical figures are quieter but
 still full-width; a reviewer scrolling section 5 still meets four large plots in sequence.
+
+## v2: the A4 restructure
+
+A4 was the weakest page after v1 and is now ordered by the argument rather than by
+document convention:
+
+| Layer | Section |
+| --- | --- |
+| Executive | Brief (question, finding, why it matters, biggest limitation) and three metrics — R-squared, the estimate, the known truth with its error |
+| Hero | **A convincing line, the wrong inventory** — F01, then What to notice and Why it matters |
+| Mechanism | **Why aquifer support moves the intercept** — support flattens the pressure history, a flatter history looks like a larger tank, the intercept moves out, and a gentle systematic bend is well approximated by a straight line so the fit statistic never objects |
+| Evidence | **The bias grows before the fit looks poor** (F03, F04) and **A limited holdout the wrong model still passes** (F05) |
+| Implication | What to do differently, stated conditionally |
+| Depth | Limitations, then Technical evidence, the scenario explorer, the decision memo, reproduction and prior work |
+
+**Figure roles.** One hero (F01), three supporting (F03, F04, F05), four diagnostic
+(F01b, F02, F06, F07), one technical (F08). "Diagnostic" was added to the role set in this
+pass: it answers "could this have been detected?" rather than "what went wrong?", and a
+reader benefits from knowing which of the two a figure addresses.
+
+**Double-titling, solved at page level.** Every canonical SVG draws its own title, and the
+page was printing the same string as a heading directly above it — nine times on A4. The
+renderer is frozen, so `Figure` gained `titleVisible={false}`: the title moves to
+`.visually-hidden`, staying in the DOM, staying the `aria-labelledby` target, and staying
+available to a screen reader, a printer and forced-colours mode. Nothing is stripped from
+the graphic. The section heading above now carries the narrative and the figure's own title
+carries its scientific identity.
+
+**Two deletions I made and corrected.** The restructure initially dropped the scenario
+explorer and the "Four statements, kept apart" callout. Both are restored — the explorer
+into technical depth, the callout at the head of the limitations. I then ran a structured
+audit comparing element counts, callout titles, table ids and prose openings against the
+pre-restructure file; it found the second deletion, and three further prose openings which
+I checked individually and confirmed are deliberate compression rather than loss. That
+audit should have run before I first called the restructure done.
+
+**One test was refined, with a control.** The long-label clipping check reported eleven
+clipped labels on A4 — all of them the titles I had just moved to `visually-hidden`, which
+sit in a 1px clipped box by construction and have no visible text to clip. The check now
+skips elements by that geometry rather than by class name, so the exemption cannot be
+claimed by adding a class to something genuinely cut off. Control: forcing a real visible
+heading to clip makes the test fail and name it, while the eleven hidden titles stay
+ignored.
 
 ## Review artefacts
 
