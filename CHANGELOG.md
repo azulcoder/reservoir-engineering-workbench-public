@@ -27,6 +27,58 @@ status.
 
 Superseded statements are marked and kept, not deleted.
 
+## Unreleased — 2026-09-15
+
+Stage B opens with **B1 — infinite-acting radial flow, known answer**, the pressure-transient
+analogue of A1. `src/reservoir_lab/transient.py` adds the line-source solution, its two
+exponential-integral branches, the dimensionless groups and the semilog inverse, with every
+field constant (`162.6`, `70.6`, `1.151293`, `3.2275`, `0.80907`) derived from `141.2`,
+`0.0002637`, `ln 10` and the Euler-Mascheroni constant rather than stored as a literal.
+
+The pre-registration is its own commit, made before any result-producing code and never
+amended, squashed or rebased since; the run embeds its SHA and re-derives its git blob
+digest at execution time, so a report quoting a drifted protocol is detectable. Nine of nine
+criteria pass: permeability-thickness recovered to a relative error of `1.564e-06` against a
+pre-registered `1e-4`, total skin to `1.594e-05` against `1e-3`, and the negative control
+fails as it is required to, at `9.35e-02`, while returning an r-squared of `0.9993`.
+
+**The headline is not the recovery.** An ungated post-hoc diagnostic seeds ten analyst
+errors into an otherwise perfect interpretation and scores each against the truth and
+against the two diagnostics available without it. Five are materially wrong and completely
+silent: rate, net thickness, wellbore radius, porosity and viscosity each leave r-squared at
+1 to eight decimals while putting permeability-thickness up to 59 percent out. Nothing inside
+a well-test interpretation can validate its own inputs, and the case now measures that
+rather than asserting it.
+
+Two corrections recorded rather than quietly fixed. The protocol predicted the
+window-placement bias as `1/(10 t_D,min)`; the measured value is `0.5196/t_D,min`, a factor
+of 1.925 smaller, because a least-squares slope sees the semilog departure projected over
+the whole window and not its value at the first point. And the implementation ran five of
+the six window starts the protocol declares — fixed by completing the code, not by editing
+the frozen protocol, which raised the measured placement-versus-density dominance from 100x
+to 3322x.
+
+Supporting changes, none of which touch an acceptance criterion:
+
+- The claims audit is a test (`tests/test_b1_report_claims.py`, 27 checks) so the report
+  cannot drift from the artefact it describes. Three positive controls confirm it can fail.
+- `metrics_sha256` is declared a fifth comparator class: a hash over floating-point values
+  cannot survive a one-ULP difference, so it is compared exactly in the canonical
+  environment and counted-and-printed elsewhere. Eight tests confirm the exclusion hides
+  nothing — a moved float, a flipped criterion, an undeclared string change and a
+  differently named hash field all still fail.
+- The skip gate accepts a declared registry rather than a single sentinel, so a
+  corroborating oracle may live behind a development-only pin without either skipping
+  silently or breaking the dependency-free stdlib runner.
+- The published verification counts are now properties of the tree rather than of the
+  runner, verified by running the same tree with and without the optional oracle.
+- `docs/bridges/saphir_b1_manual_validation.md` is a written procedure with status
+  **SAPHIR MANUAL COMPARISON — NOT RUN**, plus an exported pressure history. No third-party
+  source is copied; GPL well-test code cannot be vendored under this MIT licence.
+
+B2 through B6 are not started, and `STAGE_B_READY.md` scopes them as work rather than as
+planned results.
+
 ## Unreleased — 2026-09-14
 
 Reference-data clearance. This release does not redistribute the NIST Standard Reference
