@@ -170,6 +170,40 @@ class DefectVisibilityClaims(unittest.TestCase):
         self.assertTrue(row["visible_without_truth"])
 
 
+class PortabilityClaims(unittest.TestCase):
+    """Section 10 claims every published quantity is bit-identical across platforms.
+
+    The measurement itself lives in CI, which runs the case on four platforms. What can be
+    checked here is that the report does not overstate what a nine-significant-figure label
+    can carry, and that the two tiers are not conflated.
+    """
+
+    def test_nine_figure_labels_are_justified_against_a_measured_spread(self) -> None:
+        self.assertIn("sensitive at about `5e-10`", REPORT)
+        self.assertIn("measured spread on every", REPORT)
+
+    def test_the_two_tiers_are_named_separately(self) -> None:
+        self.assertIn("**Canonical**", REPORT)
+        self.assertIn("**Portable**", REPORT)
+        # C8 is determinism in one environment, not portability. Conflating them is the
+        # specific error this project corrected in Stage A.
+        self.assertIn("C8 is a claim about one environment", REPORT)
+
+    def test_no_unqualified_bitwise_claim(self) -> None:
+        """'Bitwise reproducible' must never appear without naming the environment."""
+        lowered = REPORT.lower()
+        for index in range(len(lowered)):
+            if lowered.startswith("bit-identical", index) or lowered.startswith("byte for byte", index):
+                window = lowered[max(0, index - 260) : index + 260]
+                self.assertTrue(
+                    any(
+                        marker in window
+                        for marker in ("canonical", "environment", "platform", "macos", "two runs")
+                    ),
+                    f"an unqualified reproducibility claim near: ...{window[200:320]}...",
+                )
+
+
 class BridgeStaysHonest(unittest.TestCase):
     """The external comparison is not run, and nothing may imply otherwise."""
 

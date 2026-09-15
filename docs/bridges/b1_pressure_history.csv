@@ -3,7 +3,7 @@
 "# h=40.0 ft, phi=0.18, ct=1.5e-05 1/psi, mu=1.2 cp, B=1.25 rb/STB, rw=0.35 ft"
 # wellbore storage is zero by design; there is no storage period to fit
 "# withheld answer: k=50.0 md, s=3.5"
-# source run metrics_sha256 3e24fce68385122f743347c475ec480b5a40257f545270768175314f2430029f
+# source run metrics_sha256 51c9cb9a68f3b20052ae00f7345d77dc59ba7cf52eff3b5cd2d526f36534fd08
 elapsed_hours,pressure_psia,drawdown_psi
 1.0,3662.3379938162407,337.6620061837594
 1.0471641766408883,3661.4839163748175,338.5160836251824

@@ -36,10 +36,13 @@ Protocol: `cases/B1_iarf_known_answer/protocol.md`, committed as `f308adc` **bef
 result-producing code existed, and not amended, squashed or rebased since. The run embeds
 that SHA and re-derives the protocol file's git blob digest at execution time, so a report
 quoting a protocol that has drifted is detectable rather than plausible. Run quoted
-throughout: `run-005`, snapshot in `results/`, metrics hash
-`3e24fce68385122f743347c475ec480b5a40257f545270768175314f2430029f`, protocol blob
+throughout: `run-005`, whose canonical-environment counterpart is the snapshot committed
+in `results/`, metrics hash
+`51c9cb9a68f3b20052ae00f7345d77dc59ba7cf52eff3b5cd2d526f36534fd08`, protocol blob
 `5712b079`. Run-005 supersedes run-001 for the reasons given in section 9; none of them
-changed a threshold, an equation or an acceptance criterion.
+changed a threshold, an equation or an acceptance criterion. Every number quoted in this
+report is bit-identical between the macOS run and the canonical-environment run, across
+both platforms, which section 10 measures rather than assumes.
 
 ## The setup in one paragraph
 
@@ -297,7 +300,8 @@ quality against itself.
 ### 9. Determinism and provenance
 
 Two consecutive runs in one environment produce byte-identical `summary.json`, satisfying
-C8. The run record carries the protocol commit SHA, the protocol file's git blob digest
+C8. C8 is a claim about one environment and section 10 measures what happens across
+environments; the two are kept apart deliberately and neither is reported as the other. The run record carries the protocol commit SHA, the protocol file's git blob digest
 re-derived at execution time, the config and settings hashes, the seeds, and the canonical
 environment. Run directories are immutable and no run is overwritten.
 
@@ -314,6 +318,46 @@ already reported. Third, run-005 adds the two post-hoc diagnostics D1 and D2 tha
 5 and 6 report; they are ungated and gate nothing. None of the three changes touched a
 threshold, an equation, an input or an acceptance criterion, and every predeclared
 experiment payload is unchanged between run-003 and run-005.
+
+### 10. What survives the platform, measured
+
+B1 is held to the same two-tier model as Stage A. **Canonical**: the committed snapshot is
+reproduced byte for byte inside `python:3.13.2-bookworm` pinned by digest, with no
+tolerance. **Portable**: on any other platform the case must pass its own nine criteria and
+then survive a semantic comparison against the declared 1e-7 envelope.
+
+The measurement, macOS 15 arm64 against the canonical container:
+
+| | |
+| --- | --- |
+| float leaves compared | 1100 |
+| leaves that differ at all | **14** |
+| worst absolute difference | `1.78e-15` |
+| worst relative difference | `1.11e-10` |
+| acceptance criteria that change state | **none** |
+
+Every one of the 14 is an aggregate over the 200-seed noise ensembles, except the worst,
+which is `placement_sweep[5].skin_absolute_error`. That one is inflated by its own
+definition rather than by any real disagreement: it is `|s_recovered - 3.5|` where
+`s_recovered` is about 3.5, so a last-place difference of `1.78e-15` on a quantity of order
+3.5 becomes `1.11e-10` once the cancellation is taken. The absolute difference is the
+honest figure and it is machine noise. Nothing in the envelope was adjusted for it; it
+passes because the envelope requires both the relative and the absolute tolerance to be
+exceeded, and `1.78e-15` is four orders inside the absolute floor.
+
+**Every quantity this report and the site figures publish is bit-identical between the two
+platforms** — recovered `kh`, `k` and skin, the semilog slope, the one-hour intercept, the
+r-squared, both recovery errors, the derivative plateau, and all four negative-control
+values. That is what justifies the nine-significant-figure labels in figures B1-02 and
+B1-05: a nine-figure label is sensitive at about `5e-10`, and the measured spread on every
+labelled quantity is exactly zero.
+
+One field cannot survive a platform change and is declared as such: `metrics_sha256`, a
+hash over the case's own floating-point payload. A single last-place difference anywhere
+changes every bit of it, so across platforms it can report only that something differs —
+which the leaf-by-leaf comparison above already answers, with magnitudes attached and in
+far more detail. It is compared exactly in the canonical environment, where it means
+something, and the comparator counts and prints it elsewhere rather than dropping it.
 
 ## Every predeclared criterion
 
