@@ -29,7 +29,7 @@ export const SITE_NAME = "Gas Reservoir Performance Lab";
  * `docs/release/VERIFICATION.md`. Re-measured in this candidate tree before publication.
  */
 export const VERIFICATION = {
-  date: "2026-09-14",
+  date: "2026-09-15",
   interpreter: "CPython 3.13.2 on macOS, darwin arm64",
   profile: "public-core",
   /* The counts below are from `python3 scripts/verify.py --profile public-core

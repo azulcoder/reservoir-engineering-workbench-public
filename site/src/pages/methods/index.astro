@@ -125,7 +125,12 @@ const description =
       candidate tree before publication. The two test runners disagree by exactly the skip
       count, because one counts a skipped test in its total and the other does not:
       {" "}{VERIFICATION.testsCollected} minus {VERIFICATION.testsSkipped} is
-      {" "}{VERIFICATION.testsPassed}.
+      {" "}{VERIFICATION.testsPassed}. The skip count is the reference-dependent tests only.
+      One further test, a corroborating cross-check of the exponential integral against an
+      independently written arbitrary-precision library, skips on any runner that installs no
+      development dependencies; it is counted and named separately rather than folded in
+      here, because a published number should describe the repository and not the machine
+      that happened to run it.
     </p>
 
     <DataTable
@@ -139,8 +144,7 @@ const description =
         { q: "tests collected", v: VERIFICATION.testsCollected },
         { q: "tests passed", v: VERIFICATION.testsPassed },
         { q: "tests failed or errored", v: VERIFICATION.testsFailedOrErrored },
-        { q: "tests skipped", v: VERIFICATION.testsSkipped },
-        { q: "reference-dependent tests, not run", v: VERIFICATION.testsSkipped },
+        { q: "reference-dependent tests skipped", v: VERIFICATION.testsSkipped },
         { q: "checks collected", v: VERIFICATION.checksCollected },
         { q: "checks passed", v: VERIFICATION.checksPassed },
         { q: "mandatory checks failed", v: VERIFICATION.mandatoryChecksFailed },
@@ -168,14 +172,14 @@ const description =
           scope: `${VERIFICATION.testsCollected} collected across the numerical core, the analytic identities and the dependency policy`,
           environment: VERIFICATION.interpreter,
           state: "PASS",
-          note: `${VERIFICATION.testsPassed} passed, ${VERIFICATION.testsSkipped} skipped, 0 failed or errored`,
+          note: `${VERIFICATION.testsPassed} passed, ${VERIFICATION.testsSkipped} skipped for want of the reference extract, 0 failed or errored`,
         },
         {
           check: "Study reproduction",
-          scope: "A1, A3 and A4 re-run into fresh directories and diffed against their committed snapshots",
+          scope: "A1, A3, A4 and B1 re-run into fresh directories and diffed against their committed snapshots",
           environment: VERIFICATION.interpreter,
           state: "PASS",
-          note: "byte-identical in all three, in the canonical environment",
+          note: "byte-identical in all four, in the canonical environment",
           evidence: { label: "Studies", path: "/studies/" },
         },
         {
