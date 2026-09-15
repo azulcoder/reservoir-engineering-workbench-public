@@ -27,6 +27,42 @@ status.
 
 Superseded statements are marked and kept, not deleted.
 
+## Unreleased — 2026-09-15 (later)
+
+**Executive visual release.** The presentation hierarchy was refactored without changing
+the protected scientific artefacts. Live at
+`https://azulcoder.github.io/reservoir-engineering-workbench-public/`, main `108720f`,
+Pages run `35031322980`, artefact 99 files fingerprint `2eb803c8`.
+
+`scripts/check_science_frozen.py` holds 116 artefacts byte-identical — every case
+protocol, result snapshot and run script, the library source, the tests, the evidence
+cards, the release contracts and the 41 published numerical downloads. Verified against
+the manifest, directly against the previous public main `22394a9b`, and again on the
+merged tree.
+
+What changed is where things sit, not what they say. The home page is built around the
+two flagship findings, both of which were previously reachable only by leaving it; B1 was
+absent from it entirely. B1's defect-visibility result — five of ten seeded analyst errors
+materially wrong and silent — was a seven-column table whose verdict column was clipped off
+the right edge at 1440, and is now a classification. A4 is ordered by its argument rather
+than by document convention. Nine figures across the two flagship studies gained roles that
+change weight only, and every page-level figure title that duplicated the title drawn inside
+its own SVG is now the accessible name rather than a second visible heading.
+
+`scripts/check_page_content.py` is new and runs in both site-QA legs: 26 required evidence
+categories across the three flagship pages, checked against the built HTML. It exists
+because the A4 restructure twice dropped content that built, rendered and tested green —
+the scenario explorer and the four-statements scoping callout — and category loss is not
+otherwise detectable.
+
+Six site-wide rendering defects fixed where a word ran into a following link or bolded
+value with no space, from Astro trimming whitespace before a line-leading element; two
+predated the pass.
+
+504 browser tests across three engines, 776 Python tests. Payload +9.6 KB across five
+pages; the studies index is 20 percent smaller. No framework, font, icon package, CDN or
+analytics added.
+
 ## Unreleased — 2026-09-15
 
 Stage B opens with **B1 — infinite-acting radial flow, known answer**, the pressure-transient

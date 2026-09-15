@@ -1,6 +1,25 @@
 # Executive visual refactor — review candidate v2
 
-**Status: READY FOR OWNER REVIEW. Not merged, not deployed.**
+**Status: RELEASED AND LIVE, 2026-09-15.**
+
+The presentation hierarchy was refactored without changing the protected scientific
+artefacts.
+
+| | |
+| --- | --- |
+| main | `108720f` (merge of PR #3) |
+| PR | #3, merged as a merge commit; the tested head was `c90d61b` |
+| CI that verified the merged tree | run `35029423085`, 15/15 — the merge commit's tree is byte-identical to `c90d61b`'s (`d65dd226`), and main's own run `35030409822` is 15/15 |
+| Pages | run `35031322980`, 18/18 |
+| deployed artefact | 99 files, fingerprint `2eb803c87d4189497cd5bef7eb0e5d1bdb8b455cb7e25f29a816751f552ed740` |
+| live | https://azulcoder.github.io/reservoir-engineering-workbench-public/ |
+| science-frozen | PASS — 116 artefacts byte-identical, checked against the manifest, against public main `22394a9b`, and again on the merged tree |
+| browser / accessibility | 504 passed, 15 skipped, 0 failed, three engines; skip policy clean |
+| content integrity | 26 required evidence categories present, verified against the published bytes |
+| payload | +9.6 KB across five pages (+0.7%); studies index −20%; no new dependency |
+| live check | all nine routes 200, 404 correct, no third-party request, no console error, no horizontal scroll at 1440 or 375 |
+
+The v1 and v2 review material below is kept as the record of what was changed and why.
 
 v2 brings A4 to the same standard as B1. The v1 scorecard named A4's noise as the
 weakest dimension on the site and said the restructure was larger than it looked; this is
