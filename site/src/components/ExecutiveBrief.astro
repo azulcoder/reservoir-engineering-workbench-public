@@ -1,0 +1,107 @@
+---
+/**
+ * The Level 1 read: what a technically sophisticated reader should get in 15-30 seconds.
+ *
+ * Four slots, and all four are required by editorial policy rather than by the type
+ * system, because a flagship claim without its limit is the failure this site exists to
+ * argue against:
+ *
+ *   question     what was asked, in one sentence
+ *   finding      what was found, leading with the comparison that carries it
+ *   implication  why a reservoir engineer should care
+ *   limit        the single most important thing this does not establish
+ *
+ * It is deliberately not a callout and not a card. It is a definition list, because that
+ * is what it is: four labelled statements about one study. A screen reader gets the
+ * labels; a sighted reader gets them as small caps in the margin at desktop width and
+ * stacked above their values on a phone. Nothing here is behind a disclosure -- this is
+ * the part a reader who reads nothing else must still receive.
+ */
+export interface Props {
+  /** Optional id so the brief can be linked and used as a landmark. */
+  id?: string;
+}
+const { id } = Astro.props;
+---
+
+<section class="brief" id={id} aria-label="Executive brief">
+  <dl class="brief__list">
+    <div class="brief__row">
+      <dt>Question</dt>
+      <dd><slot name="question" /></dd>
+    </div>
+    <div class="brief__row brief__row--finding">
+      <dt>Finding</dt>
+      <dd><slot name="finding" /></dd>
+    </div>
+    <div class="brief__row">
+      <dt>Why it matters</dt>
+      <dd><slot name="implication" /></dd>
+    </div>
+    <div class="brief__row brief__row--limit">
+      <dt>Biggest limitation</dt>
+      <dd><slot name="limit" /></dd>
+    </div>
+  </dl>
+</section>
+
+<style>
+  .brief {
+    margin-block: var(--space-7) var(--space-8);
+    border-block-start: 2px solid var(--c-ink);
+    border-block-end: 1px solid var(--c-rule);
+    padding-block: var(--space-5);
+  }
+
+  .brief__list {
+    margin: 0;
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .brief__row {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .brief dt {
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--c-ink-3);
+    font-weight: 600;
+  }
+
+  .brief dd {
+    margin: 0;
+    font-size: var(--text-base);
+    color: var(--c-ink-2);
+    max-width: var(--prose-max);
+  }
+
+  /* The finding is the one line a reader may take away, so it is the only one set at
+     lede size and in the primary ink. */
+  .brief__row--finding dd {
+    font-size: var(--text-md);
+    color: var(--c-ink);
+    line-height: 1.45;
+  }
+
+  .brief__row--limit dd {
+    color: var(--c-ink-3);
+  }
+
+  /* Labels move into the margin once there is room for them, which lets the four
+     statements read as a single column of prose rather than as a form. */
+  @media (min-width: 60rem) {
+    .brief__row {
+      grid-template-columns: 10rem 1fr;
+      gap: var(--space-5);
+      align-items: baseline;
+    }
+    .brief dt {
+      text-align: end;
+      padding-block-start: 0.2em;
+    }
+  }
+</style>

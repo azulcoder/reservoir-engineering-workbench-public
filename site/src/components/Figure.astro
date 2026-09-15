@@ -53,10 +53,24 @@ export interface Props {
   dataDownloadLabel?: string;
   /** Heading level for the figure title, so a page keeps its heading order. */
   headingLevel?: 2 | 3 | 4;
+  /**
+   * What this figure is for on the page it is on. It changes visual weight and nothing
+   * else: no figure is removed, hidden or made less accessible by its role, and the
+   * caption, caveat, long description and downloads are identical in every role.
+   *
+   *   hero        the one figure that carries the study's conclusion. One per study.
+   *   supporting  needed to follow the argument, but not the conclusion itself.
+   *   technical   the detail a reviewer checks. Set smaller and quieter.
+   *
+   * The purpose is that a reader should never have to work out which of nine equally
+   * weighted figures contains the finding.
+   */
+  role?: "hero" | "supporting" | "technical";
 }
 
 const {
   id,
+  role = "supporting",
   number = id.toUpperCase(),
   title,
   svg,
@@ -80,7 +94,12 @@ const descId = `${id}-longdesc`;
 const frameLabel = `${number}, ${title}`;
 ---
 
-<figure class="figure" id={id} aria-labelledby={titleId} aria-describedby={descId}>
+<figure
+  class:list={["figure", `figure--${role}`]}
+  id={id}
+  aria-labelledby={titleId}
+  aria-describedby={descId}
+>
   <div class="figure__head">
     <span class="eyebrow">{number}</span>
     <Heading class="figure__title" id={titleId}>{title}</Heading>

@@ -2,13 +2,15 @@
 /**
  * Studies index.
  *
- * A4 is the flagship. A1 and A3 are supporting work and are described from what their
- * committed reports and summaries actually found, which in both cases is narrower and
- * more interesting than their titles suggest. A2 has no exhibits in the public profile
- * and is listed as unavailable rather than as a study a reader could reproduce.
+ * Ordered as a progression rather than as a catalogue: each study exists because the one
+ * before it left something unestablished, and the index says so. Within a stage the entry
+ * for a completed case carries four things and nothing else -- the question it asked, what
+ * it found, whether its evidence ships, and a link. The methodological description that
+ * used to sit here is on each case page, which is the only place it can be read next to
+ * the evidence it describes.
  *
- * Stages B, C and D are not studies. They appear once, under a heading that says they are
- * future work, and they carry no result, no figure and no card.
+ * A2 is listed as unavailable rather than as a study a reader could reproduce. Future
+ * stages are set back so they cannot be mistaken for results.
  */
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Callout from "../../components/Callout.astro";
@@ -20,16 +22,15 @@ import { href } from "../../lib/urls";
 const base = await baseScenario();
 
 const contents = [
-  { id: "flagship", label: "Flagship case" },
-  { id: "supporting", label: "Supporting studies" },
-  { id: "transient", label: "Pressure transient" },
+  { id: "stage-a", label: "Stage A — inventory" },
+  { id: "stage-b", label: "Stage B — transient" },
   { id: "unavailable", label: "Not available publicly" },
   { id: "status", label: "Status at a glance" },
   { id: "roadmap", label: "Not yet done" },
 ];
 
 const description =
-  "Four synthetic gas material-balance studies plus the first pressure-transient case: the flagship counterexample A4, the supporting studies A1 and A3, A2 whose exhibits are withheld on rights grounds, and B1.";
+  "Five synthetic studies in two stages: A1, A3 and A4 on inventory and material balance, and B1 on pressure-transient interpretation. Each exists because the one before it left something unestablished.";
 ---
 
 <BaseLayout
@@ -42,164 +43,103 @@ const description =
   <h1>Studies</h1>
 
   <p class="lede">
-    Five studies. One is the flagship; two support it and are worth reading for what they
-    found rather than for what their titles promise; one cannot ship its exhibits in the
-    public profile because its inputs are someone else's data; and one, B1, opens a second
-    stage on a different problem — pressure transient rather than material balance.
+    Two stages, five studies. Each one exists because the one before it left something
+    unestablished, and both stages end the same way: with a case where the answer looks
+    convincing and is wrong.
   </p>
 
-  <section id="flagship" aria-labelledby="flagship-h">
-    <h2 id="flagship-h">Flagship case</h2>
+  <section id="stage-a" aria-labelledby="stage-a-h">
+    <h2 id="stage-a-h">Stage A — inventory and material balance</h2>
 
-    <article class="card card--flagship" aria-labelledby="card-a4">
-      <p class="eyebrow">A4 — misleading fit counterexample</p>
-      <h3 id="card-a4">
-        <a href={href("/studies/a4/")}>When a straight p/Z line is convincing and wrong</a>
-      </h3>
-      <p>
-        A volumetric p/Z fit to {base.observations} quarterly noise-free observations of an
-        aquifer-supported reservoir returns R-squared = {base.rSquared.toFixed(6)} and a gas
-        in place {base.errorPct.toFixed(3)} percent too high, with the bias
-        {" "}{Math.abs(base.biasOverStderr).toFixed(1)} times the fit's own standard error.
-        The study then attacks its own result: a bitwise reduction to the volumetric limit at
-        zero aquifer productivity, a timestep-refinement check, an estimator-free oracle, a
-        matched pair of detector controls, and a measured power curve for the detectability
-        question.
-      </p>
-      <p>
-        Nine exhibits, a scenario explorer over the eight computed aquifer strengths, a
-        decision memo, and a limitations section that includes the study's own retractions.
-      </p>
-      <p class="card__meta">
-        Synthetic. Reproduced byte for byte from a committed snapshot in the canonical
-        environment. Pre-registration rests on the author's word and the prospective ordering
-        is unverified — the study says so.
-      </p>
-    </article>
+    <ol class="track">
+      <li class="track__item">
+        <p class="track__role">Establish the instrument</p>
+        <h3><a href={href("/studies/a1/")}>A1 — the exact recovery, and how narrow &ldquo;exact&rdquo; is</a></h3>
+        <p class="track__q">Does the p/Z inverse recover a known gas in place from noise-free data?</p>
+        <p class="track__a">
+          Exactly — and a seeded-defect check shows a whole class of errors leaves the
+          recovered inventory unchanged, so the exact recovery is evidence only against the
+          defects the design can see.
+        </p>
+        <p class="track__status">Reproduces byte for byte in the canonical environment.</p>
+      </li>
+
+      <li class="track__item">
+        <p class="track__role">Understand its uncertainty</p>
+        <h3><a href={href("/studies/a3/")}>A3 — the error budget that re-ranks itself</a></h3>
+        <p class="track__q">Which measurement error dominates the inferred gas in place?</p>
+        <p class="track__a">
+          Random pressure scatter, at 1.32 percent of G — but the ranking reverses when the
+          assumed gauge accuracy is halved. That reversal was pre-registered as an inconclusive
+          condition, and it triggered.
+        </p>
+        <p class="track__status">Reproduces byte for byte. Ordinate-side only.</p>
+      </li>
+
+      <li class="track__item track__item--flagship">
+        <p class="track__role">Show it failing while looking convincing</p>
+        <h3><a href={href("/studies/a4/")}>A4 — when a straight p/Z line is convincing and wrong</a></h3>
+        <p class="track__q">
+          If an aquifer supports the reservoir, how wrong is the volumetric answer and would
+          anyone be able to tell from the data?
+        </p>
+        <p class="track__a">
+          R-squared = {base.rSquared.toFixed(6)} and the inventory is
+          {" "}{base.errorPct.toFixed(1)} percent too high. Over most of the range the quality of
+          the fit does not indicate the size of the error.
+        </p>
+        <p class="track__status">
+          Reproduces byte for byte. Nine exhibits, eight computed aquifer strengths, a decision
+          memo and a measured detection-power curve.
+        </p>
+      </li>
+    </ol>
   </section>
 
-  <section id="supporting" aria-labelledby="supporting-h">
-    <h2 id="supporting-h">Supporting studies</h2>
+  <section id="stage-b" aria-labelledby="stage-b-h">
+    <h2 id="stage-b-h">Stage B — transient interpretation</h2>
 
-    <p>
-      Both were run before A4 and both returned something other than what their briefs
-      expected. Each is summarised here from its own committed report.
-    </p>
-
-    <article class="card" aria-labelledby="card-a1">
-      <p class="eyebrow">A1 — volumetric baseline</p>
-      <h3 id="card-a1">
-        <a href={href("/studies/a1/")}>The exact recovery, and how narrow "exact" is</a>
-      </h3>
-      <p>
-        On data generated by the volumetric balance with no measurement error, the p/Z
-        inverse recovers gas in place with a relative error of exactly zero at constant
-        deviation factor and +5.40e-14 with a pressure-dependent one. The interesting part is
-        the seeded-defect diagnostic that followed: a whole class of defects — any uniform
-        multiplicative error in the ordinate, a wrong standard-volume basis included — leaves
-        the recovered inventory <em>exactly unchanged</em>, so the zero is evidence only
-        against the defect classes the design can see.
-      </p>
-      <p>
-        The study's own headline is not the zero. It is the −5.74 percent error the same
-        estimator produces, at R-squared 0.9971, when the analyst reuses the initial
-        deviation factor instead of the pressure-dependent one.
-      </p>
-      <p class="card__meta">
-        Synthetic. Numerical verification only, and the report says that is the only one of
-        the four statements it reaches. Post-hoc diagnostics D1 and D2 are not pre-registered
-        and not gated.
-      </p>
-    </article>
-
-    <article class="card" aria-labelledby="card-a3">
-      <p class="eyebrow">A3 — uncertainty experiments</p>
-      <h3 id="card-a3">
-        <a href={href("/studies/a3/")}>The error budget that re-ranks itself</a>
-      </h3>
-      <p>
-        An ordinate-side measurement error budget on a synthetic closed tank. At the declared
-        survey programme, random pressure scatter is the largest single contributor at 1.32
-        percent of G and a shared calibration bias is second at 0.86 percent —
-        <strong> and that ranking is not robust</strong>. Halving the assumed scatter reverses
-        the top two. That reversal was pre-registered as an inconclusive condition, and the
-        condition triggered, so the ranking of the top two is reported as a restatement of an
-        assumed number rather than as a result.
-      </p>
-      <p>
-        What does survive: the <em>level</em> of the deviation factor is irrelevant to a p/Z
-        gas in place to machine precision, while its <em>shape</em> across the observed window
-        moves G roughly one for one. A shared offset does not shrink with more surveys and a
-        random one does. Supplying psig where psia was required makes the reservoir look
-        smaller.
-      </p>
-      <p class="card__meta">
-        Synthetic. Ordinate-only: cumulative production is never perturbed, so the budget
-        answers for the pressure side of the line and not the volume side.
-      </p>
-    </article>
-  </section>
-
-  <section id="transient" aria-labelledby="transient-h">
-    <h2 id="transient-h">Pressure transient</h2>
-
-    <article class="card" aria-labelledby="card-b1">
-      <p class="eyebrow">B1 — infinite-acting radial flow, known answer</p>
-      <h3 id="card-b1">
-        <a href={href("/studies/b1/")}>What the diagnostics cannot see</a>
-      </h3>
-      <p>
-        The semilog straight-line interpretation recovers a known permeability-thickness to a
-        relative error of 1.56e-06 and a known skin to 1.59e-05, on a synthetic constant-rate
-        drawdown with no measurement error. Every threshold was derived analytically and
-        committed before the code that produced the numbers.
-      </p>
-      <p>
-        The recovery is the uninteresting half.
-        <strong>
-          Five of ten seeded analyst errors put a reported number materially wrong while
-          leaving every diagnostic available without the answer completely silent
-        </strong>
-        {" "}— a unit error on rate puts kh 59 percent out at an r-squared of 1 to eight
-        decimals. Window placement was also measured to dominate sampling density by three
-        orders of magnitude, and the negative control fails by 9.35 percent while returning an
-        r-squared of 0.9993.
-      </p>
-      <p class="card__meta">
-        Synthetic. Wellbore storage is zero by declared design, which is the study's largest
-        gap: it says nothing about finding where radial flow begins on real data. No
-        commercial well-test package has been compared against.
-      </p>
-    </article>
+    <ol class="track">
+      <li class="track__item track__item--flagship">
+        <p class="track__role">Establish a second instrument, then attack it</p>
+        <h3><a href={href("/studies/b1/")}>B1 — a correct interpretation can still be wrong when its inputs are wrong</a></h3>
+        <p class="track__q">
+          Can a semilog interpretation recover a known permeability and skin, and what still
+          makes a convincing interpretation wrong once it can?
+        </p>
+        <p class="track__a">
+          It recovers them essentially exactly. Then five of ten seeded analyst errors put a
+          reported number materially wrong while moving no diagnostic at all.
+        </p>
+        <p class="track__status">
+          Reproduces byte for byte. Nine pre-registered criteria: eight recorded as flags in the
+          run, and determinism verified by re-running and diffing. Wellbore storage is zero by
+          declared design.
+        </p>
+      </li>
+    </ol>
   </section>
 
   <section id="unavailable" aria-labelledby="unavailable-h">
     <h2 id="unavailable-h">Not available in the public profile</h2>
 
-    <article class="card card--unavailable" aria-labelledby="card-a2">
-      <p class="eyebrow">A2 — independent PVT check</p>
-      <h3 id="card-a2">
-        <a href={href("/studies/a2/")}>Availability: exhibits withheld on rights grounds</a>
-      </h3>
-      <p>
-        A2 compares the library's deviation-factor and viscosity correlations against
-        laboratory-grade reference equations of state. It is the only study in this project
-        that compares the code against values it did not produce — and the only one whose
-        inputs this repository cannot redistribute.
+    <div class="track__item track__item--unavailable">
+      <p class="track__role">Compare against values this project did not produce</p>
+      <h3><a href={href("/studies/a2/")}>A2 — independent PVT check</a></h3>
+      <p class="track__q">
+        Do the deviation-factor and viscosity correlations agree with laboratory-grade
+        reference equations of state?
       </p>
-      <p>
-        <strong>No figure, no table and no number from A2 appears anywhere on this site.</strong>
-        {" "}Its protocol, report and results are excluded from the public tree along with the
-        reference extract they quote, and its run script exits non-zero when the extract is
-        absent rather than producing a result from nothing.
-        {" "}<a href={href("/studies/a2/")}>What it is, why it is withheld, and what you would
-        need to run it.</a>
+      <p class="track__a">
+        Unknown here. A2 is the only study that compares the code against values it did not
+        produce, and the only one whose inputs this repository cannot redistribute.
       </p>
-      <p class="card__meta">
-        <strong>Not independently reproducible from this repository.</strong> A reader must
-        obtain the reference data themselves before any part of A2 can be run.
+      <p class="track__status">
+        <strong>No figure, no table and no number from A2 appears on this site.</strong> Its run
+        script exits non-zero when the reference extract is absent rather than producing a
+        result from nothing.
       </p>
-    </article>
+    </div>
   </section>
 
   <section id="status" aria-labelledby="status-h">
@@ -277,17 +217,16 @@ const description =
       <p>
         Nothing in this section has been run. It is listed so that a reader can see what the
         project intends and can tell it apart from what it has actually produced. None of it
-        has a figure, a number or a study page, and none of it should be read as a result.
+        has a figure, a number or a study page.
       </p>
     </Callout>
 
-    <ul>
+    <ul class="future">
       <li>
-        <strong>Stage B — pressure-transient analysis, partly done.</strong> B1 is complete
-        and has a case page above. B2 through B6 are not started: wellbore storage and the
-        problem of finding the radial-flow window rather than being handed it; build-up and
-        superposition; boundaries; real-gas pseudopressure and pseudotime; and a field-data
-        case. None of them has been run, and B1 establishes nothing about any of them.
+        <strong>B2 through B6.</strong> Wellbore storage and the problem of finding the
+        radial-flow window rather than being handed it; build-up and superposition; boundaries;
+        real-gas pseudopressure and pseudotime; and a case against data this project did not
+        generate. B2 is the direct successor to B1's largest gap.
       </li>
       <li>
         <strong>Stage C and Stage D.</strong> Not started, and not scoped beyond a heading.
@@ -295,8 +234,8 @@ const description =
       <li>
         <strong>The abscissa.</strong> A3's own recommendation, and the one gap it says it is
         least able to defend: put a metering bias and a random metering error through the
-        existing machinery so that the error budget covers the volume axis as well as the
-        pressure axis.
+        existing machinery so the error budget covers the volume axis as well as the pressure
+        axis.
       </li>
       <li>
         <strong>A companion diagnostic case for A4.</strong> Pre-register a test of the
@@ -308,29 +247,83 @@ const description =
   </section>
 
   <style>
-    .card {
-      border: 1px solid var(--c-rule);
-      border-radius: var(--radius-md);
-      padding: var(--space-5);
-      margin-block: var(--space-5);
-      background: var(--c-surface);
+    .lede {
+      max-width: 54ch;
     }
-    .card--flagship {
-      border-width: 2px;
-      border-color: var(--c-border-strong);
+
+    .track {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: var(--space-8);
     }
-    .card--unavailable {
-      border-style: dashed;
+
+    /* A study is a passage of prose with a role above it, not a card. The only rule is a
+       hairline on the inline edge, which carries the sense of a sequence. */
+    .track__item {
+      padding-inline-start: var(--space-5);
+      border-inline-start: 2px solid var(--c-rule);
+      max-width: var(--prose-max);
     }
-    .card h3 {
-      margin-block-start: var(--space-2);
+
+    .track__item--flagship {
+      border-inline-start-color: var(--c-ink);
     }
-    .card__meta {
-      font-size: var(--text-sm);
+
+    .track__item--unavailable {
+      border-inline-start-style: dashed;
+      max-width: var(--prose-max);
+      padding-inline-start: var(--space-5);
+      border-inline-start-width: 2px;
+      border-inline-start-color: var(--c-border-strong);
+    }
+
+    .track__role {
+      margin: 0;
+      font-size: var(--text-xs);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--c-ink-3);
+      font-weight: 600;
+    }
+
+    .track__item h3 {
+      margin-block: var(--space-2) var(--space-3);
+      font-size: var(--text-lg);
+      line-height: 1.3;
+    }
+
+    .track__item h3 a {
+      color: var(--c-ink);
+    }
+
+    .track__item h3 a:hover,
+    .track__item h3 a:focus-visible {
+      color: var(--c-blue-strong);
+    }
+
+    .track__q {
       color: var(--c-ink-2);
-      border-block-start: 1px solid var(--c-rule);
-      padding-block-start: var(--space-3);
+    }
+
+    .track__a {
+      color: var(--c-ink);
+    }
+
+    .track__status {
+      font-size: var(--text-sm);
+      color: var(--c-ink-3);
       margin-block-end: 0;
+    }
+
+    .future {
+      max-width: var(--prose-max);
+      color: var(--c-ink-2);
+    }
+
+    .future li {
+      margin-block: var(--space-4);
     }
   </style>
 </BaseLayout>

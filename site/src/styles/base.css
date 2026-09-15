@@ -1143,3 +1143,30 @@ tbody tr:nth-child(even) {
     border-width: 3px;
   }
 }
+
+/* ---------------------------------------------------------------------------
+ * Figure roles
+ *
+ * A role changes visual weight and nothing else. Every role keeps the same caption,
+ * caveat, long description, data table and downloads, and no figure is hidden or made
+ * less accessible by having one. The purpose is that a reader should not have to work out
+ * which of nine equally weighted figures carries the conclusion.
+ * ------------------------------------------------------------------------ */
+
+.figure--hero {
+  margin-block: var(--space-7) var(--space-8);
+}
+
+.figure--hero .figure__title {
+  font-size: var(--text-lg);
+}
+
+/* Evidence a reviewer checks, not a finding a reader is meant to carry away. */
+.figure--technical {
+  margin-block: var(--space-6);
+}
+
+.figure--technical .figure__title {
+  font-size: var(--text-base);
+  color: var(--c-ink-2);
+}

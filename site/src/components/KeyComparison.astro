@@ -1,0 +1,112 @@
+---
+/**
+ * One number against the number it should be compared with.
+ *
+ * This exists because the two flagship findings are both comparisons, and both were
+ * previously only available by reading a sentence: "112.5 Bscf against a known 100.0"
+ * and "5 of 10 seeded errors silent". A comparison read as prose is a comparison the
+ * reader has to assemble; set as two values with a relation between them, it is one they
+ * receive.
+ *
+ * Deliberately restrained. No card, no shadow, no gradient, no animated counter. A rule,
+ * two values, and a label under each. The `tone` prop marks the value that is the problem
+ * -- and it marks it with the reserved contrast colour AND with the word in its label, so
+ * the meaning survives greyscale and forced colours. Colour is never the only channel.
+ *
+ * Numbers passed in are already formatted by the caller from the case artefact. This
+ * component does no rounding: deciding how many digits a quantity deserves is the
+ * caller's job and is documented in docs/design/precision.md.
+ */
+export interface Props {
+  /** The value the reader should notice. */
+  value: string;
+  /** What that value is. */
+  label: string;
+  /** The value it should be read against. */
+  against: string;
+  /** What that comparison value is. */
+  againstLabel: string;
+  /** Short phrase naming the gap, e.g. "12.5 percent too high". */
+  gap?: string;
+  /** Marks the primary value as the structurally wrong one. */
+  tone?: "neutral" | "exception";
+}
+const { value, label, against, againstLabel, gap, tone = "neutral" } = Astro.props;
+---
+
+<div class:list={["kc", tone === "exception" && "kc--exception"]}>
+  <div class="kc__side">
+    <p class="kc__value">{value}</p>
+    <p class="kc__label">{label}</p>
+  </div>
+  <p class="kc__rel" aria-hidden="true">vs</p>
+  <div class="kc__side kc__side--ref">
+    <p class="kc__value">{against}</p>
+    <p class="kc__label">{againstLabel}</p>
+  </div>
+  {gap && <p class="kc__gap">{gap}</p>}
+</div>
+
+<style>
+  /* Flex rather than a fixed three-column grid: at 320px with the reader's text doubled,
+     a grid whose columns are sized to their content cannot shrink and pushes the page into
+     horizontal scroll. Wrapping is the behaviour that survives reflow. */
+  .kc {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: var(--space-5);
+    row-gap: var(--space-2);
+    margin-block: var(--space-4);
+    padding-block-start: var(--space-4);
+    border-block-start: 1px solid var(--c-rule);
+  }
+
+  .kc__side {
+    min-width: 0;
+    flex: 0 1 auto;
+  }
+
+  .kc__value {
+    margin: 0;
+    font-size: var(--text-2xl);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+    color: var(--c-ink);
+  }
+
+  .kc--exception .kc__side:first-child .kc__value {
+    color: var(--c-contrast);
+  }
+
+  .kc__side--ref .kc__value {
+    color: var(--c-ink-3);
+  }
+
+  .kc__label {
+    margin: var(--space-1) 0 0;
+    font-size: var(--text-sm);
+    color: var(--c-ink-3);
+    max-width: 22ch;
+    overflow-wrap: break-word;
+  }
+
+  .kc__rel {
+    margin: 0;
+    font-size: var(--text-base);
+    color: var(--c-ink-3);
+  }
+
+  .kc__gap {
+    flex: 1 0 100%;
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-base);
+    color: var(--c-ink-2);
+  }
+
+  @media (max-width: 26rem) {
+    .kc__value {
+      font-size: var(--text-xl);
+    }
+  }
+</style>

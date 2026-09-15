@@ -14,7 +14,11 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import Figure from "../../../components/Figure.astro";
 import DataTable from "../../../components/DataTable.astro";
 import Callout from "../../../components/Callout.astro";
+import ExecutiveBrief from "../../../components/ExecutiveBrief.astro";
+import KeyComparison from "../../../components/KeyComparison.astro";
+import DefectMatrix from "../../../components/DefectMatrix.astro";
 import { checkedExhibit } from "../../../scripts/exhibits";
+import * as fmt from "../../../scripts/format";
 import { download, readJson } from "../../../scripts/public-data";
 import { NAV, NOT_RUN } from "../../../scripts/site";
 import { href } from "../../../lib/urls";
@@ -92,11 +96,8 @@ const visibility = s.diagnostic_defect_visibility;
 const criteriaMet = Object.values(s.criteria).filter(Boolean).length;
 const criteriaTotal = Object.keys(s.criteria).length;
 
-/** Nine significant figures. Justified on this page against a measured spread of zero. */
-function nine(value: number): string {
-  return value.toPrecision(9);
-}
-/** Exponent form for the small errors, where a fixed format would read as zero. */
+/** Exponent form for the small errors, where the magnitude is the message. Display
+ *  precision for every other quantity on this page comes from scripts/format.ts. */
 function sci(value: number, digits = 3): string {
   return value.toExponential(digits);
 }
@@ -118,11 +119,15 @@ const visibilityRows = visibility.rows.map((row) => ({
         : "within criteria",
 }));
 
+/** The ten seeded errors; the baseline row carries no verdict and is not one of them. */
+const seededCount = visibility.rows.filter((r) => r.visible_without_truth !== undefined).length;
+
 const contents = [
-  { id: "overview", label: "Overview" },
-  { id: "evidence", label: "Evidence" },
-  { id: "visibility", label: "What the diagnostics cannot see" },
-  { id: "limits", label: "What this does not establish" },
+  { id: "instrument", label: "1. The instrument works" },
+  { id: "visibility", label: "2. What it cannot see" },
+  { id: "matters", label: "3. Why this matters" },
+  { id: "limits", label: "4. What this does not establish" },
+  { id: "technical", label: "5. Technical evidence" },
   { id: "reproduce", label: "Reproduce and download" },
 ];
 
@@ -137,123 +142,74 @@ const description =
   nav={NAV}
   contents={contents}
 >
-  <p class="eyebrow">Study B1 — first pressure-transient case</p>
-  <h1>Recovering a known answer, and measuring what that is worth</h1>
+  <p class="eyebrow">Study B1 — pressure transient</p>
+  <h1>A correct interpretation can still be wrong when its inputs are wrong</h1>
 
-  <p class="lede">
-    On a synthetic constant-rate drawdown with no measurement error, the semilog straight-line
-    interpretation recovers a permeability-thickness of
-    <strong>{nine(recovery.permeability_thickness_recovered)} md·ft</strong> against a true
-    {recovery.permeability_thickness_true} — a relative error of
-    {sci(recovery.permeability_thickness_relative_error)} — and a skin of
-    <strong>{nine(recovery.skin_recovered)}</strong> against a true {recovery.skin_true}.
-    That is the uninteresting half. The useful half is that
-    <strong>
-      {visibility.silent_but_materially_wrong_count} of {visibility.rows.length - 1} seeded
-      analyst errors put a
-      reported number materially wrong while leaving every diagnostic available without the
-      answer completely silent.
-    </strong>
-  </p>
+  <ExecutiveBrief>
+    <Fragment slot="question">
+      Can a simple pressure-transient interpretation recover a known permeability and skin
+      from clean data — and once it can, what still makes a convincing interpretation wrong?
+    </Fragment>
+    <Fragment slot="finding">
+      It recovers them essentially exactly. Analyst errors were then seeded into that same
+      working interpretation, and{" "}
+      <strong>{fmt.outOf(visibility.silent_but_materially_wrong_count, seededCount)} put a reported
+      number materially wrong while leaving every diagnostic available without the answer
+      unmoved</strong>.
+    </Fragment>
+    <Fragment slot="implication">
+      A well-test inverse can check that an answer is consistent with its own model. It cannot
+      check the rate, the net pay, the viscosity or the porosity it was handed. Input QA sits
+      outside the calculation, and no amount of fit quality substitutes for it.
+    </Fragment>
+    <Fragment slot="limit">
+      Synthetic throughout, and wellbore storage is zero by declared design — so this says
+      nothing about finding where radial flow begins on a real well.
+    </Fragment>
+  </ExecutiveBrief>
 
-  <p>
-    <strong>Synthetic throughout.</strong> {NOT_RUN.fieldData}
-  </p>
-
-  <section id="overview" aria-labelledby="overview-h">
-    <h2 id="overview-h">Overview</h2>
+  <section id="instrument" aria-labelledby="instrument-h">
+    <h2 id="instrument-h">1. The instrument works</h2>
 
     <p>
-      One well produces at a constant {s.config.truth.rate_stb_per_day} STB/D from a
-      homogeneous, isotropic, infinite reservoir: {s.config.truth.permeability_md} md over
-      {s.config.truth.thickness_ft} ft, porosity {s.config.truth.porosity}, viscosity
-      {s.config.truth.viscosity_cp} cp, skin +{s.config.truth.skin}, and
-      <strong> wellbore storage exactly zero by declared design</strong>. The forward model
-      evaluates the line-source solution. The inverse fits a least-squares line to drawdown
-      against log time over a window declared in advance — dimensionless time
-      {s.b1_0_mathematical_baseline.window.first_dimensionless_time.toExponential(2)} to
-      {s.b1_0_mathematical_baseline.window.last_dimensionless_time.toExponential(2)}, two to
-      four orders past the usual onset of radial flow — and never sees the true parameters.
+      Before attacking an interpretation it is worth establishing that it is not already
+      broken. One well produces at a constant {s.config.truth.rate_stb_per_day} STB/D from a
+      homogeneous, infinite reservoir. The forward model evaluates the line-source solution;
+      the inverse fits a straight line to drawdown against log time over a window declared in
+      advance, and never sees the true parameters.
     </p>
+
+    <KeyComparison
+      value={`${fmt.kh(recovery.permeability_thickness_recovered)} md·ft`}
+      label="permeability-thickness recovered from the data"
+      against={`${fmt.kh(recovery.permeability_thickness_true)} md·ft`}
+      againstLabel="known truth, withheld from the inverse"
+      gap={`Skin recovered ${fmt.skin(recovery.skin_recovered)} against a known ${fmt.skin(recovery.skin_true)}.`}
+    />
 
     <p>
       Every acceptance threshold was derived from an analytic error estimate and committed
-      before any result-producing code existed. {criteriaMet} of {criteriaTotal} criteria are
-      recorded as met in the run's own output. A ninth, determinism, is agreement between
-      two separate runs, which no single run can record about itself; it is checked by
-      executing the case twice and diffing, and is reported in the case report rather than
-      counted here. The residual error is not floating-point noise: it is the exact residue of
-      replacing the exponential integral with its logarithmic asymptote, and the study
-      predicts that residue in advance to six significant figures.
+      before any result-producing code existed.{" "}
+      {criteriaMet} of {criteriaTotal} criteria are recorded as met in the run's own output.
     </p>
 
-    <Callout kind="note" title="The protocol was committed before the code that produced these numbers">
-      <p>
-        The pre-registration is its own git commit, made before the implementation, and it has
-        not been amended, squashed or rebased since. The run embeds that commit and re-derives
-        the protocol file's git blob digest while it executes, so a report quoting a protocol
-        that has drifted is detectable rather than merely unlikely. That establishes internal
-        content linkage as recorded. No signed tag and no trusted timestamp attests to it, so
-        the ordering is self-reported and is not proof against retrospective construction.
-      </p>
-    </Callout>
-
-    <h3>What the study found that transfers</h3>
-    <ul>
-      <li>
-        <strong>Window placement dominates sampling density by three orders of magnitude.</strong>
-        Across a 100-fold change in points per decade the recovery error moves by a factor of
-        {s.b1_1_sampling_and_placement.density_error_spread_ratio.toFixed(2)}. Across three and
-        a half decades of where the window starts it moves by a factor of
-        {Math.round(s.b1_1_sampling_and_placement.placement_error_spread_ratio)}. On clean
-        data, including the early data is far more damaging than logging it coarsely.
-      </li>
-      <li>
-        <strong>The regression determines permeability-thickness, not permeability.</strong> A
-        net-thickness error leaves the reported kh exactly right and moves k by the full
-        factor, so any statement about permeability inherits the whole uncertainty of the
-        net-pay interpretation.
-      </li>
-      <li>
-        <strong>A wrong interpretation still looks like a good fit.</strong> The negative
-        control is {(s.b1_3_negative_control.recovery.permeability_thickness_relative_error * 100).toFixed(2)}
-        {" "}percent wrong on kh and {s.b1_3_negative_control.recovery.skin_absolute_error.toFixed(3)}
-        {" "}out on skin, at an r-squared of {s.b1_3_negative_control.r_squared.toFixed(4)}.
-      </li>
-      <li>
-        <strong>The derivative plateau is not one half.</strong> It approaches one half from
-        below with a deficit of exactly 1/(8 t_D). Testing against the round number would pass
-        while asserting the wrong thing, so the criterion requires the deficit to be present,
-        correctly signed and the right size.
-      </li>
-    </ul>
-  </section>
-
-  <section id="evidence" aria-labelledby="evidence-h">
-    <h2 id="evidence-h">Evidence</h2>
-
-    <Figure
-      id={diagnostic.id}
-      number={diagnostic.number}
-      title={diagnostic.title}
-      svg={diagnostic.svg}
-      units={diagnostic.units}
-      interpretation={`The derivative is flat because the response is a straight line on a semilog plot, which is the definition of the regime. Measured against the closed form the worst error is ${sci(s.b1_0_mathematical_baseline.derivative.max_relative_error_against_closed_form, 2)} relative. A flat derivative identifies the regime; it does not identify the reservoir.`}
-      caveat={diagnostic.caveat}
-      longDescription={diagnostic.longDescription}
-      evidenceClass={diagnostic.evidenceClass}
-      svgDownload={diagnostic.svgDownload}
-      dataDownload={derivativeCsv.path}
-      dataDownloadLabel={derivativeCsv.name}
-    />
+    <p class="note-line">
+      A ninth, determinism, is agreement between two separate runs, which
+      no single run can record about itself; it is checked by executing the case twice and
+      diffing, and is reported in the case report rather than counted here. The recovery is
+      exact to about six significant figures — the residue of replacing the exponential
+      integral with its logarithmic asymptote, not floating-point noise — and the{" "}
+      <a href={href("/studies/b1/#technical")}>technical evidence</a> carries the full values.
+    </p>
 
     <Figure
       id={semilog.id}
+      role="hero"
       number={semilog.number}
-      title={semilog.title}
+      title="The straight line that recovers the right answer"
       svg={semilog.svg}
       units={semilog.units}
-      interpretation={`Slope ${s.b1_0_mathematical_baseline.fit.slope_psi_per_cycle.toPrecision(8)} psi per cycle gives kh = ${nine(recovery.permeability_thickness_recovered)} md·ft against a true ${recovery.permeability_thickness_true}, and the line's value at one hour gives skin ${nine(recovery.skin_recovered)} against a true ${recovery.skin_true}.`}
+      interpretation={`The semilog slope gives permeability-thickness ${fmt.kh(recovery.permeability_thickness_recovered)} md·ft against a known ${fmt.kh(recovery.permeability_thickness_true)}, and the line's value at one hour gives skin ${fmt.skin(recovery.skin_recovered)} against a known ${fmt.skin(recovery.skin_true)}.`}
       caveat={semilog.caveat}
       longDescription={semilog.longDescription}
       evidenceClass={semilog.evidenceClass}
@@ -261,118 +217,30 @@ const description =
       dataDownload={pressureCsv.path}
       dataDownloadLabel={pressureCsv.name}
     />
-
-    <Figure
-      id={sampling.id}
-      number={sampling.number}
-      title={sampling.title}
-      svg={sampling.svg}
-      units={sampling.units}
-      interpretation={`Density spread ${s.b1_1_sampling_and_placement.density_error_spread_ratio.toFixed(2)}x against placement spread ${Math.round(s.b1_1_sampling_and_placement.placement_error_spread_ratio)}x. Placement dominates — ${s.b1_1_sampling_and_placement.placement_dominates ? "as the protocol predicted before the run" : "contrary to the protocol's prediction"}.`}
-      caveat={sampling.caveat}
-      longDescription={sampling.longDescription}
-      evidenceClass={sampling.evidenceClass}
-      svgDownload={sampling.svgDownload}
-    />
-
-    <Figure
-      id={noise.id}
-      number={noise.number}
-      title={noise.title}
-      svg={noise.svg}
-      units={noise.units}
-      interpretation="Two hundred seeds at each of four noise levels. The purpose was to measure degradation, not to demonstrate robustness, and the table below is the measurement."
-      caveat={noise.caveat}
-      longDescription={noise.longDescription}
-      evidenceClass={noise.evidenceClass}
-      tableLabel="Data table — degradation under pressure noise"
-      tableOpen={true}
-      svgDownload={noise.svgDownload}
-    >
-      <DataTable
-        caption="Mean and 95th percentile of the recovery error over 200 seeds per level. For scale, the semilog slope is about 43 psi per cycle, so 0.1 psi is a good gauge and 10 psi is a bad one."
-        captionTitle="Table B1-04"
-        columns={[
-          { key: "sigma", label: "Gauge sigma", unit: "psi", rowHeader: true, numeric: true },
-          { key: "khMean", label: "mean |dk/k|", numeric: true },
-          { key: "khP95", label: "p95 |dk/k|", numeric: true },
-          { key: "sMean", label: "mean |ds|", numeric: true },
-          { key: "sP95", label: "p95 |ds|", numeric: true },
-        ]}
-        rows={s.b1_2_pressure_noise.levels.map((level) => ({
-          sigma: level.sigma_psi.toFixed(1),
-          khMean: sci(level.kh_relative_error_mean, 2),
-          khP95: sci(level.kh_relative_error_p95, 2),
-          sMean: sci(level.skin_absolute_error_mean, 2),
-          sP95: sci(level.skin_absolute_error_p95, 2),
-        }))}
-        id="t-b1-04"
-      />
-      <Fragment slot="footnote">
-        <p>
-          The error is proportional to the gauge sigma, which is what a linear estimator under
-          additive noise must do and is therefore a check on the estimator rather than a
-          discovery. At a 10 psi gauge the 95th percentile skin error is
-          {" "}{s.b1_2_pressure_noise.levels[s.b1_2_pressure_noise.levels.length - 1].skin_absolute_error_p95.toFixed(2)},
-          {" "}which is the difference between reporting a moderately damaged well and a badly
-          damaged one. This is also the forgiving noise model: independent, per-point and
-          zero-mean. Real gauge error carries shared calibration bias and temporal correlation,
-          and a systematic offset is exactly the error class the semilog intercept converts
-          straight into skin.
-        </p>
-      </Fragment>
-    </Figure>
-
-    <Figure
-      id={control.id}
-      number={control.number}
-      title={control.title}
-      svg={control.svg}
-      units={control.units}
-      interpretation={`The negative control must fail, and it does: kh is ${(s.b1_3_negative_control.recovery.permeability_thickness_relative_error * 100).toFixed(2)} percent wrong against a threshold of ${s.config.thresholds.C3_kh_relative}. It fails while producing an r-squared of ${s.b1_3_negative_control.r_squared.toFixed(4)}, which is the point of running it.`}
-      caveat={control.caveat}
-      longDescription={control.longDescription}
-      evidenceClass={control.evidenceClass}
-      svgDownload={control.svgDownload}
-    />
   </section>
 
   <section id="visibility" aria-labelledby="visibility-h">
-    <h2 id="visibility-h">What the diagnostics cannot see</h2>
+    <h2 id="visibility-h">2. Several wrong interpretations remain internally convincing</h2>
 
     <p>
-      Ten analyst errors were seeded into an otherwise perfect interpretation of the same
-      data. Each is scored against the truth, which only this study has, and against the two
-      diagnostics a real interpretation actually has: the fit's r-squared, and whether the
-      derivative plateau agrees with the kh the regression reports — both computed with the
-      analyst's own, possibly wrong, metadata, because that is the only version of the check
-      anyone can run on a real well.
+      Those errors are listed below. The data never changed;
+      only the interpretation did. Each error is scored against the truth, which only this
+      study has, and against the two things a real interpretation actually has: the fit's
+      r-squared, and whether the derivative plateau agrees with the permeability-thickness the
+      regression reports — both computed with the analyst's own, possibly wrong, metadata,
+      because that is the only version of the check anyone can run on a real well.
     </p>
 
-    <DataTable
-      caption="Seeded analyst errors. 'Wrong, and SILENT' means the error breached an acceptance criterion while moving neither diagnostic. Both flags are computed in the run, so the verdicts are the artefact's and not the author's."
-      captionTitle="Table B1-D1"
-      columns={[
-        { key: "defect", label: "Seeded error", rowHeader: true },
-        { key: "kh", label: "kh error", numeric: true },
-        { key: "k", label: "k error", numeric: true },
-        { key: "skin", label: "skin error", numeric: true },
-        { key: "r2", label: "r-squared", numeric: true },
-        { key: "consistency", label: "derivative vs fit", numeric: true },
-        { key: "verdict", label: "Verdict" },
-      ]}
-      rows={visibilityRows}
-      id="t-b1-d1"
-    />
+    <DefectMatrix rows={visibility.rows} annotate="rate 1.589x wrong (m3/d read as STB/D)" />
 
     <Callout kind="limitation" title="Nothing inside a well-test interpretation can validate its own inputs">
       <p>
-        Every metadata error in the table is silent: rate, net thickness, wellbore radius,
-        porosity and viscosity each leave r-squared at 1 to eight decimals and leave the
-        consistency check at its noise floor, while putting kh up to 59 percent wrong. This is
-        not a weakness of the implementation but the structure of the problem — those
-        quantities enter as multiplicative constants after the regression, and the consistency
-        check is blind to them because both sides use the same wrong number.
+        Every metadata error above is silent: rate, net thickness, wellbore radius, porosity
+        and viscosity each leave r-squared at 1 to eight decimals and leave the consistency
+        check at its noise floor. This is not a weakness of the implementation but the
+        structure of the problem — those quantities enter as multiplicative constants after
+        the regression, and the consistency check is blind to them because both sides use the
+        same wrong number.
       </p>
       <p>
         Two errors are caught. A wrong time zero curves the data rather than shifting it, so
@@ -383,16 +251,47 @@ const description =
       </p>
     </Callout>
 
+    <p class="note-line">
+      This experiment is post-hoc. It was not pre-registered, it gates nothing, and it changed
+      no threshold. It is here because the recovery above is a claim about a defect class, and
+      a claim about a defect class is worth nothing until the class is measured. Both flags
+      are computed in the run and recorded in its summary, so the counts are the artefact's
+      and not the author's — the full scored table is in the{" "}
+      <a href={href("/studies/b1/#technical")}>technical evidence</a>.
+    </p>
+  </section>
+
+  <section id="matters" aria-labelledby="matters-h">
+    <h2 id="matters-h">3. Why this matters</h2>
+
     <p>
-      This block is post-hoc. It was not pre-registered, it gates nothing, and it changed no
-      threshold. It is on this page because the recovery figure above is a claim about a
-      defect class, and a claim about a defect class is worth nothing until the class is
-      measured.
+      A well-test inverse calculation can verify that its answer is consistent with its own
+      model. That is a real and useful property, and section 1 is what establishes it. It is
+      not the same property as being right.
+    </p>
+
+    <p>
+      It cannot independently validate the data it was handed. Rate allocation, net pay,
+      viscosity and porosity all enter as multiplicative constants after the regression, so an
+      error in any of them passes straight through to the reported answer while every
+      diagnostic the interpretation can compute stays exactly where it was. The practical
+      consequence is that the quality assurance which determines whether a well-test number is
+      trustworthy happens before the interpretation starts, on the inputs — not inside it, on
+      the fit.
+    </p>
+
+    <p>
+      Two specific consequences are worth carrying. The regression determines
+      permeability-thickness, not permeability: a net-thickness error leaves the reported
+      product exactly right and moves the permeability by the full factor, so any statement
+      about permeability inherits the whole uncertainty of the net-pay interpretation. And a
+      sign error is invisible in permeability and catastrophic in skin, caught only if someone
+      plots the derivative and looks at it.
     </p>
   </section>
 
   <section id="limits" aria-labelledby="limits-h">
-    <h2 id="limits-h">What this study does not establish</h2>
+    <h2 id="limits-h">4. What this study does not establish</h2>
 
     <Callout kind="limitation" title="Wellbore storage is zero by design, and that is the largest gap">
       <p>
@@ -448,6 +347,132 @@ const description =
     </Callout>
   </section>
 
+  <section id="technical" aria-labelledby="technical-h">
+    <h2 id="technical-h">5. Technical evidence</h2>
+
+    <p>
+      The detailed response, the sampling and noise studies, the negative control and the full
+      scored defect table. None of this changes the conclusions above; it is what they rest on.
+    </p>
+
+    <Figure
+      id={diagnostic.id}
+      role="technical"
+      number={diagnostic.number}
+      title={diagnostic.title}
+      svg={diagnostic.svg}
+      units={diagnostic.units}
+      interpretation={`The derivative is flat because the response is a straight line on a semilog plot, which is the definition of the regime. Measured against the closed form the worst error is ${sci(s.b1_0_mathematical_baseline.derivative.max_relative_error_against_closed_form, 2)} relative. A flat derivative identifies the regime; it does not identify the reservoir.`}
+      caveat={diagnostic.caveat}
+      longDescription={diagnostic.longDescription}
+      evidenceClass={diagnostic.evidenceClass}
+      svgDownload={diagnostic.svgDownload}
+      dataDownload={derivativeCsv.path}
+      dataDownloadLabel={derivativeCsv.name}
+    />
+
+    <Figure
+      id={sampling.id}
+      role="technical"
+      number={sampling.number}
+      title={sampling.title}
+      svg={sampling.svg}
+      units={sampling.units}
+      interpretation={`Density spread ${s.b1_1_sampling_and_placement.density_error_spread_ratio.toFixed(2)}x against placement spread ${Math.round(s.b1_1_sampling_and_placement.placement_error_spread_ratio)}x. Placement dominates — ${s.b1_1_sampling_and_placement.placement_dominates ? "as the protocol predicted before the run" : "contrary to the protocol's prediction"}.`}
+      caveat={sampling.caveat}
+      longDescription={sampling.longDescription}
+      evidenceClass={sampling.evidenceClass}
+      svgDownload={sampling.svgDownload}
+    />
+
+    <Figure
+      id={noise.id}
+      role="technical"
+      number={noise.number}
+      title={noise.title}
+      svg={noise.svg}
+      units={noise.units}
+      interpretation="Two hundred seeds at each of four noise levels. The purpose was to measure degradation, not to demonstrate robustness, and the table below is the measurement."
+      caveat={noise.caveat}
+      longDescription={noise.longDescription}
+      evidenceClass={noise.evidenceClass}
+      tableLabel="Data table — degradation under pressure noise"
+      tableOpen={true}
+      svgDownload={noise.svgDownload}
+    >
+      <DataTable
+        caption="Mean and 95th percentile of the recovery error over 200 seeds per level. For scale, the semilog slope is about 43 psi per cycle, so 0.1 psi is a good gauge and 10 psi is a bad one."
+        captionTitle="Table B1-04"
+        columns={[
+          { key: "sigma", label: "Gauge sigma", unit: "psi", rowHeader: true, numeric: true },
+          { key: "khMean", label: "mean |dk/k|", numeric: true },
+          { key: "khP95", label: "p95 |dk/k|", numeric: true },
+          { key: "sMean", label: "mean |ds|", numeric: true },
+          { key: "sP95", label: "p95 |ds|", numeric: true },
+        ]}
+        rows={s.b1_2_pressure_noise.levels.map((level) => ({
+          sigma: level.sigma_psi.toFixed(1),
+          khMean: sci(level.kh_relative_error_mean, 2),
+          khP95: sci(level.kh_relative_error_p95, 2),
+          sMean: sci(level.skin_absolute_error_mean, 2),
+          sP95: sci(level.skin_absolute_error_p95, 2),
+        }))}
+        id="t-b1-04"
+      />
+      <Fragment slot="footnote">
+        <p>
+          The error is proportional to the gauge sigma, which is what a linear estimator under
+          additive noise must do and is therefore a check on the estimator rather than a
+          discovery. At a 10 psi gauge the 95th percentile skin error is
+          {" "}{s.b1_2_pressure_noise.levels[s.b1_2_pressure_noise.levels.length - 1].skin_absolute_error_p95.toFixed(2)},
+          {" "}which is the difference between reporting a moderately damaged well and a badly
+          damaged one. This is also the forgiving noise model: independent, per-point and
+          zero-mean. Real gauge error carries shared calibration bias and temporal correlation,
+          and a systematic offset is exactly the error class the semilog intercept converts
+          straight into skin.
+        </p>
+      </Fragment>
+    </Figure>
+
+    <Figure
+      id={control.id}
+      role="technical"
+      number={control.number}
+      title={control.title}
+      svg={control.svg}
+      units={control.units}
+      interpretation={`The negative control must fail, and it does: kh is ${(s.b1_3_negative_control.recovery.permeability_thickness_relative_error * 100).toFixed(2)} percent wrong against a threshold of ${s.config.thresholds.C3_kh_relative}. It fails while producing an r-squared of ${s.b1_3_negative_control.r_squared.toFixed(4)}, which is the point of running it.`}
+      caveat={control.caveat}
+      longDescription={control.longDescription}
+      evidenceClass={control.evidenceClass}
+      svgDownload={control.svgDownload}
+    />
+
+    <h3>The scored defect table</h3>
+
+    <p>
+      Every seeded error with its measured values, which section 2 classifies rather than
+      lists. &ldquo;Wrong, and SILENT&rdquo; means the error breached an acceptance criterion
+      while moving neither diagnostic.
+    </p>
+
+    <DataTable
+      caption="Seeded analyst errors. 'Wrong, and SILENT' means the error breached an acceptance criterion while moving neither diagnostic. Both flags are computed in the run, so the verdicts are the artefact's and not the author's."
+      captionTitle="Table B1-D1"
+      columns={[
+        { key: "defect", label: "Seeded error", rowHeader: true },
+        { key: "kh", label: "kh error", numeric: true },
+        { key: "k", label: "k error", numeric: true },
+        { key: "skin", label: "skin error", numeric: true },
+        { key: "r2", label: "r-squared", numeric: true },
+        { key: "consistency", label: "derivative vs fit", numeric: true },
+        { key: "verdict", label: "Verdict" },
+      ]}
+      rows={visibilityRows}
+      id="t-b1-d1"
+    />
+  </section>
+
   <section id="reproduce" aria-labelledby="reproduce-h">
     <h2 id="reproduce-h">Reproduce, and download the numbers</h2>
 
@@ -461,8 +486,10 @@ const description =
       its own criteria and then survive a semantic comparison against a declared envelope —
       measured at a worst relative difference of 1.11e-10 across 1100 compared values, with
       every quantity shown on this page bit-identical between macOS arm64 and the canonical
-      container. That measured zero is why the values above are shown to nine significant
-      figures.
+      container. The values above are therefore stable to far more digits than they are
+      printed to; they are printed to the digits the engineering supports, which is a
+      separate and stricter limit. The full-precision values are in the downloads below and
+      in the case report.
     </p>
 
     <ul class="downloads">
@@ -479,7 +506,7 @@ const description =
     </ul>
 
     <p>
-      The full case report, with every derivation and the complete limitations list, is
+      The full case report, with every derivation and the complete limitations list, is{" "}
       <code>cases/B1_iarf_known_answer/report.md</code> in the repository, and the
       pre-registration it was judged against is <code>protocol.md</code> beside it. See also
       {" "}<a href={href("/methods/")}>Methods</a> for how the two reproducibility tiers are
@@ -488,6 +515,14 @@ const description =
   </section>
 
   <style>
+    /* Secondary prose: a qualification a reader may skip on the first pass and must be
+       able to find on the second. Smaller and lighter than body, never hidden. */
+    .note-line {
+      font-size: var(--text-sm);
+      color: var(--c-ink-3);
+      max-width: var(--prose-max);
+    }
+
     .downloads {
       list-style: none;
       padding: 0;

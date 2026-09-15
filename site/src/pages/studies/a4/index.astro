@@ -12,12 +12,15 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import Figure from "../../../components/Figure.astro";
 import DataTable from "../../../components/DataTable.astro";
 import Callout from "../../../components/Callout.astro";
+import ExecutiveBrief from "../../../components/ExecutiveBrief.astro";
+import KeyComparison from "../../../components/KeyComparison.astro";
 import ExplorerScenarios from "../../../components/ExplorerScenarios.astro";
 import { checkedExhibit } from "../../../scripts/exhibits";
 import { residualBound } from "../../../scripts/residual";
 import { baseScenario, truth } from "../../../scripts/scenarios";
 import { download, downloads } from "../../../scripts/public-data";
 import { NAV, GATE, FOUR_STATEMENTS, NOT_RUN } from "../../../scripts/site";
+import * as fmt from "../../../scripts/format";
 import { loadFigureData } from "../../../lib/figures";
 import { href, pageHref } from "../../../lib/urls";
 
@@ -259,13 +262,37 @@ const description =
   <p class="eyebrow">Study A4 — flagship case</p>
   <h1>When a straight p/Z line is convincing and wrong</h1>
 
-  <p class="lede">
-    In an aquifer-supported synthetic case, a volumetric p/Z fit achieves
-    R-squared = {base.rSquared.toFixed(6)} but estimates {base.fittedBscf.toFixed(1)} Bscf
-    against a known {base.trueBscf.toFixed(1)} Bscf: a {base.errorPct.toFixed(1)} percent
-    overestimate. A close fit does not, by itself, establish that the volumetric assumption
-    is appropriate. Full-precision values are in the tables below and in the CSV export.
-  </p>
+  <ExecutiveBrief>
+    <Fragment slot="question">
+      An aquifer supports a dry-gas reservoir that is being interpreted with the volumetric
+      p/Z model. How wrong is the recovered gas in place, and could anyone have told from the
+      data alone?
+    </Fragment>
+    <Fragment slot="finding">
+      The fit is excellent and the answer is badly wrong: R-squared =
+      {" "}{fmt.rSquared(base.rSquared)} against an inventory
+      {" "}{fmt.percent(base.errorPct / 100)} too high. Over most of the range the quality of
+      the fit does not indicate the size of the error.
+    </Fragment>
+    <Fragment slot="implication">
+      Goodness of fit is not evidence that the model is the right model. A volumetric p/Z
+      estimate needs an independent reason to believe the tank assumption — low water
+      production is not one, and neither is a straight line.
+    </Fragment>
+    <Fragment slot="limit">
+      Synthetic throughout, and one drive mechanism. This demonstrates that a convincing fit
+      can be structurally wrong; it does not quantify how often that happens on real fields.
+    </Fragment>
+  </ExecutiveBrief>
+
+  <KeyComparison
+    value={`${fmt.bscf(base.fittedBscf)} Bscf`}
+    label="gas in place the volumetric fit reports"
+    against={`${fmt.bscf(base.trueBscf)} Bscf`}
+    againstLabel="known truth, withheld from the estimator"
+    gap={`An overestimate of ${fmt.bscf(base.fittedBscf - base.trueBscf)} Bscf, or ${fmt.percent(base.errorPct / 100)}, from a fit with R-squared = ${fmt.rSquared(base.rSquared)}.`}
+    tone="exception"
+  />
 
   <p>
     <strong>Synthetic throughout.</strong> {NOT_RUN.fieldData}
@@ -366,6 +393,7 @@ const description =
 
     <Figure
       id={f01.id}
+      role="hero"
       number={f01.number}
       title={f01.title}
       svg={f01.svg}
@@ -398,6 +426,7 @@ const description =
 
     <Figure
       id={f01b.id}
+      role="supporting"
       number={f01b.number}
       title={f01b.title}
       svg={f01b.svg}
@@ -420,6 +449,7 @@ const description =
 
     <Figure
       id={f02.id}
+      role="supporting"
       number={f02.number}
       title={f02.title}
       svg={f02.svg}
@@ -443,6 +473,7 @@ const description =
 
     <Figure
       id={f03.id}
+      role="technical"
       number={f03.number}
       title={f03.title}
       svg={f03.svg}
@@ -491,6 +522,7 @@ const description =
 
     <Figure
       id={f04.id}
+      role="technical"
       number={f04.number}
       title={f04.title}
       svg={f04.svg}
@@ -536,6 +568,7 @@ const description =
 
     <Figure
       id={f05.id}
+      role="technical"
       number={f05.number}
       title={f05.title}
       svg={f05.svg}
@@ -600,6 +633,7 @@ const description =
 
     <Figure
       id={f06.id}
+      role="technical"
       number={f06.number}
       title={f06.title}
       svg={f06.svg}
@@ -651,6 +685,7 @@ const description =
 
     <Figure
       id={f07.id}
+      role="technical"
       number={f07.number}
       title={f07.title}
       svg={f07.svg}
@@ -690,6 +725,7 @@ const description =
 
     <Figure
       id={f08.id}
+      role="technical"
       number={f08.number}
       title={f08.title}
       svg={f08.svg}
