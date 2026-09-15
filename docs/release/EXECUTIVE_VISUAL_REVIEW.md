@@ -258,6 +258,25 @@ captures.
 Do not run `npm run build` or `scripts/build_release.py` to preview: both begin by
 re-rendering every figure, which replaces the canonical Linux rasters with local ones.
 
+## Remaining visual compromises
+
+**A suppressed figure title is still a heading.** `titleVisible={false}` hides the title
+visually but leaves it in the document outline, so a reader navigating by heading hears the
+narrative section heading and then the figure's own title, interleaved. A sighted reader
+scanning the page sees only the narrative headings. The alternative — demoting the title
+from a heading to a span — would clean the outline at the cost of removing figure-level
+heading navigation, which is a real aid. Left as is deliberately, and recorded here because
+the two audiences get a different sequence.
+
+**In-frame figure text still dominates some frames.** F01 carries five or six lines of
+footnote inside the SVG, and the B1 figures are similar. That is the frozen renderer. The
+page-level duplication around them has been removed; the text inside them has not, and
+cannot be in a presentation-only pass.
+
+**A4 remains the longest page on the site.** It carries nine figures, a scenario explorer,
+a decision memo and a references section, all of which are evidence the study genuinely
+rests on. The pass re-ordered and re-weighted them; it did not remove any.
+
 ## What this pass deliberately did not do
 
 - It did not touch the figure renderer. Every SVG and PNG is the committed canonical
