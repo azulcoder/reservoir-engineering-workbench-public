@@ -366,6 +366,32 @@ counters, gauges) actively distort a number that the entire page exists to state
 pass and has not had one. Shipping untested dark values would defeat the purpose of measuring
 the light ones.
 
+**D29. A figure carries a role, and the role changes weight only.** `Figure` takes
+`role="hero" | "supporting" | "technical"`. A hero is the one figure that carries a study's
+conclusion, and there is normally one per study; a technical figure is evidence a reviewer
+checks. The role changes margin and title size. It does not change the caption, the caveat,
+the long description, the data table, the downloads or the accessible name, and it never
+hides anything. The problem it solves is that a reader met nine equally weighted figures and
+had to work out which one contained the finding.
+
+**D30. Display precision is decided per quantity, in one module.** `site/src/scripts/format.ts`
+holds the rule for permeability-thickness, permeability, skin, gas volume, R-squared,
+percentages and small relative errors, each with the reason for its digits written next to
+it. There is deliberately no global decimal rule: a kh, a skin and an R-squared have
+different resolutions, and rounding them alike would be a formatting convention wearing the
+costume of a measurement claim. R-squared keeps six decimals precisely because both flagship
+findings turn on it staying indistinguishable from 1 while the answer is wrong. Raw
+scientific output is untouched; this governs presentation only, and the full-precision values
+stay in the downloads and the case reports.
+
+**D31. B1's defect-visibility result is a classification, not a table.** It was a
+seven-column table of scientific notation whose last column held the verdict, and at 1440
+that column was clipped off the right edge — the cell reading "wrong, and SILENT" was the one
+a reader could not see. It is now four groups keyed on the experiment's own two flags. The
+silent-and-wrong group is marked three ways: a count, a heading that says "and nothing showed
+it" in words, and the reserved contrast colour. Colour is the third channel and never the
+only one. The full scored table is preserved in the technical-evidence section.
+
 ## 11. What this research does not guarantee
 
 Stated plainly, because the rest of this file reads more confident than the evidence
