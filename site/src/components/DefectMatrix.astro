@@ -1,0 +1,231 @@
+---
+/**
+ * B1's defect-visibility experiment, as a classification rather than as a table.
+ *
+ * Why this replaces a table
+ * -------------------------
+ * The experiment's conclusion lived in the last column of a seven-column table of
+ * scientific notation. At 1440 that column was clipped off the right edge, so the one
+ * cell that said "wrong, and SILENT" was the cell a reader could not see. The numbers
+ * still matter and are still on the page -- they are in the technical evidence below and
+ * in b1_defect_visibility.csv -- but they are not the finding. The finding is which
+ * quadrant each seeded error lands in.
+ *
+ * The two axes are the experiment's own, not new categories:
+ *
+ *   materially_wrong        breached C3 or C4, the case's own acceptance criteria
+ *   visible_without_truth   moved r-squared by more than 1e-6, or moved the
+ *                           derivative-versus-fit check to more than ten times where it
+ *                           sits on a clean interpretation
+ *
+ * Both flags are computed in cases/B1_iarf_known_answer/run.py and recorded in the run's
+ * summary. This component reads them; it does not recompute or reinterpret them.
+ *
+ * Accessibility
+ * -------------
+ * The quadrant is a definition list of four groups, not a grid of coloured boxes. Each
+ * group names its own classification in words, so the meaning survives greyscale, forced
+ * colours, a screen reader and a printer. The reserved contrast colour marks the
+ * silent-and-wrong group, and the same group is also the only one whose heading says
+ * "and nothing showed it" -- colour is a second channel, never the only one.
+ */
+export interface DefectRow {
+  defect: string;
+  kind?: string;
+  permeability_thickness_relative_error: number;
+  permeability_relative_error: number;
+  skin_absolute_error: number;
+  r_squared: number;
+  derivative_versus_fit_relative_difference: number;
+  visible_without_truth?: boolean;
+  materially_wrong?: boolean;
+}
+
+export interface Props {
+  rows: DefectRow[];
+  /** Optional defect name to annotate as the worst case. */
+  annotate?: string;
+}
+const { rows, annotate } = Astro.props;
+
+/* The baseline carries no verdict flags: it is the reference, not a seeded error. */
+const seeded = rows.filter((r) => r.visible_without_truth !== undefined);
+
+const groups = [
+  {
+    key: "silent-wrong",
+    heading: "Materially wrong, and nothing showed it",
+    gloss:
+      "Breached an acceptance criterion while leaving every diagnostic available without the answer unmoved.",
+    match: (r: DefectRow) => r.materially_wrong && !r.visible_without_truth,
+    tone: "exception" as const,
+  },
+  {
+    key: "seen-wrong",
+    heading: "Materially wrong, and a diagnostic moved",
+    gloss: "Breached an acceptance criterion, and the fit or the derivative check showed it.",
+    match: (r: DefectRow) => r.materially_wrong && r.visible_without_truth,
+    tone: "neutral" as const,
+  },
+  {
+    key: "silent-ok",
+    heading: "Within criteria, and nothing showed it",
+    gloss: "Stayed inside the acceptance criteria, so there was nothing for a diagnostic to catch.",
+    match: (r: DefectRow) => !r.materially_wrong && !r.visible_without_truth,
+    tone: "neutral" as const,
+  },
+  {
+    key: "seen-ok",
+    heading: "Within criteria, and a diagnostic moved",
+    gloss: "Stayed inside the acceptance criteria while still disturbing a diagnostic.",
+    match: (r: DefectRow) => !r.materially_wrong && r.visible_without_truth,
+    tone: "neutral" as const,
+  },
+].map((g) => ({ ...g, members: seeded.filter(g.match) }));
+
+/** Largest permeability-thickness error, as a percentage, for the annotated defect. */
+function worstKhPercent(name: string): string | null {
+  const row = seeded.find((r) => r.defect === name);
+  if (!row) return null;
+  return `${(row.permeability_thickness_relative_error * 100).toFixed(0)} percent`;
+}
+const annotated = annotate ? seeded.find((r) => r.defect === annotate) : undefined;
+const annotatedKh = annotate ? worstKhPercent(annotate) : null;
+---
+
+<div class="dm">
+  <dl class="dm__groups">
+    {
+      groups
+        .filter((g) => g.members.length > 0)
+        .map((g) => (
+          <div class:list={["dm__group", g.tone === "exception" && "dm__group--exception"]}>
+            <dt class="dm__heading">
+              <span class="dm__count">{g.members.length}</span>
+              <span class="dm__label">{g.heading}</span>
+              <span class="dm__gloss">{g.gloss}</span>
+            </dt>
+            <dd class="dm__members">
+              <ul>
+                {g.members.map((m) => (
+                  <li>{m.defect}</li>
+                ))}
+              </ul>
+            </dd>
+          </div>
+        ))
+    }
+  </dl>
+
+  {
+    annotated && annotatedKh && (
+      <p class="dm__annotation">
+        <strong>The worst of them:</strong> reading a rate in m³/d as STB/D puts
+        permeability-thickness {annotatedKh} wrong, and the fit it comes from still returns an
+        r-squared of {annotated.r_squared.toFixed(8)}. Nothing a reader could see would tell them
+        to look.
+      </p>
+    )
+  }
+</div>
+
+<style>
+  .dm {
+    margin-block: var(--space-6);
+  }
+
+  .dm__groups {
+    margin: 0;
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  .dm__group {
+    display: grid;
+    gap: var(--space-3);
+    padding-inline-start: var(--space-4);
+    border-inline-start: 3px solid var(--c-rule);
+  }
+
+  .dm__group--exception {
+    border-inline-start-color: var(--c-contrast-mark);
+  }
+
+  /* Wraps rather than holding two fixed columns: at 320px with the reader's text doubled
+     a content-sized grid column cannot shrink and the page gains a horizontal scrollbar. */
+  .dm__heading {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--space-4);
+    row-gap: var(--space-1);
+    align-items: baseline;
+  }
+
+  .dm__label,
+  .dm__gloss {
+    min-width: 0;
+    overflow-wrap: break-word;
+  }
+
+  .dm__count {
+    font-size: var(--text-xl);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--c-ink-3);
+  }
+
+  .dm__group--exception .dm__count {
+    color: var(--c-contrast);
+  }
+
+  .dm__label {
+    font-size: var(--text-md);
+    color: var(--c-ink);
+  }
+
+  .dm__group--exception .dm__label {
+    font-weight: 600;
+  }
+
+  .dm__gloss {
+    flex: 1 0 100%;
+    font-size: var(--text-sm);
+    color: var(--c-ink-3);
+    max-width: var(--prose-max);
+  }
+
+  .dm__members {
+    margin: 0;
+  }
+
+  .dm__members ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+  }
+
+  .dm__members li {
+    font-size: var(--text-sm);
+    color: var(--c-ink-2);
+    padding-inline-start: var(--space-3);
+    border-inline-start: 1px solid var(--c-rule);
+  }
+
+  .dm__annotation {
+    margin-block-start: var(--space-6);
+    padding-inline-start: var(--space-5);
+    border-inline-start: 3px solid var(--c-contrast-mark);
+    font-size: var(--text-base);
+    color: var(--c-ink-2);
+    max-width: var(--prose-max);
+  }
+
+  @media (min-width: 52rem) {
+    .dm__members {
+      grid-column: 2;
+    }
+  }
+</style>

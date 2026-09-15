@@ -781,6 +781,15 @@ jobs:
           raise SystemExit(1 if problems else 0)
           PY
 
+      # A restructure that moves content between reading depths fails silently: the page
+      # builds, renders and tests green while a whole category of evidence has gone. This
+      # checks categories rather than prose, against the built HTML, so it tests what a
+      # reader receives. Two categories it is known to catch are the scenario explorer and
+      # the four-statements scoping callout, both of which were dropped and restored during
+      # the executive visual refactor.
+      - name: Every required evidence category is still on the flagship pages
+        run: python3 scripts/check_page_content.py --dist "site/${{ matrix.leg.dist }}"
+
       - name: The committed figures and downloads did not drift
         # Not part of the canonical sequence, and not a restatement of it. The sequence
         # REGENERATES site/src/generated/figures and site/public/data in place and then

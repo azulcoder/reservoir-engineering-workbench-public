@@ -2,28 +2,50 @@
 /**
  * Home.
  *
- * What the project is, the scope line, the flagship finding and its figure, and one main
- * action. The distinction between numerical verification, conditional reconstruction,
- * physical interpretation and decision adequacy belongs on the methods page, which states
- * all four in full; repeating it here made the first thing a reader met an argument about
- * evidence rather than a description of the work.
+ * The portfolio is communicated through its two flagship findings, A4 and B1, and through
+ * nothing else above the fold. Both are the same shape of result -- a number that looks
+ * trustworthy and is not -- and stating them together is the argument the site is making.
+ *
+ * What deliberately does not appear here any more: test counts, continuous-integration
+ * detail, canonical-environment detail and release history. None of it was deleted; it is
+ * on the methods page, which is where a reader who wants it goes looking. Putting it on
+ * the home page meant the first thing a reader met was an argument about evidence rather
+ * than a finding.
+ *
+ * Every number below is read from a case artefact through the checked data path. Nothing
+ * on this page is typed in by hand.
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Figure from "../components/Figure.astro";
-import Callout from "../components/Callout.astro";
+import KeyComparison from "../components/KeyComparison.astro";
 import { checkedExhibit } from "../scripts/exhibits";
 import { baseScenario, truth } from "../scripts/scenarios";
-import { download } from "../scripts/public-data";
-import { NAV, NOT_RUN, VERIFICATION, SITE_NAME } from "../scripts/site";
+import { readJson } from "../scripts/public-data";
+import { NAV, NOT_RUN, SITE_NAME } from "../scripts/site";
 import { href } from "../lib/urls";
+import * as fmt from "../scripts/format";
 
 const f01 = await checkedExhibit("F01");
 const base = await baseScenario();
 const trueG = await truth();
-const f01Csv = await download("f01_f02_scenarios_all.csv");
+
+interface B1Summary {
+  b1_0_mathematical_baseline: {
+    recovery: { permeability_thickness_recovered: number; permeability_thickness_true: number };
+  };
+  diagnostic_defect_visibility: {
+    rows: Array<{ visible_without_truth?: boolean }>;
+    silent_but_materially_wrong_count: number;
+  };
+}
+const b1 = await readJson<B1Summary>("b1_summary.json");
+const silent = b1.diagnostic_defect_visibility.silent_but_materially_wrong_count;
+const seeded = b1.diagnostic_defect_visibility.rows.filter(
+  (r) => r.visible_without_truth !== undefined,
+).length;
 
 const description =
-  "Reproducible studies of gas-reservoir material balance and gas-in-place estimation, using synthetic depletion histories to examine how aquifer support and modelling assumptions affect the results.";
+  "Two synthetic studies of when a convincing reservoir-engineering answer is wrong: a near-perfect p/Z fit that overstates inventory, and a working well-test interpretation that stays convincing while its inputs are wrong.";
 ---
 
 <BaseLayout
@@ -37,126 +59,214 @@ const description =
   <h1>{SITE_NAME}</h1>
 
   <p class="lede">
-    Reproducible studies of gas-reservoir material balance and gas-in-place estimation, and
-    now of pressure-transient interpretation. Synthetic histories are used to examine how
-    aquifer support, modelling assumptions and analyst choices affect the results. Each
-    published study includes calculations, visual evidence, and interpretation — and, where
-    it was measured, which errors the diagnostics would not have caught.
+    Two questions run through this work: when does a reservoir-engineering answer look right
+    and turn out to be wrong, and what would have had to be different for anyone to notice?
   </p>
 
-  <p class="home__scope">Synthetic case studies; not field-validated.</p>
-
-  <p class="home__actions">
-    <a class="home__cta" href={href("/studies/a4/")}>
-      Read the flagship case — when a straight p/Z line is convincing and wrong
-    </a>
-    <a class="home__secondary" href={href("/methods/")}>
-      How to check any of it
-    </a>
+  <p class="home__scope">
+    Synthetic case studies, each reproducible from a committed protocol. Not field-validated.
   </p>
 
-  <h2>The finding, in one figure</h2>
+  <section class="finding" aria-labelledby="a4-h">
+    <p class="eyebrow">Flagship finding — material balance</p>
+    <h2 id="a4-h">
+      <a href={href("/studies/a4/")}>A near-perfect straight line can still give the wrong inventory</a>
+    </h2>
 
-  <p>
-    In an aquifer-supported synthetic case, a volumetric p/Z fit achieves
-    R-squared = {base.rSquared.toFixed(6)} but estimates {base.fittedBscf.toFixed(1)} Bscf
-    against a known {trueG.bscf.toFixed(1)} Bscf: a {base.errorPct.toFixed(1)} percent
-    overestimate. A close fit does not, by itself, establish that the volumetric assumption
-    is appropriate. The full-precision values are on the
-    {" "}<a href={href("/studies/a4/")}>case page</a>.
-  </p>
+    <KeyComparison
+      value={`${fmt.bscf(base.fittedBscf)} Bscf`}
+      label="gas in place the p/Z fit reports"
+      against={`${fmt.bscf(trueG.bscf)} Bscf`}
+      againstLabel="known truth, withheld from the estimator"
+      gap={`The fit that produced it has R-squared = ${fmt.rSquared(base.rSquared)}.`}
+      tone="exception"
+    />
 
-  <Figure
-    id={f01.id}
-    number={f01.number}
-    title={f01.title}
-    svg={f01.svg}
-    units={f01.units}
-    interpretation="The observed points and the fitted line are visually indistinguishable over the observed interval, and the line's extrapolated x-intercept lands 12.5 Bscf to the right of the truth."
-    caveat={f01.caveat}
-    longDescription={f01.longDescription}
-    evidenceClass={f01.evidenceClass}
-    tableLabel="Where the numbers behind this figure are"
-    svgDownload={f01.svgDownload}
-    dataDownload={f01Csv.path}
-    dataDownloadLabel={f01Csv.name}
-  >
     <p>
-      The full table of all {base.observations} observations, the other seven computed
-      aquifer strengths and the residual structure are on the
-      {" "}<a href={href("/studies/a4/")}>case page</a>. The complete export is the CSV linked
-      below this figure.
+      The interpretation overstates the inventory by {fmt.percent(base.errorPct / 100)} and the
+      fit gives no warning. <strong>Fit quality does not establish model adequacy.</strong>
     </p>
-  </Figure>
 
-  <h2>What is here, and what is deliberately not</h2>
+  </section>
 
-  <Callout kind="note" title="Synthetic throughout">
-    <p>{NOT_RUN.fieldData}</p>
-  </Callout>
+  <section class="finding" aria-labelledby="b1-h">
+    <p class="eyebrow">Flagship finding — pressure transient</p>
+    <h2 id="b1-h">
+      <a href={href("/studies/b1/")}>A correct interpretation can still be wrong when its inputs are wrong</a>
+    </h2>
 
-  <ul class="home__facts">
-    <li>
-      <strong>Four studies with committed results</strong>, each re-run from scratch.
-      Canonical snapshots reproduce bitwise in the pinned reference environment; runs on
-      other supported platforms are checked separately for numerical equivalence and for
-      each study's own acceptance criteria. A fifth study is described but cannot ship its
-      exhibits, because its inputs are someone else's data.
-    </li>
-    <li>
-      <strong>{VERIFICATION.testsCollected} tests collected, {VERIFICATION.testsPassed} passed,
-      {" "}{VERIFICATION.testsSkipped} skipped</strong> on {VERIFICATION.date}. The skips are
-      expected and are named on the <a href={href("/methods/")}>methods page</a>: they are the
-      tests that need a reference extract this repository does not redistribute.
-    </li>
-    <li>
-      <strong>Hosted continuous integration, but it is not external validation.</strong>
-      {" "}{NOT_RUN.hostedCi}
-    </li>
-    <li>
-      <strong>No external validation claimed.</strong> {NOT_RUN.externalValidation}
-    </li>
-    <li>
-      <strong>No peer review.</strong> {NOT_RUN.peerReview}
-    </li>
-  </ul>
+    <KeyComparison
+      value={fmt.outOf(silent, seeded)}
+      label="seeded analyst errors that were materially wrong and moved no diagnostic"
+      against={fmt.outOf(seeded - silent, seeded)}
+      againstLabel="errors that either stayed within criteria or were caught"
+      gap="The interpretation itself was established first: it recovers a withheld permeability-thickness and skin essentially exactly."
+      tone="exception"
+    />
+
+    <p>
+      A well-test inverse was shown to work on clean data, then attacked. Wrong rate, wrong net
+      pay, wrong porosity, wrong viscosity: each passes straight through to the reported answer
+      while R-squared stays at 1 to eight decimals.
+      <strong>An interpretation can check itself against its own model; it cannot check the
+      data it was handed.</strong>
+    </p>
+
+  </section>
+
+  <section class="home__evidence" aria-labelledby="evidence-h">
+    <h2 id="evidence-h">The A4 finding, in one figure</h2>
+
+    <Figure
+      id={f01.id}
+      role="hero"
+      number={f01.number}
+      title={f01.title}
+      titleVisible={false}
+      svg={f01.svg}
+      units={f01.units}
+      interpretation={`Observed points and fitted line are visually indistinguishable over the observed interval, and the extrapolated x-intercept lands ${fmt.bscf(base.fittedBscf - trueG.bscf)} Bscf to the right of the truth.`}
+      caveat={f01.caveat}
+      longDescription={f01.longDescription}
+      evidenceClass={f01.evidenceClass}
+      svgDownload={f01.svgDownload}
+    />
+  </section>
+
+  <section class="home__map" aria-labelledby="map-h">
+    <h2 id="map-h">The studies</h2>
+
+    <ol class="map">
+      <li>
+        <span class="map__stage">Stage A — inventory and material balance</span>
+        <span class="map__body">
+          <a href={href("/studies/a1/")}>A1</a> establishes the estimator,{" "}
+          <a href={href("/studies/a3/")}>A3</a> measures what dominates its uncertainty, and{" "}
+          <a href={href("/studies/a4/")}>A4</a> shows it failing while looking convincing.
+          <a href={href("/studies/a2/")}>A2</a> cannot ship its exhibits: its inputs are
+          someone else's data.
+        </span>
+      </li>
+      <li>
+        <span class="map__stage">Stage B — transient interpretation</span>
+        <span class="map__body">
+          <a href={href("/studies/b1/")}>B1</a> establishes a pressure-transient instrument on
+          a known answer, then measures which analyst errors it cannot see.
+        </span>
+      </li>
+      <li class="map--future">
+        <span class="map__stage">Not started</span>
+        <span class="map__body">
+          B2 through B6 — wellbore storage, build-up, boundaries, real-gas pseudopressure, and
+          a case against data this project did not generate. Listed so the gap between what
+          exists and what is intended is visible. None of it has been run.
+        </span>
+      </li>
+    </ol>
+
+    <p class="home__links">
+      <a href={href("/methods/")}>How any of it can be checked</a> ·
+      <a href={href("/about/")}>What this is, and what it is not</a>
+    </p>
+  </section>
+
+  <p class="home__scope home__scope--foot">
+    <strong>Synthetic throughout.</strong> {NOT_RUN.fieldData}
+  </p>
 
   <style>
-    .home__actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-4);
-      align-items: center;
-      margin-block: var(--space-6);
+    .lede {
+      max-width: 54ch;
+      font-size: var(--text-lg);
+      line-height: 1.4;
+      color: var(--c-ink);
+      margin-block-end: var(--space-4);
     }
-    .home__cta {
-      display: inline-flex;
-      align-items: center;
-      min-height: var(--target-min, 2.75rem);
-      padding: var(--space-3) var(--space-4);
-      border: 2px solid var(--c-blue-strong);
-      border-radius: var(--radius-sm);
-      background: var(--c-blue-tint);
-      font-weight: var(--weight-semibold);
-      text-decoration: none;
-    }
-    .home__cta:hover {
-      text-decoration: underline;
-    }
-    .home__secondary {
-      display: inline-flex;
-      align-items: center;
-      min-height: var(--target-min, 2.75rem);
-    }
-    .home__facts {
-      padding-inline-start: var(--space-5);
-    }
-    .home__facts li + li {
-      margin-block-start: var(--space-3);
-    }
+
     .home__scope {
-      font-style: italic;
-      color: var(--c-ink-muted, inherit);
+      font-size: var(--text-sm);
+      color: var(--c-ink-3);
+      max-width: var(--prose-max);
+    }
+
+    .home__scope--foot {
+      margin-block-start: var(--space-9);
+      padding-block-start: var(--space-5);
+      border-block-start: 1px solid var(--c-rule);
+    }
+
+    /* A finding is a section of prose, not a card: no border, no shadow, no rounded
+       corner. Separation comes from space and from the eyebrow. */
+    .finding {
+      margin-block-start: var(--space-8);
+      max-width: var(--prose-max);
+    }
+
+    .finding:first-of-type {
+      margin-block-start: var(--space-7);
+    }
+
+    .finding h2 {
+      margin-block: var(--space-2) 0;
+      font-size: var(--text-xl);
+      line-height: 1.25;
+    }
+
+    .finding h2 a {
+      color: var(--c-ink);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.18em;
+    }
+
+    .finding h2 a:hover,
+    .finding h2 a:focus-visible {
+      color: var(--c-blue-strong);
+    }
+
+    .finding p {
+      max-width: var(--prose-max);
+    }
+
+    .home__evidence,
+    .home__map {
+      margin-block-start: var(--space-9);
+    }
+
+    .map {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: var(--space-5);
+      max-width: var(--prose-max);
+    }
+
+    .map__stage {
+      display: block;
+      font-size: var(--text-xs);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--c-ink-3);
+      font-weight: 600;
+      margin-block-end: var(--space-1);
+    }
+
+    .map__body {
+      display: block;
+      color: var(--c-ink-2);
+    }
+
+    /* Future work is set back rather than boxed, so it cannot be mistaken for a result
+       while still being legible. */
+    .map--future .map__body {
+      color: var(--c-ink-3);
+      font-size: var(--text-sm);
+    }
+
+    .home__links {
+      margin-block-start: var(--space-6);
+      font-size: var(--text-sm);
+      color: var(--c-ink-3);
     }
   </style>
 </BaseLayout>
