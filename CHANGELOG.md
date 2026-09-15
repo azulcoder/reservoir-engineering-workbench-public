@@ -38,7 +38,9 @@ field constant (`162.6`, `70.6`, `1.151293`, `3.2275`, `0.80907`) derived from `
 The pre-registration is its own commit, made before any result-producing code and never
 amended, squashed or rebased since; the run embeds its SHA and re-derives its git blob
 digest at execution time, so a report quoting a drifted protocol is detectable. Nine of nine
-criteria pass: permeability-thickness recovered to a relative error of `1.564e-06` against a
+criteria pass -- eight recorded as flags in the run's own output, and determinism, which no
+single run can record about itself, verified by executing the case twice and diffing:
+permeability-thickness recovered to a relative error of `1.564e-06` against a
 pre-registered `1e-4`, total skin to `1.594e-05` against `1e-3`, and the negative control
 fails as it is required to, at `9.35e-02`, while returning an r-squared of `0.9993`.
 

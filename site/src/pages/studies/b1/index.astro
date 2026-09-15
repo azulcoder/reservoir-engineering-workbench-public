@@ -178,8 +178,11 @@ const description =
 
     <p>
       Every acceptance threshold was derived from an analytic error estimate and committed
-      before any result-producing code existed. {criteriaMet} of {criteriaTotal} criteria
-      pass. The residual error is not floating-point noise: it is the exact residue of
+      before any result-producing code existed. {criteriaMet} of {criteriaTotal} criteria are
+      recorded as met in the run's own output. A ninth, determinism, is agreement between
+      two separate runs, which no single run can record about itself; it is checked by
+      executing the case twice and diffing, and is reported in the case report rather than
+      counted here. The residual error is not floating-point noise: it is the exact residue of
       replacing the exponential integral with its logarithmic asymptote, and the study
       predicts that residue in advance to six significant figures.
     </p>

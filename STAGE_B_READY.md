@@ -48,7 +48,9 @@ opposite assumption:
 `cases/B1_iarf_known_answer/` — infinite-acting radial flow, known answer. The
 pre-registration is its own commit, made before any result-producing code and never
 amended, squashed or rebased since; the run embeds its SHA and re-derives its git blob
-digest at execution time. Nine of nine pre-registered criteria pass, the negative control
+digest at execution time. Nine of nine pre-registered criteria pass -- eight recorded as
+flags in the run's own output, and determinism, which no single run can record about
+itself, verified by executing the case twice and diffing. The negative control
 fails as it is required to, and the case has a site page.
 
 What it establishes, exactly: *in this model, at these properties, over this window, the
