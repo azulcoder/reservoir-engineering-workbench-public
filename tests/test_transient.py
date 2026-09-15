@@ -200,13 +200,22 @@ class ExponentialIntegralTests(unittest.TestCase):
 
 
 class MpmathCrossCheckTests(unittest.TestCase):
-    """A fourth implementation by other authors, used only if it happens to be present."""
+    """A fourth implementation by other authors, pinned for development only."""
 
-    def test_against_mpmath_if_available(self) -> None:
-        try:
-            import mpmath
-        except ImportError:
-            self.skipTest("mpmath is not installed; it is not a dependency of this project")
+    def test_against_mpmath(self) -> None:
+        """Mpmath is pinned in requirements-dev.lock as a test oracle and nothing more.
+
+        It is an independently written arbitrary-precision implementation by other
+        authors, so agreement with it is evidence in a way agreement with this project's
+        own second method is not. It is a development pin, not a runtime dependency: the
+        library still installs with nothing behind it.
+
+        The test does not skip when mpmath is missing. A skip here would be an
+        unexplained one, and this repository fails on those rather than letting an oracle
+        quietly stop running.
+        """
+        import mpmath
+
         mpmath.mp.dps = 40
         for x in (1e-8, 1e-3, 0.1, 1.0, 3.0, 10.0, 100.0):
             with self.subTest(x=x):

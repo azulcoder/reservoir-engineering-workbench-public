@@ -95,7 +95,9 @@ NOISE_SIGMAS_PSI = (0.1, 0.5, 2.0, 10.0)
 NOISE_REPLICATES = 200
 NOISE_SEED_BASE = 20260915
 SAMPLING_POINTS_PER_DECADE = (2, 3, 5, 10, 20, 50, 200)
-WINDOW_START_T_D = (10.0, 25.0, 50.0, 100.0, 1000.0)
+# Exactly the six starts the protocol declares. The last is the declared
+# interpretation window itself, quoted there to three significant figures.
+WINDOW_START_T_D = (10.0, 25.0, 50.0, 100.0, 1000.0, 3.32e4)
 NEGATIVE_CONTROL_T_D = (1.0, 10.0)
 
 # Protocol section 6. Thresholds, copied verbatim. Not derived here and not adjusted.
@@ -265,7 +267,23 @@ def experiment_b1_0() -> dict[str, Any]:
     ideal_plateau = 0.5 * scale
     plateau_deficits = [(ideal_plateau - d) / ideal_plateau for d in deriv_values]
 
+    # The series the figures draw. Exported from the audited run rather than recomputed
+    # by the renderer, so that what a reader sees and what the acceptance criteria were
+    # applied to are the same numbers.
+    fitted_line = [fit.intercept_psi + fit.slope_psi_per_cycle * math.log10(t) for t in times]
+    series = {
+        "time_hours": list(times),
+        "dimensionless_time": [t_d(t) for t in times],
+        "drawdown_psi": list(drops),
+        "fitted_line_psi": fitted_line,
+        "residual_psi": [d - f for d, f in zip(drops, fitted_line, strict=True)],
+        "derivative_time_hours": list(deriv_times),
+        "derivative_psi": list(deriv_values),
+        "analytic_derivative_psi": list(analytic),
+    }
+
     return {
+        "series": series,
         "window": {
             "first_hour": WINDOW_FIRST_HOUR,
             "last_hour": WINDOW_LAST_HOUR,
@@ -335,6 +353,33 @@ def _e1_high_precision(x: float, digits: int = 40) -> float:
 
 
 # ---------------------------------------------------------------------------------
+def _projected_placement_bias(start_t_d: float) -> float:
+    """Least-squares projection of the semilog departure onto the fitted line.
+
+    POST-HOC DIAGNOSTIC. Not pre-registered, not gated, and it moves no threshold.
+
+    The line-source solution departs from its own semilog asymptote by exactly
+    ``1/(8 t_D)`` (evidence card section 2). The protocol predicted the resulting
+    permeability bias as ``1/(10 t_D,min)``, which is the departure at the *first*
+    point of the window. A least-squares slope does not see the first point; it sees
+    the covariance of the departure with ``ln t`` over the whole window. This function
+    computes that projection on the same discrete grid the sweep uses, so the reported
+    scaling can be checked rather than asserted.
+    """
+    first = hours_at_t_d(start_t_d)
+    times = log_window(first, first * (WINDOW_LAST_HOUR / WINDOW_FIRST_HOUR), BASE_POINTS_PER_DECADE)
+    u = [math.log(t_d(t)) for t in times]
+    departure = [1.0 / (8.0 * math.exp(x)) for x in u]
+    n = len(u)
+    mean_u = math.fsum(u) / n
+    mean_d = math.fsum(departure) / n
+    covariance = math.fsum((a - mean_u) * (b - mean_d) for a, b in zip(u, departure, strict=True)) / n
+    variance = math.fsum((a - mean_u) ** 2 for a in u) / n
+    # The true dimensionless semilog slope is 1/2, and kh is inversely proportional to
+    # the fitted slope, so a slope bias of dm maps to a relative kh error of dm / (1/2).
+    return abs((covariance / variance) / 0.5)
+
+
 # B1.1 -- sampling density and window placement
 # ---------------------------------------------------------------------------------
 def experiment_b1_1() -> dict[str, Any]:
@@ -369,6 +414,8 @@ def experiment_b1_1() -> dict[str, Any]:
                 "skin_absolute_error": skin_error,
                 # The protocol predicted this scale before the run.
                 "predicted_bias_one_over_ten_t_d": 1.0 / (10.0 * start_t_d),
+                # Post-hoc, ungated: see _projected_placement_bias.
+                "projected_bias_least_squares": _projected_placement_bias(start_t_d),
             }
         )
 
@@ -447,7 +494,14 @@ def experiment_b1_3() -> dict[str, Any]:
     drops = [drawdown_psi(t) for t in times]
     fit = interpret(times, drops)
     kh_error, skin_error = recovery_errors(fit)
+    fitted_line = [fit.intercept_psi + fit.slope_psi_per_cycle * math.log10(t) for t in times]
     return {
+        "series": {
+            "time_hours": list(times),
+            "dimensionless_time": [t_d(t) for t in times],
+            "drawdown_psi": list(drops),
+            "fitted_line_psi": fitted_line,
+        },
         "window_dimensionless_time": list(NEGATIVE_CONTROL_T_D),
         "first_hour": first,
         "last_hour": last,
@@ -479,6 +533,182 @@ def collect_criteria(results: dict[str, Any]) -> dict[str, bool]:
         "C6_plateau_below_ideal_half": bool(base["c6_plateau_below_ideal_half"]),
         "C7_negative_control_fails": bool(results["b1_3_negative_control"]["c7_negative_control_fails_c3"]),
         "C9_noise_degradation_monotone": bool(results["b1_2_pressure_noise"]["c9_monotone_in_sigma"]),
+    }
+
+
+# ---------------------------------------------------------------------------------
+# Diagnostic D1 -- which analyst errors are visible without the truth
+# ---------------------------------------------------------------------------------
+# POST-HOC AND UNGATED. Not pre-registered, not an acceptance criterion, and it moves no
+# threshold. It exists because "the instrument recovers the known answer" is a claim about
+# a defect class, and a claim about a defect class is worth nothing until the class is
+# measured. Every row below is the SAME synthetic data; only the interpretation is wrong.
+#
+# Each seeded defect is scored twice. Against the truth, which only this case has. And
+# against the two things an analyst has WITHOUT the truth: the fit's r-squared, and whether
+# the derivative plateau agrees with the kh the regression reports -- both computed with
+# the analyst's own, possibly wrong, metadata, because that is the only version of the
+# check a real interpretation can actually run.
+def diagnostic_defect_visibility() -> dict[str, Any]:
+    """Seed analyst errors into a perfect interpretation and record what shows."""
+
+    def scored(times: list[float], drops: list[float], **overrides: float) -> dict[str, Any]:
+        metadata = {
+            "thickness_ft": TRUTH["thickness_ft"],
+            "rate_stb_per_day": TRUTH["rate_stb_per_day"],
+            "formation_volume_factor": TRUTH["formation_volume_factor"],
+            "viscosity_cp": TRUTH["viscosity_cp"],
+            "porosity": TRUTH["porosity"],
+            "total_compressibility_per_psi": TRUTH["total_compressibility_per_psi"],
+            "wellbore_radius_ft": TRUTH["wellbore_radius_ft"],
+        }
+        metadata.update(overrides)
+        fit = semilog_interpretation(times, drops, **metadata)
+        # What the analyst would report: their own recovered k times their own assumed h.
+        reported_kh = fit.permeability_md * metadata["thickness_ft"]
+        _, derivative_values = bourdet_derivative(times, drops, smoothing_l=SMOOTHING_L)
+        observed_plateau = max(derivative_values)
+        implied_plateau = (
+            derivative_plateau_constant()
+            * metadata["rate_stb_per_day"]
+            * metadata["viscosity_cp"]
+            * metadata["formation_volume_factor"]
+            / reported_kh
+        )
+        true_kh = TRUTH["permeability_md"] * TRUTH["thickness_ft"]
+        return {
+            "permeability_thickness_relative_error": abs(reported_kh - true_kh) / true_kh,
+            "permeability_relative_error": abs(fit.permeability_md - TRUTH["permeability_md"])
+            / TRUTH["permeability_md"],
+            "skin_absolute_error": abs(fit.skin - TRUTH["skin"]),
+            "r_squared": fit.r_squared,
+            "derivative_versus_fit_relative_difference": abs(observed_plateau - implied_plateau)
+            / implied_plateau,
+        }
+
+    def window(start_t_d: float, ratio: float = 48.0, per_decade: int = BASE_POINTS_PER_DECADE):
+        first = hours_at_t_d(start_t_d)
+        times = log_window(first, first * ratio, per_decade)
+        return times, [drawdown_psi(x) for x in times]
+
+    base_times = log_window(WINDOW_FIRST_HOUR, WINDOW_LAST_HOUR, BASE_POINTS_PER_DECADE)
+    base_drops = [drawdown_psi(x) for x in base_times]
+    declared_t_d = t_d(WINDOW_FIRST_HOUR)
+
+    rows: list[dict[str, Any]] = [
+        {"defect": "none (baseline)", "kind": "reference", **scored(base_times, base_drops)},
+        {"defect": "window starts at t_D = 10", "kind": "window", **scored(*window(10.0))},
+        {
+            "defect": "duration one third of a decade",
+            "kind": "window",
+            **scored(*window(declared_t_d, ratio=2.15)),
+        },
+        {
+            "defect": "two points per decade",
+            "kind": "sampling",
+            **scored(*window(declared_t_d, per_decade=2)),
+        },
+        {
+            "defect": "time zero wrong by +0.5 hour",
+            "kind": "data",
+            **scored([x + 0.5 for x in base_times], base_drops),
+        },
+        {
+            "defect": "drawdown sign flipped",
+            "kind": "data",
+            **scored(base_times, [-x for x in base_drops]),
+        },
+        {
+            "defect": "rate 1.589x wrong (m3/d read as STB/D)",
+            "kind": "metadata",
+            **scored(base_times, base_drops, rate_stb_per_day=TRUTH["rate_stb_per_day"] * 1.589873),
+        },
+        {
+            "defect": "net thickness 1.5x too large",
+            "kind": "metadata",
+            **scored(base_times, base_drops, thickness_ft=TRUTH["thickness_ft"] * 1.5),
+        },
+        {
+            "defect": "radius entered as diameter",
+            "kind": "metadata",
+            **scored(base_times, base_drops, wellbore_radius_ft=TRUTH["wellbore_radius_ft"] * 2.0),
+        },
+        {
+            "defect": "porosity 0.18 read as 0.25",
+            "kind": "metadata",
+            **scored(base_times, base_drops, porosity=0.25),
+        },
+        {
+            "defect": "viscosity 1.2 read as 0.9 cp",
+            "kind": "metadata",
+            **scored(base_times, base_drops, viscosity_cp=0.9),
+        },
+    ]
+
+    baseline = rows[0]
+    # A defect counts as visible only if it moves a diagnostic well clear of where that
+    # diagnostic already sits on a clean interpretation. Ten times the baseline floor is a
+    # deliberately generous bar, and six of the ten defects still do not clear it.
+    for row in rows[1:]:
+        row["visible_without_truth"] = (
+            row["r_squared"] < baseline["r_squared"] - 1e-6
+            or row["derivative_versus_fit_relative_difference"]
+            > 10.0 * baseline["derivative_versus_fit_relative_difference"]
+        )
+        row["materially_wrong"] = (
+            row["permeability_thickness_relative_error"] > C3_KH_RELATIVE
+            or row["permeability_relative_error"] > C3_KH_RELATIVE
+            or row["skin_absolute_error"] > C4_SKIN_ABSOLUTE
+        )
+
+    silent_and_wrong = [
+        row["defect"] for row in rows[1:] if row["materially_wrong"] and not row["visible_without_truth"]
+    ]
+    return {
+        "note": (
+            "Post-hoc, ungated. Measures the defect class the acceptance criteria can "
+            "actually see. No threshold in this block gates the run."
+        ),
+        "rows": rows,
+        "silent_but_materially_wrong": silent_and_wrong,
+        "silent_but_materially_wrong_count": len(silent_and_wrong),
+    }
+
+
+# ---------------------------------------------------------------------------------
+# Diagnostic D2 -- what smoothing L costs on noise-free data
+# ---------------------------------------------------------------------------------
+def diagnostic_smoothing_cost() -> dict[str, Any]:
+    """POST-HOC AND UNGATED. Derivative accuracy against L, where the answer is exact."""
+    times = log_window(WINDOW_FIRST_HOUR, WINDOW_LAST_HOUR, BASE_POINTS_PER_DECADE)
+    drops = [drawdown_psi(x) for x in times]
+    scale = pressure_drop_psi(
+        1.0,
+        permeability_md=TRUTH["permeability_md"],
+        thickness_ft=TRUTH["thickness_ft"],
+        rate_stb_per_day=TRUTH["rate_stb_per_day"],
+        formation_volume_factor=TRUTH["formation_volume_factor"],
+        viscosity_cp=TRUTH["viscosity_cp"],
+    )
+    rows = []
+    for smoothing in (0.0, 0.02, 0.05, 0.1, 0.2, 0.3, 0.5):
+        deriv_times, deriv_values = bourdet_derivative(times, drops, smoothing_l=smoothing)
+        analytic = [line_source_log_derivative(t_d(x)) * scale for x in deriv_times]
+        rows.append(
+            {
+                "smoothing_l": smoothing,
+                "points": len(deriv_values),
+                "max_relative_error_against_closed_form": max(
+                    abs(v - a) / a for v, a in zip(deriv_values, analytic, strict=True)
+                ),
+            }
+        )
+    return {
+        "note": (
+            "Post-hoc, ungated. On noise-free data smoothing only costs accuracy; its "
+            "value is entirely in the noisy case, which this block does not exercise."
+        ),
+        "rows": rows,
     }
 
 
@@ -529,6 +759,8 @@ def main(argv: list[str] | None = None) -> int:
             "b1_1_sampling_and_placement": experiment_b1_1(),
             "b1_2_pressure_noise": experiment_b1_2(),
             "b1_3_negative_control": experiment_b1_3(),
+            "diagnostic_defect_visibility": diagnostic_defect_visibility(),
+            "diagnostic_smoothing_cost": diagnostic_smoothing_cost(),
         }
         criteria = collect_criteria(results)
         payload: dict[str, Any] = {
