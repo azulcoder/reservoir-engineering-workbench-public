@@ -137,11 +137,18 @@ class Step:
 #: registers its own check, so --cases fast collects 7 where --cases all collects 9.
 #: Comparing the published number against a deliberately reduced run would fail a build
 #: for running less, which is not drift.
+# The site states these in prose, so each must be a property of the tree rather than of
+# the machine that ran the suite. Two of them are deliberately not the raw totals:
+# `tests_passed` and `tests_skipped` both move by one wherever a declared optional oracle
+# is not installed, so the site publishes the count with every oracle present
+# (`tests_passed_with_oracles`) and the reference-dependent skips only
+# (`tests_reference_skipped`), and the optional-oracle count is reported separately by
+# verify.py rather than folded into a published number.
 PUBLISHED_COUNTS = {
     "testsCollected": ("tests_collected", "tests collected", False),
-    "testsPassed": ("tests_passed", "tests passed", False),
+    "testsPassed": ("tests_passed_with_oracles", "tests passed", False),
     "testsFailedOrErrored": ("tests_failed", "tests failed or errored", False),
-    "testsSkipped": ("tests_skipped", "tests skipped", False),
+    "testsSkipped": ("tests_reference_skipped", "reference-dependent tests skipped", False),
     "checksCollected": ("checks_collected", "checks collected", True),
     "checksPassed": ("checks_passed", "checks passed", True),
 }

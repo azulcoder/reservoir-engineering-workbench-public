@@ -2,7 +2,7 @@
   "manifest_version": "1.0.0",
   "generated": {
     "renderer": "site/scripts/render-figures.mjs",
-    "renderer_sha256": "6f502e8ef2764bbcc54e17b38ceb731bbdea4a64e43f03fdba0a6e4bb20710e7",
+    "renderer_sha256": "1f394303c1618c60c7192d81bc5f7e9614ab6f86466d7afd80ffb48f39c6b732",
     "note": "the renderer digest is the SITE BUILD revision and is distinct from the numerical-source digests below, which identify the run that produced the numbers"
   },
   "site_build": {
@@ -24,7 +24,12 @@
         "F08",
         "F09",
         "A1-01",
-        "A3-01"
+        "A3-01",
+        "B1-01",
+        "B1-02",
+        "B1-03",
+        "B1-04",
+        "B1-05"
       ],
       "blocked": [],
       "rasteriser": "sharp 0.35.4 (libvips 8.18.6, librsvg 2.62.91), imported dynamically",
@@ -189,7 +194,7 @@
         },
         {
           "path": "f01.png",
-          "bytes": 564855,
+          "bytes": 561566,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -282,7 +287,7 @@
         },
         {
           "path": "f01b-observed-range.png",
-          "bytes": 478070,
+          "bytes": 479059,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -373,7 +378,7 @@
         },
         {
           "path": "f02.png",
-          "bytes": 445378,
+          "bytes": 443133,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -473,7 +478,7 @@
         },
         {
           "path": "f03.png",
-          "bytes": 769540,
+          "bytes": 766665,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -564,7 +569,7 @@
         },
         {
           "path": "f04.png",
-          "bytes": 611027,
+          "bytes": 609144,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -675,7 +680,7 @@
         },
         {
           "path": "f05.png",
-          "bytes": 689872,
+          "bytes": 687863,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -766,7 +771,7 @@
         },
         {
           "path": "f06.png",
-          "bytes": 683495,
+          "bytes": 677914,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -858,7 +863,7 @@
         },
         {
           "path": "f07.png",
-          "bytes": 523687,
+          "bytes": 516737,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -949,7 +954,7 @@
         },
         {
           "path": "f08.png",
-          "bytes": 653759,
+          "bytes": 652203,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -1022,7 +1027,7 @@
         },
         {
           "path": "f09.png",
-          "bytes": 1478187,
+          "bytes": 1471418,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -1110,7 +1115,7 @@
         },
         {
           "path": "a1-01.png",
-          "bytes": 768745,
+          "bytes": 755432,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }
@@ -1197,7 +1202,458 @@
         },
         {
           "path": "a3-01.png",
-          "bytes": 633806,
+          "bytes": 625590,
+          "media_type": "image/png",
+          "raster": "216 dpi, 3x the 72 dpi authoring scale"
+        }
+      ]
+    },
+    {
+      "figure_id": "B1-01",
+      "case_id": "B1_iarf_known_answer",
+      "selector": "cases/B1_iarf_known_answer/results/summary.json /b1_0_mathematical_baseline/series, 85 pressure points and 79 derivative points",
+      "data_files": [
+        "cases/B1_iarf_known_answer/results/summary.json"
+      ],
+      "axes": {
+        "x": {
+          "quantity": "elapsed time",
+          "unit": "hours",
+          "scale": "log",
+          "domain": [
+            1,
+            47.99999999999999
+          ]
+        },
+        "y": {
+          "quantity": "pressure drop and its log-time derivative",
+          "unit": "psi",
+          "scale": "log",
+          "domain": [
+            10.192807984599416,
+            655.047843769803
+          ]
+        }
+      },
+      "transformations": [
+        "the derivative is the Bourdet three-point estimator with respect to natural-log time, L = 0.1",
+        "no smoothing beyond that L, no resampling, no interpolation; every exported point is drawn"
+      ],
+      "uncertainty": "none: this figure is noise-free synthetic data. The only band-like feature is the gap between the derivative and its ideal plateau, which is a deterministic property of the solution and is labelled as such.",
+      "question": "Does the synthetic response actually show infinite-acting radial flow over the window the protocol declared?",
+      "caveat": "A flat derivative is necessary for this interpretation and nowhere near sufficient to identify a reservoir. Wellbore storage is zero by design here, so the early-time distortion a real test would show is absent.",
+      "evidence_class": "synthetic; generator and estimator are separate modules; known inventory is evaluation-only information that no field measurement provides",
+      "units": {
+        "pressure": "psia (absolute)",
+        "p_over_z": "psia",
+        "cumulative_gas": "scf, also reported as Bscf = 1e9 scf",
+        "time": "days, also reported as years of 365.25 days",
+        "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
+      },
+      "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+      "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
+      "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
+      "numerical_source_digests": {
+        "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
+        "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
+        "baseline_summary_sha256": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
+        "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
+      },
+      "export_code_revision": {
+        "exporter_path": "scripts/export_presentation_data.py",
+        "exporter_sha256": "cf5916c14bbc6c19bb5913caaa1d8ab3dc1a71586fca178515fdc59c4c31d252",
+        "reconciliation_checks_passed": 51,
+        "reconcile_relative_tolerance": 1e-12
+      },
+      "exported_data_hashes": [
+        {
+          "path": "cases/B1_iarf_known_answer/results/summary.json",
+          "matches_contract": null,
+          "note": "committed case summary, outside the export contract"
+        }
+      ],
+      "accessibility": {
+        "role": "img",
+        "accessible_name": "B1-01 — the diagnostic: a flat derivative is what infinite-acting radial flow looks like",
+        "long_description_chars": 599,
+        "non_colour_channels": "every series carries a dash pattern, a marker shape or a direct text label, and each figure's legend repeats them. Only two marks sit below 3:1 on the plot ground: the axis gridlines and the band fills, both aria-hidden, both of which passed a removal test -- every band boundary is also drawn in --c-border-strong at 3.51:1 and labelled in text, so the shading is redundant reinforcement. Every other rule, including the divider above the caveat lines, the separator between table rows and the boundary of a legend band swatch, carries information and is drawn at 3.51:1. The classification is recorded in docs/design/figure_spec.md.",
+        "minimum_label_px": 13,
+        "colour_source": "docs/design/tokens.css, parsed at build time; no colour value is retyped in the renderer"
+      },
+      "public_data_decision": "public. Every value is synthetic and already committed to this repository; there is no field, proprietary or personal data in the source, and the known inventory is evaluation-only information that exists because the history was generated.",
+      "png_status": {
+        "state": "emitted",
+        "rasteriser": "sharp (libvips + librsvg), imported dynamically"
+      },
+      "files": [
+        {
+          "path": "b1-01.svg",
+          "bytes": 20611,
+          "media_type": "image/svg+xml"
+        },
+        {
+          "path": "b1-01.png",
+          "bytes": 484403,
+          "media_type": "image/png",
+          "raster": "216 dpi, 3x the 72 dpi authoring scale"
+        }
+      ]
+    },
+    {
+      "figure_id": "B1-02",
+      "case_id": "B1_iarf_known_answer",
+      "selector": "cases/B1_iarf_known_answer/results/summary.json /b1_0_mathematical_baseline/series and /fit",
+      "data_files": [
+        "cases/B1_iarf_known_answer/results/summary.json"
+      ],
+      "axes": {
+        "x": {
+          "quantity": "elapsed time",
+          "unit": "hours",
+          "scale": "log",
+          "domain": [
+            1,
+            47.99999999999999
+          ]
+        },
+        "y": {
+          "quantity": "drawdown",
+          "unit": "psi",
+          "scale": "linear",
+          "domain": [
+            331.6620061837594,
+            423.40490235612685
+          ]
+        }
+      },
+      "transformations": [
+        "ordinary least squares of drawdown against log10 of elapsed time over the declared window; no weighting, no outlier rejection, no window search"
+      ],
+      "uncertainty": "the residual standard error of the fit is reported, and it is conditional on the straight-line model being the right one. It is not an uncertainty about permeability and it does not become one by being small.",
+      "question": "Does the specialized straight line recover the permeability and skin that generated the data?",
+      "caveat": "Noise-free. The window was declared in the protocol before the run and was not selected by looking at the fit, which is the step that carries the judgement in a real interpretation.",
+      "evidence_class": "synthetic; generator and estimator are separate modules; known inventory is evaluation-only information that no field measurement provides",
+      "units": {
+        "pressure": "psia (absolute)",
+        "p_over_z": "psia",
+        "cumulative_gas": "scf, also reported as Bscf = 1e9 scf",
+        "time": "days, also reported as years of 365.25 days",
+        "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
+      },
+      "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+      "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
+      "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
+      "numerical_source_digests": {
+        "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
+        "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
+        "baseline_summary_sha256": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
+        "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
+      },
+      "export_code_revision": {
+        "exporter_path": "scripts/export_presentation_data.py",
+        "exporter_sha256": "cf5916c14bbc6c19bb5913caaa1d8ab3dc1a71586fca178515fdc59c4c31d252",
+        "reconciliation_checks_passed": 51,
+        "reconcile_relative_tolerance": 1e-12
+      },
+      "exported_data_hashes": [
+        {
+          "path": "cases/B1_iarf_known_answer/results/summary.json",
+          "matches_contract": null,
+          "note": "committed case summary, outside the export contract"
+        }
+      ],
+      "accessibility": {
+        "role": "img",
+        "accessible_name": "B1-02 — the specialized analysis: one straight line carries both answers",
+        "long_description_chars": 472,
+        "non_colour_channels": "every series carries a dash pattern, a marker shape or a direct text label, and each figure's legend repeats them. Only two marks sit below 3:1 on the plot ground: the axis gridlines and the band fills, both aria-hidden, both of which passed a removal test -- every band boundary is also drawn in --c-border-strong at 3.51:1 and labelled in text, so the shading is redundant reinforcement. Every other rule, including the divider above the caveat lines, the separator between table rows and the boundary of a legend band swatch, carries information and is drawn at 3.51:1. The classification is recorded in docs/design/figure_spec.md.",
+        "minimum_label_px": 13,
+        "colour_source": "docs/design/tokens.css, parsed at build time; no colour value is retyped in the renderer"
+      },
+      "public_data_decision": "public. Every value is synthetic and already committed to this repository; there is no field, proprietary or personal data in the source, and the known inventory is evaluation-only information that exists because the history was generated.",
+      "png_status": {
+        "state": "emitted",
+        "rasteriser": "sharp (libvips + librsvg), imported dynamically"
+      },
+      "files": [
+        {
+          "path": "b1-02.svg",
+          "bytes": 24185,
+          "media_type": "image/svg+xml"
+        },
+        {
+          "path": "b1-02.png",
+          "bytes": 567195,
+          "media_type": "image/png",
+          "raster": "216 dpi, 3x the 72 dpi authoring scale"
+        }
+      ]
+    },
+    {
+      "figure_id": "B1-03",
+      "case_id": "B1_iarf_known_answer",
+      "selector": "cases/B1_iarf_known_answer/results/summary.json /b1_1_sampling_and_placement, 7 density points and 5 placement points",
+      "data_files": [
+        "cases/B1_iarf_known_answer/results/summary.json"
+      ],
+      "axes": {
+        "x": {
+          "quantity": "points per decade, then dimensionless time at window start",
+          "unit": "dimensionless",
+          "scale": "log",
+          "domain": [
+            2,
+            1000
+          ]
+        },
+        "y": {
+          "quantity": "relative error in recovered permeability-thickness",
+          "unit": "dimensionless",
+          "scale": "log",
+          "domain": [
+            7.773605996135302e-7,
+            0.02
+          ]
+        }
+      },
+      "transformations": [
+        "none beyond the logarithmic axes; every swept value is drawn"
+      ],
+      "uncertainty": "none: both sweeps are deterministic and noise-free. The dashed line is an analytic prediction made before the run, not a fit to these points.",
+      "question": "Of sampling density and window placement, which one actually limits a clean interpretation?",
+      "caveat": "Noise-free only. The conclusion that density barely matters is specific to that; with a gauge in the loop the point count sets how much of the noise averages out.",
+      "evidence_class": "synthetic; generator and estimator are separate modules; known inventory is evaluation-only information that no field measurement provides",
+      "units": {
+        "pressure": "psia (absolute)",
+        "p_over_z": "psia",
+        "cumulative_gas": "scf, also reported as Bscf = 1e9 scf",
+        "time": "days, also reported as years of 365.25 days",
+        "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
+      },
+      "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+      "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
+      "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
+      "numerical_source_digests": {
+        "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
+        "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
+        "baseline_summary_sha256": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
+        "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
+      },
+      "export_code_revision": {
+        "exporter_path": "scripts/export_presentation_data.py",
+        "exporter_sha256": "cf5916c14bbc6c19bb5913caaa1d8ab3dc1a71586fca178515fdc59c4c31d252",
+        "reconciliation_checks_passed": 51,
+        "reconcile_relative_tolerance": 1e-12
+      },
+      "exported_data_hashes": [
+        {
+          "path": "cases/B1_iarf_known_answer/results/summary.json",
+          "matches_contract": null,
+          "note": "committed case summary, outside the export contract"
+        }
+      ],
+      "accessibility": {
+        "role": "img",
+        "accessible_name": "B1-03 — how many points hardly matters; where the window sits matters a hundredfold",
+        "long_description_chars": 507,
+        "non_colour_channels": "every series carries a dash pattern, a marker shape or a direct text label, and each figure's legend repeats them. Only two marks sit below 3:1 on the plot ground: the axis gridlines and the band fills, both aria-hidden, both of which passed a removal test -- every band boundary is also drawn in --c-border-strong at 3.51:1 and labelled in text, so the shading is redundant reinforcement. Every other rule, including the divider above the caveat lines, the separator between table rows and the boundary of a legend band swatch, carries information and is drawn at 3.51:1. The classification is recorded in docs/design/figure_spec.md.",
+        "minimum_label_px": 13,
+        "colour_source": "docs/design/tokens.css, parsed at build time; no colour value is retyped in the renderer"
+      },
+      "public_data_decision": "public. Every value is synthetic and already committed to this repository; there is no field, proprietary or personal data in the source, and the known inventory is evaluation-only information that exists because the history was generated.",
+      "png_status": {
+        "state": "emitted",
+        "rasteriser": "sharp (libvips + librsvg), imported dynamically"
+      },
+      "files": [
+        {
+          "path": "b1-03.svg",
+          "bytes": 39929,
+          "media_type": "image/svg+xml"
+        },
+        {
+          "path": "b1-03.png",
+          "bytes": 579264,
+          "media_type": "image/png",
+          "raster": "216 dpi, 3x the 72 dpi authoring scale"
+        }
+      ]
+    },
+    {
+      "figure_id": "B1-04",
+      "case_id": "B1_iarf_known_answer",
+      "selector": "cases/B1_iarf_known_answer/results/summary.json /b1_2_pressure_noise/levels, 4 sigma levels of 200 replicates",
+      "data_files": [
+        "cases/B1_iarf_known_answer/results/summary.json"
+      ],
+      "axes": {
+        "x": {
+          "quantity": "gauge noise standard deviation",
+          "unit": "psi",
+          "scale": "log",
+          "domain": [
+            0.1,
+            10
+          ]
+        },
+        "y": {
+          "quantity": "relative error in recovered permeability-thickness",
+          "unit": "dimensionless",
+          "scale": "log",
+          "domain": [
+            0.0001817920538350933,
+            0.1841978229809506
+          ]
+        }
+      },
+      "transformations": [
+        "mean and 95th percentile taken across 200 seeded replicates at each level; no smoothing across levels"
+      ],
+      "uncertainty": "the Monte Carlo standard error of each mean is tabulated. It describes how well 200 replicates pin the mean, not how well the method knows the permeability.",
+      "question": "How fast does the recovery degrade as the gauge gets worse?",
+      "caveat": "One noise model: additive, independent, zero-mean, Gaussian, on pressure only. Drift, quantisation and time-correlated error are not represented and would not behave like this.",
+      "evidence_class": "synthetic; generator and estimator are separate modules; known inventory is evaluation-only information that no field measurement provides",
+      "units": {
+        "pressure": "psia (absolute)",
+        "p_over_z": "psia",
+        "cumulative_gas": "scf, also reported as Bscf = 1e9 scf",
+        "time": "days, also reported as years of 365.25 days",
+        "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
+      },
+      "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+      "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
+      "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
+      "numerical_source_digests": {
+        "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
+        "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
+        "baseline_summary_sha256": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
+        "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
+      },
+      "export_code_revision": {
+        "exporter_path": "scripts/export_presentation_data.py",
+        "exporter_sha256": "cf5916c14bbc6c19bb5913caaa1d8ab3dc1a71586fca178515fdc59c4c31d252",
+        "reconciliation_checks_passed": 51,
+        "reconcile_relative_tolerance": 1e-12
+      },
+      "exported_data_hashes": [
+        {
+          "path": "cases/B1_iarf_known_answer/results/summary.json",
+          "matches_contract": null,
+          "note": "committed case summary, outside the export contract"
+        }
+      ],
+      "accessibility": {
+        "role": "img",
+        "accessible_name": "B1-04 — what a gauge costs",
+        "long_description_chars": 480,
+        "non_colour_channels": "every series carries a dash pattern, a marker shape or a direct text label, and each figure's legend repeats them. Only two marks sit below 3:1 on the plot ground: the axis gridlines and the band fills, both aria-hidden, both of which passed a removal test -- every band boundary is also drawn in --c-border-strong at 3.51:1 and labelled in text, so the shading is redundant reinforcement. Every other rule, including the divider above the caveat lines, the separator between table rows and the boundary of a legend band swatch, carries information and is drawn at 3.51:1. The classification is recorded in docs/design/figure_spec.md.",
+        "minimum_label_px": 13,
+        "colour_source": "docs/design/tokens.css, parsed at build time; no colour value is retyped in the renderer"
+      },
+      "public_data_decision": "public. Every value is synthetic and already committed to this repository; there is no field, proprietary or personal data in the source, and the known inventory is evaluation-only information that exists because the history was generated.",
+      "png_status": {
+        "state": "emitted",
+        "rasteriser": "sharp (libvips + librsvg), imported dynamically"
+      },
+      "files": [
+        {
+          "path": "b1-04.svg",
+          "bytes": 27744,
+          "media_type": "image/svg+xml"
+        },
+        {
+          "path": "b1-04.png",
+          "bytes": 571834,
+          "media_type": "image/png",
+          "raster": "216 dpi, 3x the 72 dpi authoring scale"
+        }
+      ]
+    },
+    {
+      "figure_id": "B1-05",
+      "case_id": "B1_iarf_known_answer",
+      "selector": "cases/B1_iarf_known_answer/results/summary.json /b1_3_negative_control",
+      "data_files": [
+        "cases/B1_iarf_known_answer/results/summary.json"
+      ],
+      "axes": {
+        "x": {
+          "quantity": "elapsed time",
+          "unit": "hours",
+          "scale": "log",
+          "domain": [
+            0.000030102389078498295,
+            0.000301023890784983
+          ]
+        },
+        "y": {
+          "quantity": "drawdown",
+          "unit": "psi",
+          "scale": "linear",
+          "domain": [
+            145.0806679228286,
+            197.85484198258513
+          ]
+        }
+      },
+      "transformations": [
+        "ordinary least squares of drawdown against log10 elapsed time, over a window declared invalid in advance"
+      ],
+      "uncertainty": "the residual standard error is reported and is small, which is the point: it is conditional on a model that does not apply here, and a small conditional scatter carries no information about whether the condition holds.",
+      "question": "Can the acceptance machinery reject an interpretation that looks entirely convincing?",
+      "caveat": "A deliberately invalid window on otherwise clean data. It shows one failure mode out of many; wellbore storage, boundaries and rate-history errors produce different ones and are not represented.",
+      "evidence_class": "synthetic; generator and estimator are separate modules; known inventory is evaluation-only information that no field measurement provides",
+      "units": {
+        "pressure": "psia (absolute)",
+        "p_over_z": "psia",
+        "cumulative_gas": "scf, also reported as Bscf = 1e9 scf",
+        "time": "days, also reported as years of 365.25 days",
+        "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
+      },
+      "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+      "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
+      "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
+      "numerical_source_digests": {
+        "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
+        "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
+        "baseline_summary_sha256": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
+        "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
+      },
+      "export_code_revision": {
+        "exporter_path": "scripts/export_presentation_data.py",
+        "exporter_sha256": "cf5916c14bbc6c19bb5913caaa1d8ab3dc1a71586fca178515fdc59c4c31d252",
+        "reconciliation_checks_passed": 51,
+        "reconcile_relative_tolerance": 1e-12
+      },
+      "exported_data_hashes": [
+        {
+          "path": "cases/B1_iarf_known_answer/results/summary.json",
+          "matches_contract": null,
+          "note": "committed case summary, outside the export contract"
+        }
+      ],
+      "accessibility": {
+        "role": "img",
+        "accessible_name": "B1-05 — the negative control: an excellent fit to the wrong window",
+        "long_description_chars": 448,
+        "non_colour_channels": "every series carries a dash pattern, a marker shape or a direct text label, and each figure's legend repeats them. Only two marks sit below 3:1 on the plot ground: the axis gridlines and the band fills, both aria-hidden, both of which passed a removal test -- every band boundary is also drawn in --c-border-strong at 3.51:1 and labelled in text, so the shading is redundant reinforcement. Every other rule, including the divider above the caveat lines, the separator between table rows and the boundary of a legend band swatch, carries information and is drawn at 3.51:1. The classification is recorded in docs/design/figure_spec.md.",
+        "minimum_label_px": 13,
+        "colour_source": "docs/design/tokens.css, parsed at build time; no colour value is retyped in the renderer"
+      },
+      "public_data_decision": "public. Every value is synthetic and already committed to this repository; there is no field, proprietary or personal data in the source, and the known inventory is evaluation-only information that exists because the history was generated.",
+      "png_status": {
+        "state": "emitted",
+        "rasteriser": "sharp (libvips + librsvg), imported dynamically"
+      },
+      "files": [
+        {
+          "path": "b1-05.svg",
+          "bytes": 22451,
+          "media_type": "image/svg+xml"
+        },
+        {
+          "path": "b1-05.png",
+          "bytes": 564978,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }

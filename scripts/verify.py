@@ -907,6 +907,12 @@ def _assemble(
             "tests_passed": counts.passed,
             "tests_failed": counts.failed + counts.errored,
             "tests_skipped": counts.skipped,
+            # Split out because they move with the environment while the rest do not.
+            # A published count must be a property of the tree, not of whichever runner
+            # happened to have an optional development dependency installed.
+            "tests_reference_skipped": counts.reference_dependent_skipped,
+            "tests_optional_oracle_skipped": counts.optional_oracle_skipped,
+            "tests_passed_with_oracles": counts.passed + counts.optional_oracle_skipped,
             "not_run_tests": not_run_tests,
             "not_run_checks": not_run_checks,
         },
