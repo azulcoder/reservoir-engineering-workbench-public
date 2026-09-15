@@ -170,6 +170,37 @@ class DefectVisibilityClaims(unittest.TestCase):
         self.assertTrue(row["visible_without_truth"])
 
 
+class CriterionCountAgreement(unittest.TestCase):
+    """The report and the site must count criteria the same way.
+
+    Written after the live site said "8 of 8 criteria" while the report said "Nine of
+    nine". Both were defensible and they disagreed, because C8 is agreement between two
+    runs and no single run can record that about itself. The distinction is real and is
+    now stated in both places; this test stops it drifting back apart.
+    """
+
+    SITE_PAGE = ROOT / "site" / "src" / "pages" / "studies" / "b1" / "index.astro"
+
+    def test_eight_criteria_are_recorded_in_the_artifact(self) -> None:
+        self.assertEqual(len(SUMMARY["criteria"]), 8)
+        self.assertNotIn("C8", " ".join(SUMMARY["criteria"]))
+
+    def test_the_protocol_declares_nine(self) -> None:
+        for number in range(1, 10):
+            self.assertIn(f"B1-C{number}", PROTOCOL, f"the protocol must declare C{number}")
+
+    def test_the_report_explains_why_the_counts_differ(self) -> None:
+        self.assertIn("Eight of the nine are recorded as flags", REPORT)
+        self.assertIn("no single run can record that about itself", REPORT)
+
+    def test_the_site_page_says_recorded_rather_than_implying_all(self) -> None:
+        page = self.SITE_PAGE.read_text()
+        self.assertIn("recorded as met in the run's own output", page)
+        self.assertIn("no single run can record about itself", page)
+        # The page must not hardcode a count that the artifact could contradict.
+        self.assertIn("{criteriaMet} of {criteriaTotal}", page)
+
+
 class PortabilityClaims(unittest.TestCase):
     """Section 10 claims every published quantity is bit-identical across platforms.
 

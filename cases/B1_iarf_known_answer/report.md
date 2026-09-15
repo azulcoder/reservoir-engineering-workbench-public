@@ -373,7 +373,15 @@ something, and the comparator counts and prints it elsewhere rather than droppin
 | B1-C8 | two runs agree byte for byte | exact | identical | PASS |
 | B1-C9 | noise degradation monotone in sigma | monotone | monotone, and linear | PASS |
 
-Nine of nine. Under the classification declared in protocol section 7 this run is
+Nine of nine, with one distinction the summary makes and this table should not hide.
+**Eight of the nine are recorded as flags in `summary.json`.** C8 is not, and cannot be: it
+is agreement between two runs, and no single run can record that about itself. It is
+verified by executing the case twice into separate directories and diffing the output,
+which is what section 9 reports, and the site's case page therefore counts eight recorded
+criteria rather than nine. The distinction is between a criterion the artifact attests and
+one the harness attests; both were met, and neither is presented as the other.
+
+Under the classification declared in protocol section 7 this run is
 **ESTABLISHED**, and the claim that carries is exactly: *in this model, at these
 properties, over this window, the instrument recovers the known answer to the stated
 precision.* Nothing wider.
