@@ -12,12 +12,15 @@ import BaseLayout from "../../../layouts/BaseLayout.astro";
 import Figure from "../../../components/Figure.astro";
 import DataTable from "../../../components/DataTable.astro";
 import Callout from "../../../components/Callout.astro";
+import ExecutiveBrief from "../../../components/ExecutiveBrief.astro";
+import KeyMetrics from "../../../components/KeyMetrics.astro";
 import ExplorerScenarios from "../../../components/ExplorerScenarios.astro";
 import { checkedExhibit } from "../../../scripts/exhibits";
 import { residualBound } from "../../../scripts/residual";
 import { baseScenario, truth } from "../../../scripts/scenarios";
 import { download, downloads } from "../../../scripts/public-data";
 import { NAV, GATE, FOUR_STATEMENTS, NOT_RUN } from "../../../scripts/site";
+import * as fmt from "../../../scripts/format";
 import { loadFigureData } from "../../../lib/figures";
 import { href, pageHref } from "../../../lib/urls";
 
@@ -235,14 +238,17 @@ const f01Csv = await download("f01_f02_scenarios_all.csv");
 const f03Json = await download("f03_bias_sweep.json");
 
 const contents = [
-  { id: "overview", label: "Overview" },
-  { id: "model", label: "Model and assumptions" },
-  { id: "evidence", label: "Evidence" },
-  { id: "explorer", label: "Scenario explorer" },
+  { id: "hero", label: "A convincing line, the wrong inventory" },
+  { id: "mechanism", label: "Why aquifer support moves the intercept" },
+  { id: "behaviour", label: "The bias grows before the fit looks poor" },
+  { id: "holdout", label: "A limited holdout it still passes" },
+  { id: "implication", label: "Engineering implication" },
   { id: "limits", label: "What this does not establish" },
+  { id: "technical", label: "Technical evidence" },
+  { id: "explorer", label: "Scenario explorer" },
   { id: "memo", label: "Decision memo" },
   { id: "reproduce", label: "Reproduce and download" },
-  { id: "references", label: "References" },
+  { id: "references", label: "Prior work" },
 ];
 
 const description =
@@ -259,115 +265,56 @@ const description =
   <p class="eyebrow">Study A4 — flagship case</p>
   <h1>When a straight p/Z line is convincing and wrong</h1>
 
-  <p class="lede">
-    In an aquifer-supported synthetic case, a volumetric p/Z fit achieves
-    R-squared = {base.rSquared.toFixed(6)} but estimates {base.fittedBscf.toFixed(1)} Bscf
-    against a known {base.trueBscf.toFixed(1)} Bscf: a {base.errorPct.toFixed(1)} percent
-    overestimate. A close fit does not, by itself, establish that the volumetric assumption
-    is appropriate. Full-precision values are in the tables below and in the CSV export.
-  </p>
+  <ExecutiveBrief>
+    <Fragment slot="question">
+      An aquifer supports a dry-gas reservoir that is being interpreted with the volumetric
+      p/Z model. How wrong is the recovered gas in place, and could anyone have told from the
+      data alone?
+    </Fragment>
+    <Fragment slot="finding">
+      The fit is excellent and the answer is badly wrong. Over most of the range the quality
+      of the fit does not indicate the size of the error.
+    </Fragment>
+    <Fragment slot="implication">
+      Goodness of fit is not evidence that the model is the right model. A volumetric p/Z
+      estimate needs an independent reason to believe the tank assumption — low water
+      production is not one, and neither is a straight line.
+    </Fragment>
+    <Fragment slot="limit">
+      Synthetic throughout, and one drive mechanism. This demonstrates that a convincing fit
+      can be structurally wrong; it does not quantify how often that happens on real fields.
+    </Fragment>
+  </ExecutiveBrief>
+
+  <KeyMetrics
+    metrics={[
+      { value: fmt.rSquared(base.rSquared), label: "R-squared of the volumetric fit" },
+      {
+        value: `${fmt.bscf(base.fittedBscf)} Bscf`,
+        label: "gas in place the fit reports",
+        exception: true,
+      },
+      {
+        value: `${fmt.bscf(base.trueBscf)} Bscf`,
+        label: `known truth — the estimate is ${fmt.percent(base.errorPct / 100)} high`,
+      },
+    ]}
+    note="The estimation error is more than a tenth of the inventory, and the fit statistic gives no sign of it."
+  />
 
   <p>
     <strong>Synthetic throughout.</strong> {NOT_RUN.fieldData}
   </p>
 
-  <section id="overview" aria-labelledby="overview-h">
-    <h2 id="overview-h">Overview</h2>
-
-    <p>
-      A dry-gas reservoir is supported by an aquifer and is being interpreted with the
-      volumetric p/Z model. How good does the fit look, how wrong is the recovered gas in
-      place, and could anyone have told from the data alone? The fit looks excellent, the
-      answer is badly wrong, and over most of the range the quality of the fit does not
-      indicate the size of the error.
-    </p>
-
-    <p>
-      The straight-line fit is not useless. It is exact when the reservoir is volumetric —
-      the volumetric control in the sweep below recovers the inventory to rounding — and at
-      negligible aquifer strength its error is small. What it stops doing, once any
-      meaningful influx is present, is carrying the information people read from it: the
-      x-intercept stops being gas in place, and the fit statistic stops warning them.
-    </p>
-
-    <p>
-      This effect is not new and the study does not claim it is. What it adds is the attack
-      on it: a pre-registered protocol, a bitwise reduction to the volumetric limit, a
-      timestep-refinement check, an estimator-free oracle, a matched pair of detector
-      controls, and a measured power curve for the detectability question. The{" "}
-      <a href={pageHref("/studies/a4/") + "#references"}>references section</a> records where
-      it sits against prior work.
-    </p>
-
-    <Callout kind="note" title="Four statements, kept apart" id="four-statements">
-      <p>
-        This study reaches the first two and does not reach the last two. Clearing a
-        project demonstration gate is evidence about the first two only.
-      </p>
-      <ol>
-        {FOUR_STATEMENTS.map((s) => (
-          <li>
-            <strong>{s.name}</strong> — {s.text}.
-          </li>
-        ))}
-      </ol>
-      <p>
-        Quantities are kept apart too. <em>G</em> and <em>G − G_p</em> here are inventory in
-        place. Recoverable gas is smaller by whatever the drive mechanism and the
-        abandonment condition leave behind, and reserves are a further commercial and
-        regulatory classification of a recoverable quantity. Nothing on this page is a
-        recoverable volume or a reserve.
-      </p>
-    </Callout>
-  </section>
-
-  <section id="model" aria-labelledby="model-h">
-    <h2 id="model-h">Model and assumptions</h2>
-
-    <p>
-      The histories come from a reservoir tank coupled to a Fetkovich aquifer, solved
-      implicitly at every step. The estimator is a constant-pore-volume inventory balance
-      with no influx term. They are separate modules and share no balance or fitting code,
-      so the bias reported here is a model-structure error and not algebra applied twice in
-      the same direction.
-    </p>
-
-    <p>
-      Reservoir: G = 1.0e11 scf, initial pressure 4000 psia, 180 degF, gas gravity 0.65,
-      deviation factor from Dranchuk-Abou-Kassem on Standing dry-gas pseudocriticals, SPE
-      standard conditions. Constant offtake of 0.55 G over 12.0 years, 144 monthly
-      timesteps, observations every third step. Aquifer: initial aquifer pressure 4000 psia,
-      W_i = 3.0e9 bbl, c_t = 6.0e-6 1/psi, so c_t·W_i = 18000 bbl/psi.
-      <strong>Only the productivity index is varied.</strong>
-    </p>
-
-    <Callout kind="note" title="Where the true inventory comes from">
-      <p>
-        The known inventory is evaluation-only information that no field measurement
-        provides, and it is not a field of the exported data. It is derived on this page as
-        {" "}<code>fit.gas_in_place_scf / (1 + relative_gas_in_place_error)</code>, evaluated
-        independently for each of the eight cases; the eight agree to better than 1e-9
-        relative, and the build stops if they do not. The value is
-        {" "}{trueG.bscf.toFixed(6)} Bscf. It is not typed into this page.
-      </p>
-    </Callout>
-  </section>
-
-  <section id="evidence" aria-labelledby="evidence-h">
-    <h2 id="evidence-h">Evidence</h2>
-
-    <p>
-      Nine exhibits, in the order of the study's own argument: what the fit looks like,
-      whether the residuals gave it away, how the bias scales, how it drifts with history
-      length, whether a chronological split catches it, whether a detector catches it under
-      noise, whether that detector survives a correlation mismatch, and whether the
-      generator's own numerics are trustworthy.
-    </p>
+  <section id="hero" aria-labelledby="hero-h">
+    <h2 id="hero-h">A convincing line, the wrong inventory</h2>
 
     <Figure
       id={f01.id}
+      role="hero"
       number={f01.number}
       title={f01.title}
+      titleVisible={false}
       svg={f01.svg}
       units={f01.units}
       interpretation="The observed points and the fitted line are visually indistinguishable over the observed interval, and the line's extrapolated x-intercept lands 12.5 Bscf to the right of the truth."
@@ -388,7 +335,25 @@ const description =
       />
     </Figure>
 
+    <h3>What to notice</h3>
+
     <p>
+      Over the observed interval the points and the fitted line are visually
+      indistinguishable. Everything to the right of the last observation is extrapolation with
+      no data behind it, and that is where the two answers separate: the line crosses zero
+      {" "}{fmt.bscf(base.fittedBscf - trueG.bscf)} Bscf past the known inventory.
+    </p>
+
+    <h3>Why it matters</h3>
+
+    <p>
+      The number an engineer takes from this plot is the x-intercept, and the statistic they
+      use to decide whether to trust it is the one shown above it. Here the statistic is
+      excellent and the intercept is wrong, so the usual check does not do the job it is being
+      asked to do.
+    </p>
+
+<p>
       The estimation error is {Math.abs(base.biasOverStderr).toFixed(1)} times the fit's
       reported standard error. That standard error is conditional on the fitted model; it
       does not include uncertainty from the omitted support mechanism. A narrower interval
@@ -396,55 +361,56 @@ const description =
       quantity it describes is the precision of a fit, not the accuracy of the inventory.
     </p>
 
-    <Figure
-      id={f01b.id}
-      number={f01b.number}
-      title={f01b.title}
-      svg={f01b.svg}
-      units={f01b.units}
-      interpretation="The same fit with the vertical axis restricted to the observed range, so that departures of a few psia are inspectable; the observations lie above the fit at both ends and below it in the middle."
-      caveat={f01b.caveat}
-      longDescription={f01b.longDescription}
-      evidenceClass={f01b.evidenceClass}
-      tableLabel="Data table — see Table F01 above"
-      svgDownload={f01b.svgDownload}
-      dataDownload={f01Csv.path}
-      dataDownloadLabel={f01Csv.name}
-    >
-      <p>
-        F01b is drawn from the same {base.observations} observations as F01. The values are
-        in <a href={pageHref("/studies/a4/") + "#t-f01"}>Table F01</a> above rather than
-        repeated here.
-      </p>
-    </Figure>
+  </section>
 
-    <Figure
-      id={f02.id}
-      number={f02.number}
-      title={f02.title}
-      svg={f02.svg}
-      units={f02.units}
-      interpretation={`The residuals sweep down, back up and down again rather than scattering: they run from ${base.residualMin.toFixed(2)} to ${base.residualMax.toFixed(2)} psia with a root-mean-square of ${base.residualRms.toFixed(2)} psia, and the largest excursion sits at zero cumulative production.`}
-      caveat={f02.caveat}
-      longDescription={f02.longDescription}
-      evidenceClass={f02.evidenceClass}
-      tableLabel="Data table — see Table F01 above"
-      svgDownload={f02.svgDownload}
-      dataDownload={f01Csv.path}
-      dataDownloadLabel={f01Csv.name}
-    >
-      <p>
-        The residual column of <a href={pageHref("/studies/a4/") + "#t-f01"}>Table F01</a> is
-        this figure's data. The 10 to 50 psia band drawn on it is the study author's
-        engineering judgement about the achievable error on a volume-averaged reservoir
-        pressure, not a retrieved figure, and the detectability conclusion depends on it.
-      </p>
-    </Figure>
+  <section id="mechanism" aria-labelledby="mechanism-h">
+    <h2 id="mechanism-h">Why aquifer support moves the intercept</h2>
+
+    <p>
+      The volumetric interpretation assumes the only thing holding pressure up is the gas
+      expanding into the space it already occupies. An aquifer breaks that assumption by
+      adding a second source of support: water encroaches, the reservoir gives up less
+      pressure for every unit of gas produced, and the pressure history is therefore flatter
+      than a closed tank of the same size would produce.
+    </p>
+
+    <p>
+      A flatter pressure history is exactly what a <em>larger</em> closed tank looks like. The
+      p/Z line rotates, its slope shallows, and the x-intercept — which the volumetric model
+      reads as gas in place — moves out. The estimator is not malfunctioning. It is answering
+      the question it was asked, on a reservoir that does not satisfy the assumption behind
+      the question.
+    </p>
+
+    <p>
+      This also explains why the fit statistic stays high. Influx does not scatter the points;
+      it bends the trend gently and systematically, and over a limited observed window a gentle
+      bend is well approximated by a straight line. The residuals carry the signature, but they
+      carry it as structure rather than as noise, and R-squared is not a test for structure.
+    </p>
+
+    <p>
+      The straight-line fit is not useless. It is exact when the reservoir really is
+      volumetric — the volumetric control in the sweep below recovers the inventory to
+      rounding — and at negligible aquifer strength its error is small. What it stops doing,
+      once meaningful influx is present, is carrying the information people read from it.
+    </p>
+  </section>
+
+  <section id="behaviour" aria-labelledby="behaviour-h">
+    <h2 id="behaviour-h">The bias grows before the fit looks poor</h2>
+
+    <p>
+      Two questions follow immediately: how does the error scale with the amount of support,
+      and does watching it for longer help?
+    </p>
 
     <Figure
       id={f03.id}
+      role="supporting"
       number={f03.number}
       title={f03.title}
+      titleVisible={false}
       svg={f03.svg}
       units={f03.units}
       interpretation="The inventory error rises monotonically with aquifer strength across the whole sweep while R-squared stays at or above 0.995, so the fit statistic does not track the error it is being read as evidence against."
@@ -491,8 +457,10 @@ const description =
 
     <Figure
       id={f04.id}
+      role="supporting"
       number={f04.number}
       title={f04.title}
+      titleVisible={false}
       svg={f04.svg}
       units={f04.units}
       interpretation="Every water-drive row drifts as history accumulates while each individual fit still looks like a clean straight line; the volumetric row is flat at machine precision, as it must be."
@@ -522,8 +490,20 @@ const description =
         </p>
       </Fragment>
     </Figure>
+  </section>
 
-    <Callout kind="note" title="F05, F06 and F07 are fixed-base experiments" id="fixed-base">
+  <section id="holdout" aria-labelledby="holdout-h">
+    <h2 id="holdout-h">A limited holdout the wrong model still passes</h2>
+
+    <p>
+      Withholding the later history and predicting it is the standard defence against a model
+      that has been over-fitted. It does not defend against this. The wrong structural model
+      reproduces the held-out pressures while its inventory extrapolation stays materially
+      biased, because the quantity being tested and the quantity being reported are not the
+      same quantity.
+    </p>
+
+<Callout kind="note" title="F05, F06 and F07 are fixed-base experiments" id="fixed-base">
       <p>
         The next three exhibits are their own experiments at their own settings. F05 is a
         chronological split of the base case; F06 is two Monte-Carlo noise studies with
@@ -536,8 +516,10 @@ const description =
 
     <Figure
       id={f05.id}
+      role="supporting"
       number={f05.number}
       title={f05.title}
+      titleVisible={false}
       svg={f05.svg}
       units={f05.units}
       interpretation={`Calibrated on the first ${f05Data.calibration_points} of ${f05Data.times_years.length} observations and used to reconstruct the remaining ${f05Data.holdout_points}, a model whose gas in place is ${(m5.calibration_relative_gas_in_place_error * 100).toFixed(2)} percent wrong reconstructs the held-out pressures to ${m5.holdout_rmse_pressure_psia.toFixed(2)} psia, which is ${(m5.holdout_rmse_fraction_of_initial_pressure * 100).toFixed(3)} percent of the initial pressure.`}
@@ -580,7 +562,7 @@ const description =
       </Fragment>
     </Figure>
 
-    <Callout kind="superseded" title="The gate this row is scored against" id="gate">
+<Callout kind="superseded" title="The gate this row is scored against" id="gate">
       <p>
         <strong>[SUPERSEDED]</strong> An earlier version of this study's report listed both
         J = 0.05 at +0.32 percent and J = 0.2 at +1.26 percent as rows inside a 1 percent
@@ -598,136 +580,64 @@ const description =
       </p>
     </Callout>
 
-    <Figure
-      id={f06.id}
-      number={f06.number}
-      title={f06.title}
-      svg={f06.svg}
-      units={f06.units}
-      interpretation="The curvature detector finds the aquifer in every realisation at 1 psi of pressure error and is effectively blind by 40 psi; the measured power curve crosses one half at about 11.2 psi on this design."
-      caveat={f06.caveat}
-      longDescription={f06.longDescription}
-      evidenceClass={f06.evidenceClass}
-      tableLabel="Data tables — two experiments, kept apart"
-      tableOpen={true}
-      svgDownload={f06.svgDownload}
-      dataDownload={evidenceDownloads[3]?.path}
-      dataDownloadLabel={evidenceDownloads[3]?.name}
-    >
-      <DataTable
-        caption={`Pre-registered noise sweep, ${f06Data.original.replicates} realisations per level. ${f06Data.original.seed_note}`}
-        captionTitle="Table F06a"
-        columns={[
-          { key: "sigma", label: "Pressure sigma", unit: "psi", numeric: true, rowHeader: true },
-          { key: "wd", label: "Detection rate, water drive", unit: "fraction", numeric: true },
-          { key: "nul", label: "Detection rate, volumetric null", unit: "fraction", numeric: true },
-        ]}
-        rows={f06Rows}
-        id="t-f06a"
-      />
-      <DataTable
-        caption={`Post-review power curve, ${f06Data.post_review_power_curve.replicates} realisations per level, on a different seed. A separate experiment, never spliced with the sweep above.`}
-        captionTitle="Table F06b"
-        columns={[
-          { key: "sigma", label: "Pressure sigma", unit: "psi", numeric: true, rowHeader: true },
-          { key: "rate", label: "Detection rate", unit: "fraction", numeric: true },
-        ]}
-        rows={f06Power}
-        id="t-f06b"
-      />
-      <Fragment slot="footnote">
-        <p>
-          The null rate is identical at every noise level because the null p/Z series is
-          exactly linear, so scaling the noise scales the fitted coefficient and its
-          standard error equally. With one seed reset identically at every level, that is
-          also the only thing that could have happened: the seven levels are rescalings of
-          one draw set rather than seven independent experiments, and the same limitation
-          applies to the ten levels of the power curve. The 0.0675 null rate is a high draw
-          of the declared seed, not the detector's size; over eight seeds the null rate runs
-          0.0425 to 0.0675 and pools to 0.0473 at 20000 replicates.
-        </p>
-      </Fragment>
-    </Figure>
-
-    <Figure
-      id={f07.id}
-      number={f07.number}
-      title={f07.title}
-      svg={f07.svg}
-      units={f07.units}
-      interpretation="Reading a strictly volumetric history with the wrong deviation-factor correlation produces a curvature statistic of −9.05 against a critical value of 2.01 — twice the aquifer's own +4.51 and opposite in sign — while the gas-in-place bias barely moves."
-      caveat={f07.caveat}
-      longDescription={f07.longDescription}
-      evidenceClass={f07.evidenceClass}
-      tableLabel="Data table — the correlation-mismatch values"
-      tableOpen={true}
-      svgDownload={f07.svgDownload}
-      dataDownload={evidenceDownloads[4]?.path}
-      dataDownloadLabel={evidenceDownloads[4]?.name}
-    >
-      <DataTable
-        caption="Post-review correlation-mismatch check. Signed statistics are kept signed; the sign is the point."
-        captionTitle="Table F07"
-        columns={[
-          { key: "q", label: "Quantity", rowHeader: true },
-          { key: "v", label: "Value", unit: "as declared", numeric: true },
-        ]}
-        rows={f07Rows}
-        id="t-f07"
-      />
-      <Fragment slot="footnote">
-        <p>
-          Two different questions with two different answers. The gas-in-place bias is
-          insensitive to the correlation: a constant multiplicative error in Z scales the
-          whole ordinate and leaves the x-intercept untouched, so the headline result
-          survives the correlation choice to within 0.3 percentage points. The curvature
-          detector does not survive it. Its false-positive rate of about 0.05 is conditional
-          on the analyst using exactly the correlation that generated the history, and no
-          field analysis can meet that condition.
-        </p>
-      </Fragment>
-    </Figure>
-
-    <Figure
-      id={f08.id}
-      number={f08.number}
-      title={f08.title}
-      svg={f08.svg}
-      units={f08.units}
-      interpretation={`Halving the timestep three times moves the recovered gas-in-place error by ${f08Data.J_2.error_span_over_refinement.toExponential(1)} at the base case and ${f08Data.J_60.error_span_over_refinement.toExponential(1)} at the strongest aquifer, against a pre-registered threshold of 1e-3: the bias is resolved in time and is not a timestep artefact.`}
-      caveat={f08.caveat}
-      longDescription={f08.longDescription}
-      evidenceClass={f08.evidenceClass}
-      tableLabel="Data table — four refinement levels at two aquifer strengths"
-      tableOpen={true}
-      svgDownload={f08.svgDownload}
-      dataDownload={evidenceDownloads[5]?.path}
-      dataDownloadLabel={evidenceDownloads[5]?.name}
-    >
-      <DataTable
-        caption="Timestep refinement. The finest computation is a numerical comparator, not an exact solution."
-        captionTitle="Table F08"
-        columns={[
-          { key: "j", label: "J", unit: "bbl/day/psi", numeric: true, rowHeader: true },
-          { key: "dt", label: "Timestep", unit: "days", numeric: true },
-          { key: "steps", label: "Steps", unit: "count", numeric: true },
-          { key: "we", label: "Terminal water influx", unit: "bbl", numeric: true },
-          { key: "err", label: "Error in G", unit: "%", numeric: true },
-          { key: "res", label: "Worst solver residual", unit: "psia of p/Z", numeric: true },
-        ]}
-        rows={f08Rows}
-        id="t-f08"
-      />
-      <Fragment slot="footnote">
-        <p>{f08Data.note} Convergence of this quantity does not establish that the formulation is right.</p>
-      </Fragment>
-    </Figure>
+    <Callout kind="limitation" title="This is a conditional reconstruction, not a forecast">
+      <p>
+        The held-out pressures are reconstructed using the synthetic deviation factor from the
+        future period, which a real forecast would not have. Nothing here establishes
+        independent forecasting capability; what it establishes is that passing a limited
+        chronological split does not establish that the structural model is right.
+      </p>
+    </Callout>
   </section>
 
-  <ExplorerScenarios />
+  <section id="implication" aria-labelledby="implication-h">
+    <h2 id="implication-h">Engineering implication</h2>
+
+    <p>
+      Before treating a p/Z x-intercept as a volumetric inventory basis, evaluate
+      independently whether the drive assumption is defensible. The fit statistic cannot do
+      that, and neither can a limited chronological holdout.
+    </p>
+
+    <p>
+      Evidence that bears on the question, and which this case shows is not substituted for by
+      goodness of fit: water production history, an explicit influx interpretation, geological
+      and structural evidence for a connected aquifer, drift in the estimate as history
+      accumulates, and whether a competing material-balance model fits the same data equally
+      well.
+    </p>
+
+    <p>
+      This is a synthetic counterexample under declared conditions. It establishes that a
+      convincing straight line <em>can</em> be structurally wrong, which is enough to require
+      the question be asked. It is not evidence about how often that happens on real fields,
+      and it is not an operating procedure.
+    </p>
+  </section>
 
   <section id="limits" aria-labelledby="limits-h">
     <h2 id="limits-h">What this study does not establish</h2>
+
+    <Callout kind="note" title="Four statements, kept apart" id="four-statements">
+      <p>
+        This study reaches the first two and does not reach the last two. Clearing a
+        project demonstration gate is evidence about the first two only.
+      </p>
+      <ol>
+        {FOUR_STATEMENTS.map((s) => (
+          <li>
+            <strong>{s.name}</strong> — {s.text}.
+          </li>
+        ))}
+      </ol>
+      <p>
+        Quantities are kept apart too. <em>G</em> and <em>G − G_p</em> here are inventory in
+        place. Recoverable gas is smaller by whatever the drive mechanism and the
+        abandonment condition leave behind, and reserves are a further commercial and
+        regulatory classification of a recoverable quantity. Nothing on this page is a
+        recoverable volume or a reserve.
+      </p>
+    </Callout>
 
     <p>
       These are not footnotes and they are not behind a disclosure. Several of them are the
@@ -833,6 +743,240 @@ const description =
       <p>{NOT_RUN.peerReview}</p>
     </Callout>
   </section>
+
+  <section id="technical" aria-labelledby="technical-h">
+    <h2 id="technical-h">Technical evidence</h2>
+
+    <p>
+      The model and its assumptions, the diagnostic exhibits that ask whether the fault could
+      have been detected, and the checks on the generator's own numerics. None of this changes
+      the finding above; it is what the finding rests on.
+    </p>
+
+    <h3>Model and assumptions</h3>
+
+
+    <p>
+      The histories come from a reservoir tank coupled to a Fetkovich aquifer, solved
+      implicitly at every step. The estimator is a constant-pore-volume inventory balance
+      with no influx term. They are separate modules and share no balance or fitting code,
+      so the bias reported here is a model-structure error and not algebra applied twice in
+      the same direction.
+    </p>
+
+    <p>
+      Reservoir: G = 1.0e11 scf, initial pressure 4000 psia, 180 degF, gas gravity 0.65,
+      deviation factor from Dranchuk-Abou-Kassem on Standing dry-gas pseudocriticals, SPE
+      standard conditions. Constant offtake of 0.55 G over 12.0 years, 144 monthly
+      timesteps, observations every third step. Aquifer: initial aquifer pressure 4000 psia,
+      W_i = 3.0e9 bbl, c_t = 6.0e-6 1/psi, so c_t·W_i = 18000 bbl/psi.
+      <strong>Only the productivity index is varied.</strong>
+    </p>
+
+    <Callout kind="note" title="Where the true inventory comes from">
+      <p>
+        The known inventory is evaluation-only information that no field measurement
+        provides, and it is not a field of the exported data. It is derived on this page as
+        {" "}<code>fit.gas_in_place_scf / (1 + relative_gas_in_place_error)</code>, evaluated
+        independently for each of the eight cases; the eight agree to better than 1e-9
+        relative, and the build stops if they do not. The value is
+        {" "}{trueG.bscf.toFixed(6)} Bscf. It is not typed into this page.
+      </p>
+    </Callout>
+
+    <h3>Could anyone have told?</h3>
+
+    <p>
+      Four exhibits ask the detectability question rather than the inventory question: what the
+      fit looks like over the observed interval alone, what the residuals would have had to
+      show, whether a detector catches the influx under noise, and whether that detector
+      survives a correlation mismatch.
+    </p>
+
+    <Figure
+      id={f01b.id}
+      role="diagnostic"
+      number={f01b.number}
+      title={f01b.title}
+      titleVisible={false}
+      svg={f01b.svg}
+      units={f01b.units}
+      interpretation="The same fit with the vertical axis restricted to the observed range, so that departures of a few psia are inspectable; the observations lie above the fit at both ends and below it in the middle."
+      caveat={f01b.caveat}
+      longDescription={f01b.longDescription}
+      evidenceClass={f01b.evidenceClass}
+      tableLabel="Data table — see Table F01 above"
+      svgDownload={f01b.svgDownload}
+      dataDownload={f01Csv.path}
+      dataDownloadLabel={f01Csv.name}
+    >
+      <p>
+        F01b is drawn from the same {base.observations} observations as F01. The values are
+        in <a href={pageHref("/studies/a4/") + "#t-f01"}>Table F01</a> above rather than
+        repeated here.
+      </p>
+    </Figure>
+
+    <Figure
+      id={f02.id}
+      role="diagnostic"
+      number={f02.number}
+      title={f02.title}
+      titleVisible={false}
+      svg={f02.svg}
+      units={f02.units}
+      interpretation={`The residuals sweep down, back up and down again rather than scattering: they run from ${base.residualMin.toFixed(2)} to ${base.residualMax.toFixed(2)} psia with a root-mean-square of ${base.residualRms.toFixed(2)} psia, and the largest excursion sits at zero cumulative production.`}
+      caveat={f02.caveat}
+      longDescription={f02.longDescription}
+      evidenceClass={f02.evidenceClass}
+      tableLabel="Data table — see Table F01 above"
+      svgDownload={f02.svgDownload}
+      dataDownload={f01Csv.path}
+      dataDownloadLabel={f01Csv.name}
+    >
+      <p>
+        The residual column of <a href={pageHref("/studies/a4/") + "#t-f01"}>Table F01</a> is
+        this figure's data. The 10 to 50 psia band drawn on it is the study author's
+        engineering judgement about the achievable error on a volume-averaged reservoir
+        pressure, not a retrieved figure, and the detectability conclusion depends on it.
+      </p>
+    </Figure>
+
+    <Figure
+      id={f06.id}
+      role="diagnostic"
+      number={f06.number}
+      title={f06.title}
+      titleVisible={false}
+      svg={f06.svg}
+      units={f06.units}
+      interpretation="The curvature detector finds the aquifer in every realisation at 1 psi of pressure error and is effectively blind by 40 psi; the measured power curve crosses one half at about 11.2 psi on this design."
+      caveat={f06.caveat}
+      longDescription={f06.longDescription}
+      evidenceClass={f06.evidenceClass}
+      tableLabel="Data tables — two experiments, kept apart"
+      tableOpen={true}
+      svgDownload={f06.svgDownload}
+      dataDownload={evidenceDownloads[3]?.path}
+      dataDownloadLabel={evidenceDownloads[3]?.name}
+    >
+      <DataTable
+        caption={`Pre-registered noise sweep, ${f06Data.original.replicates} realisations per level. ${f06Data.original.seed_note}`}
+        captionTitle="Table F06a"
+        columns={[
+          { key: "sigma", label: "Pressure sigma", unit: "psi", numeric: true, rowHeader: true },
+          { key: "wd", label: "Detection rate, water drive", unit: "fraction", numeric: true },
+          { key: "nul", label: "Detection rate, volumetric null", unit: "fraction", numeric: true },
+        ]}
+        rows={f06Rows}
+        id="t-f06a"
+      />
+      <DataTable
+        caption={`Post-review power curve, ${f06Data.post_review_power_curve.replicates} realisations per level, on a different seed. A separate experiment, never spliced with the sweep above.`}
+        captionTitle="Table F06b"
+        columns={[
+          { key: "sigma", label: "Pressure sigma", unit: "psi", numeric: true, rowHeader: true },
+          { key: "rate", label: "Detection rate", unit: "fraction", numeric: true },
+        ]}
+        rows={f06Power}
+        id="t-f06b"
+      />
+      <Fragment slot="footnote">
+        <p>
+          The null rate is identical at every noise level because the null p/Z series is
+          exactly linear, so scaling the noise scales the fitted coefficient and its
+          standard error equally. With one seed reset identically at every level, that is
+          also the only thing that could have happened: the seven levels are rescalings of
+          one draw set rather than seven independent experiments, and the same limitation
+          applies to the ten levels of the power curve. The 0.0675 null rate is a high draw
+          of the declared seed, not the detector's size; over eight seeds the null rate runs
+          0.0425 to 0.0675 and pools to 0.0473 at 20000 replicates.
+        </p>
+      </Fragment>
+    </Figure>
+
+    <Figure
+      id={f07.id}
+      role="diagnostic"
+      number={f07.number}
+      title={f07.title}
+      titleVisible={false}
+      svg={f07.svg}
+      units={f07.units}
+      interpretation="Reading a strictly volumetric history with the wrong deviation-factor correlation produces a curvature statistic of −9.05 against a critical value of 2.01 — twice the aquifer's own +4.51 and opposite in sign — while the gas-in-place bias barely moves."
+      caveat={f07.caveat}
+      longDescription={f07.longDescription}
+      evidenceClass={f07.evidenceClass}
+      tableLabel="Data table — the correlation-mismatch values"
+      tableOpen={true}
+      svgDownload={f07.svgDownload}
+      dataDownload={evidenceDownloads[4]?.path}
+      dataDownloadLabel={evidenceDownloads[4]?.name}
+    >
+      <DataTable
+        caption="Post-review correlation-mismatch check. Signed statistics are kept signed; the sign is the point."
+        captionTitle="Table F07"
+        columns={[
+          { key: "q", label: "Quantity", rowHeader: true },
+          { key: "v", label: "Value", unit: "as declared", numeric: true },
+        ]}
+        rows={f07Rows}
+        id="t-f07"
+      />
+      <Fragment slot="footnote">
+        <p>
+          Two different questions with two different answers. The gas-in-place bias is
+          insensitive to the correlation: a constant multiplicative error in Z scales the
+          whole ordinate and leaves the x-intercept untouched, so the headline result
+          survives the correlation choice to within 0.3 percentage points. The curvature
+          detector does not survive it. Its false-positive rate of about 0.05 is conditional
+          on the analyst using exactly the correlation that generated the history, and no
+          field analysis can meet that condition.
+        </p>
+      </Fragment>
+    </Figure>
+
+    <h3>Is the generator itself trustworthy?</h3>
+
+    <Figure
+      id={f08.id}
+      role="technical"
+      number={f08.number}
+      title={f08.title}
+      titleVisible={false}
+      svg={f08.svg}
+      units={f08.units}
+      interpretation={`Halving the timestep three times moves the recovered gas-in-place error by ${f08Data.J_2.error_span_over_refinement.toExponential(1)} at the base case and ${f08Data.J_60.error_span_over_refinement.toExponential(1)} at the strongest aquifer, against a pre-registered threshold of 1e-3: the bias is resolved in time and is not a timestep artefact.`}
+      caveat={f08.caveat}
+      longDescription={f08.longDescription}
+      evidenceClass={f08.evidenceClass}
+      tableLabel="Data table — four refinement levels at two aquifer strengths"
+      tableOpen={true}
+      svgDownload={f08.svgDownload}
+      dataDownload={evidenceDownloads[5]?.path}
+      dataDownloadLabel={evidenceDownloads[5]?.name}
+    >
+      <DataTable
+        caption="Timestep refinement. The finest computation is a numerical comparator, not an exact solution."
+        captionTitle="Table F08"
+        columns={[
+          { key: "j", label: "J", unit: "bbl/day/psi", numeric: true, rowHeader: true },
+          { key: "dt", label: "Timestep", unit: "days", numeric: true },
+          { key: "steps", label: "Steps", unit: "count", numeric: true },
+          { key: "we", label: "Terminal water influx", unit: "bbl", numeric: true },
+          { key: "err", label: "Error in G", unit: "%", numeric: true },
+          { key: "res", label: "Worst solver residual", unit: "psia of p/Z", numeric: true },
+        ]}
+        rows={f08Rows}
+        id="t-f08"
+      />
+      <Fragment slot="footnote">
+        <p>{f08Data.note} Convergence of this quantity does not establish that the formulation is right.</p>
+      </Fragment>
+    </Figure>
+  </section>
+
+  <ExplorerScenarios />
 
   <section id="memo" aria-labelledby="memo-h">
     <h2 id="memo-h">Decision memo</h2>
@@ -977,6 +1121,14 @@ const description =
 
   <section id="references" aria-labelledby="references-h">
     <h2 id="references-h">Where this sits against prior work</h2>
+
+    <p>
+      This effect is not new and the study does not claim it is. What it adds is the attack
+      on it: a pre-registered protocol, a bitwise reduction to the volumetric limit, a
+      timestep-refinement check, an estimator-free oracle, a matched pair of detector
+      controls, and a measured power curve for the detectability question. The contribution
+      is the controlled known-answer structure, not the discovery of the phenomenon.
+    </p>
 
     <p>
       The effect is documented in the literature and this study is a corroboration, not a

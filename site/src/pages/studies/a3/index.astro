@@ -148,6 +148,7 @@ const description =
       id={a3.id}
       number={a3.number}
       title={a3.title}
+      titleVisible={false}
       svg={a3.svg}
       units={a3.units}
       interpretation={`Only the random-scatter row moves with the assumed gauge accuracy, and it moves far enough to swap the top two: the ranking is stable under a factor of two in the assumption — ${r.ranking_stable_under_sigma_factor_two ? "yes" : "no"}.`}
@@ -186,7 +187,7 @@ const description =
           published correlations, which is not the same quantity as the error against
           laboratory PVT, so it is a lower bound on the deviation-factor risk rather than an
           estimate of it. And the whole table is conditional on the tank model being right: a
-          weak aquifer biases G by more than every row of this table added together, while
+          weak aquifer biases G by more than every row of this table added together, while{" "}
           <em> improving</em> the apparent straightness of the line — which is what study
           {" "}<a href={href("/studies/a4/")}>A4</a> demonstrates.
         </p>

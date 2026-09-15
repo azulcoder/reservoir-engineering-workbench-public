@@ -1,0 +1,89 @@
+---
+/**
+ * Two or three consequential values on one line.
+ *
+ * Where KeyComparison sets one number against the number it should be read against, this
+ * sets out the small set of values a reader needs to hold at once -- for A4, the fit
+ * statistic, the estimate and the error. It exists because the alternative was a wall of
+ * cards, and because reading three values out of a paragraph is work a reader should not
+ * have to do.
+ *
+ * Restrained by construction: a row of values on a rule, no card, no shadow, no icon. One
+ * metric may be marked as the exception, and it is marked by colour AND by the word in its
+ * own label, never by colour alone.
+ *
+ * Values are formatted by the caller from the case artefact. This component does no
+ * rounding; how many digits a quantity deserves is decided in scripts/format.ts.
+ */
+export interface Metric {
+  value: string;
+  label: string;
+  /** Marks this as the value that is the problem. */
+  exception?: boolean;
+}
+export interface Props {
+  metrics: Metric[];
+  /** Optional sentence under the row, for the relation between them. */
+  note?: string;
+}
+const { metrics, note } = Astro.props;
+---
+
+<div class="km">
+  <dl class="km__row">
+    {
+      metrics.map((m) => (
+        <div class:list={["km__metric", m.exception && "km__metric--exception"]}>
+          <dt class="km__value">{m.value}</dt>
+          <dd class="km__label">{m.label}</dd>
+        </div>
+      ))
+    }
+  </dl>
+  {note && <p class="km__note">{note}</p>}
+</div>
+
+<style>
+  .km {
+    margin-block: var(--space-5) var(--space-6);
+    padding-block-start: var(--space-4);
+    border-block-start: 1px solid var(--c-rule);
+  }
+
+  .km__row {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-5) var(--space-8);
+  }
+
+  .km__metric {
+    min-width: 0;
+    flex: 0 1 auto;
+  }
+
+  .km__value {
+    font-size: var(--text-xl);
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+    color: var(--c-ink);
+  }
+
+  .km__metric--exception .km__value {
+    color: var(--c-contrast);
+  }
+
+  .km__label {
+    margin: var(--space-1) 0 0;
+    font-size: var(--text-sm);
+    color: var(--c-ink-3);
+    max-width: 24ch;
+    overflow-wrap: break-word;
+  }
+
+  .km__note {
+    margin-block: var(--space-4) 0;
+    color: var(--c-ink-2);
+    max-width: var(--prose-max);
+  }
+</style>

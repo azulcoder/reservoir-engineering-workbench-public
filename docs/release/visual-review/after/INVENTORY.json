@@ -1,0 +1,151 @@
+{
+  "note": "review captures for human inspection; not pixel baselines, not comparable across operating systems",
+  "platform": "darwin",
+  "base_url": "http://127.0.0.1:4399/reservoir-engineering-workbench-public",
+  "files": [
+    {
+      "file": "home.png",
+      "path": "/",
+      "width": 1440,
+      "fullPage": false,
+      "anchor": null,
+      "what": "home, first viewport: is the project and its two flagship findings clear?"
+    },
+    {
+      "file": "home-full.png",
+      "path": "/",
+      "width": 1440,
+      "fullPage": true,
+      "anchor": null,
+      "what": "home, whole page: total narrative length and section order"
+    },
+    {
+      "file": "home-768.png",
+      "path": "/",
+      "width": 768,
+      "fullPage": false,
+      "anchor": null,
+      "what": "home at tablet width"
+    },
+    {
+      "file": "home-375.png",
+      "path": "/",
+      "width": 375,
+      "fullPage": false,
+      "anchor": null,
+      "what": "home at phone width: does the hierarchy survive?"
+    },
+    {
+      "file": "studies.png",
+      "path": "/studies/",
+      "width": 1440,
+      "fullPage": true,
+      "anchor": null,
+      "what": "studies index: progression or catalogue?"
+    },
+    {
+      "file": "studies-375.png",
+      "path": "/studies/",
+      "width": 375,
+      "fullPage": true,
+      "anchor": null,
+      "what": "studies index at phone width"
+    },
+    {
+      "file": "a4.png",
+      "path": "/studies/a4/",
+      "width": 1440,
+      "fullPage": false,
+      "anchor": null,
+      "what": "A4 first viewport: question, the inventory problem, synthetic status"
+    },
+    {
+      "file": "a4-375.png",
+      "path": "/studies/a4/",
+      "width": 375,
+      "fullPage": false,
+      "anchor": null,
+      "what": "A4 first viewport at phone width"
+    },
+    {
+      "file": "a4-hero.png",
+      "path": "/studies/a4/",
+      "width": 1440,
+      "fullPage": false,
+      "anchor": "#hero",
+      "what": "A4 hero figure: is the conclusion visible in one figure?"
+    },
+    {
+      "file": "a4-result.png",
+      "path": "/studies/a4/",
+      "width": 1440,
+      "fullPage": false,
+      "anchor": "#implication",
+      "what": "A4 engineering implication"
+    },
+    {
+      "file": "a4-supporting.png",
+      "path": "/studies/a4/",
+      "width": 1440,
+      "fullPage": false,
+      "anchor": "#behaviour",
+      "what": "A4 primary supporting evidence"
+    },
+    {
+      "file": "a4-holdout.png",
+      "path": "/studies/a4/",
+      "width": 1440,
+      "fullPage": false,
+      "anchor": "#holdout",
+      "what": "A4 holdout section"
+    },
+    {
+      "file": "a4-technical.png",
+      "path": "/studies/a4/",
+      "width": 1440,
+      "fullPage": false,
+      "anchor": "#technical",
+      "what": "A4 transition into technical evidence"
+    },
+    {
+      "file": "b1.png",
+      "path": "/studies/b1/",
+      "width": 1440,
+      "fullPage": false,
+      "anchor": null,
+      "what": "B1 first viewport: question, instrument, silent-error insight, synthetic status"
+    },
+    {
+      "file": "b1-375.png",
+      "path": "/studies/b1/",
+      "width": 375,
+      "fullPage": false,
+      "anchor": null,
+      "what": "B1 first viewport at phone width"
+    },
+    {
+      "file": "b1-visibility.png",
+      "path": "/studies/b1/",
+      "width": 1440,
+      "fullPage": false,
+      "anchor": "#visibility",
+      "what": "B1 defect-visibility section: the primary insight"
+    },
+    {
+      "file": "b1-diagnostic.png",
+      "path": "/studies/b1/",
+      "width": 1440,
+      "fullPage": false,
+      "anchor": "#evidence",
+      "what": "B1 primary diagnostic figure"
+    },
+    {
+      "file": "methods.png",
+      "path": "/methods/",
+      "width": 1440,
+      "fullPage": false,
+      "anchor": null,
+      "what": "methods, first viewport"
+    }
+  ]
+}
