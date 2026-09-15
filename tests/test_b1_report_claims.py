@@ -193,6 +193,34 @@ class CriterionCountAgreement(unittest.TestCase):
         self.assertIn("Eight of the nine are recorded as flags", REPORT)
         self.assertIn("no single run can record that about itself", REPORT)
 
+    #: Every place that states B1's criterion count. Deliberately enumerated rather than
+    #: discovered by scanning for "9 of 9": docs/release/VERIFICATION.md and
+    #: CANONICAL_SNAPSHOT_MIGRATION.md both carry that string about A1 and A3, where it
+    #: means something else entirely, and a scan would fail on them for no reason.
+    COUNT_SITES = (
+        ("cases/B1_iarf_known_answer/report.md", "no single run can record that about itself"),
+        ("STAGE_B_READY.md", "no single run can record about"),
+        ("CHANGELOG.md", "no\nsingle run can record about itself"),
+        ("site/src/pages/studies/index.astro", "determinism verified by re-running"),
+    )
+
+    def test_every_statement_of_the_count_explains_it(self) -> None:
+        """A reader moving between pages must not have to reconcile 9 against 8.
+
+        This exists because the first fix corrected the report and the case page and left
+        the studies index saying "9 of 9" with no explanation, which is the same defect one
+        page over.
+        """
+        for relative, explanation in self.COUNT_SITES:
+            document = (ROOT / relative).read_text()
+            states_count = "9 of 9" in document or "Nine of nine" in document
+            self.assertTrue(states_count, f"{relative} no longer states the count")
+            self.assertIn(
+                explanation.replace("\\n", "\n"),
+                document,
+                f"{relative} states the criterion count without explaining the eight-of-nine split",
+            )
+
     def test_the_site_page_says_recorded_rather_than_implying_all(self) -> None:
         page = self.SITE_PAGE.read_text()
         self.assertIn("recorded as met in the run's own output", page)
