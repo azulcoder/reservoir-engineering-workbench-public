@@ -761,7 +761,7 @@ async function main() {
   await emitJson(
     "b1_summary.json",
     b1,
-    "B1 case summary, the committed canonical snapshot verbatim, including every criterion flag and both ungated diagnostics.",
+    "B1 case summary: every value of the committed canonical snapshot, including each criterion flag and both ungated diagnostics. Re-serialised by this emitter rather than copied byte for byte, so a whole-numbered float such as 0.0 is written 0; the numbers themselves are unchanged.",
     "full",
   );
 
