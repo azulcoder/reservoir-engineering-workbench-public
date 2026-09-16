@@ -304,17 +304,25 @@ Measured from `site/public/data/index.json` after a clean run of the sequence.
 
 | Class | Files | Bytes | In a page payload? |
 |---|---|---|---|
-| `full` — whole-dataset CSV and JSON | 20 | 213,716 | no, download only |
-| `selected` — one computed case each | 16 | 220,193 | no, download only |
-| `exhibit` — canonical vector figures | 12 | 355,683 | the same bytes are inlined in the HTML |
-| `exhibit-raster` — PNG exports | 12 | 8,258,520 | **no** |
-| Total | 60 | 9,048,112 | |
+| `full` — whole-dataset CSV and JSON | 28 | 473,381 | no, download only |
+| `selected` — one computed case each | 16 | 220,189 | no, download only |
+| `canonical-vector` — figures | 22 | 615,505 | the same bytes are inlined in the HTML |
+| `raster-export` — PNG exports | 22 | 14,012,983 | **no** |
+| Total | 88 | 15,322,058 | |
+
+> **[RECOUNTED 2026-09-17]** The previous version of this table read 20 / 16 / 12 / 12 and a
+> total of 60 files and 9,048,112 bytes, and named the last two classes `exhibit` and
+> `exhibit-raster`. Those counts were already stale before case B2 was added, and the class
+> names did not match what `index.json` actually writes. Every figure in the table above was
+> recounted directly from `site/public/data/index.json` after a clean run of the sequence
+> rather than adjusted by the difference. Nothing about the policy changed; only the
+> measurement of it was wrong.
 
 The rasters are accounted for separately because they behave differently from everything
 else in the table. Nothing on the site inlines, embeds or preloads one: they are reachable
 only as a download link, step 9 of the build sequence fails if any page carries an `<img>`,
 `<image>` or `<link>` pointing at one, and `dataIndex()` reports them in their own block so
-no page can fold them into a payload figure. 8.25 MB of PNG is 91 percent of the published
+no page can fold them into a payload figure. 14.0 MB of PNG is 91 percent of the published
 download bytes and 0 percent of what a reader downloads to read a page.
 
 Per figure, vector and raster:

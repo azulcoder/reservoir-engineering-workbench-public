@@ -3903,6 +3903,7 @@ function buildB2Control(summary) {
         description,
         `The rule declined one condition earlier than the protocol anticipated. It was expected to fail on the minimum extent; it failed on the storage identity, meaning no point in the record is even admissible. That is a stricter refusal than the one designed for, not a weaker one.`,
         "This control matters less than it was meant to. It shows the gate closing on a record built to be hopeless — but the primary case at C_D = 1000, which was built to succeed, also had the gate close on it.",
+        "Units: pressure change and Bourdet derivative in psi, against elapsed time in hours, both on logarithmic axes. The storage coefficient C_D is dimensionless. No standard-condition basis applies -- this is a liquid-filled wellbore at reservoir conditions and nothing here is a gas volume.",
         "Synthetic data. Source: cases/B2_wellbore_storage_window/results/summary.json, /b2_6_deliberately_inconclusive.",
       ],
     }),

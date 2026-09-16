@@ -165,7 +165,7 @@ test.describe("responsive", () => {
      * only two of the three engines reported it. The floor is unchanged. */
     const FLOOR = 13;
     const WIDTHS = [320, 375, 768, 1440];
-    const PAGES = ["/", "/studies/a4/", "/studies/a1/", "/studies/a3/", "/studies/b1/"];
+    const PAGES = ["/", "/studies/a4/", "/studies/a1/", "/studies/a3/", "/studies/b1/", "/studies/b2/"];
     const worst: Array<{ at: string; px: number; text: string; where: string }> = [];
 
     for (const width of WIDTHS) {
