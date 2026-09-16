@@ -346,6 +346,22 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Install the case-layer numerical dependency
+        # Case B2's forward model needs modified Bessel functions at complex argument and a
+        # numerical inverse Laplace transform. `math` has neither, so the case layer uses
+        # mpmath, pinned to the version in requirements-dev.lock. The library under src/ is
+        # untouched by this and still installs with nothing behind it, which a test enforces
+        # by walking its import graph.
+        #
+        # The backend is printed because it is load-bearing. mpmath computes in pure Python
+        # by default and switches to gmpy2 when that is installed, which would change the
+        # arithmetic under every Bessel evaluation. Byte-identical reproduction is a claim
+        # about the backend as much as about the version.
+        run: |
+          set -uo pipefail
+          python3 -m pip install --no-cache-dir --disable-pip-version-check mpmath==1.3.0
+          python3 -c "import mpmath, mpmath.libmp as l; print('mpmath', mpmath.__version__, 'backend', l.BACKEND)"
+
       - name: Record the canonical environment
         run: |
           set -uo pipefail
@@ -358,6 +374,7 @@ jobs:
             grep -E "^PRETTY_NAME=" /etc/os-release
             echo "arch:   $(uname -m)"
             python3 -VV
+            python3 -c "import mpmath, mpmath.libmp as l; print('mpmath:', mpmath.__version__, '(backend', l.BACKEND + ')')"
           } | tee canonical_environment.txt
 
       - name: Reproduce each canonical snapshot, byte for byte
@@ -445,6 +462,22 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: ${{ matrix.python }}
+
+      - name: Install the case-layer numerical dependency
+        # Case B2's forward model needs modified Bessel functions at complex argument and a
+        # numerical inverse Laplace transform. `math` has neither, so the case layer uses
+        # mpmath, pinned to the version in requirements-dev.lock. The library under src/ is
+        # untouched by this and still installs with nothing behind it, which a test enforces
+        # by walking its import graph.
+        #
+        # The backend is printed because it is load-bearing. mpmath computes in pure Python
+        # by default and switches to gmpy2 when that is installed, which would change the
+        # arithmetic under every Bessel evaluation. Byte-identical reproduction is a claim
+        # about the backend as much as about the version.
+        run: |
+          set -uo pipefail
+          python3 -m pip install --no-cache-dir --disable-pip-version-check mpmath==1.3.0
+          python3 -c "import mpmath, mpmath.libmp as l; print('mpmath', mpmath.__version__, 'backend', l.BACKEND)"
 
       - name: Run each case and check its own scientific criteria
         run: |

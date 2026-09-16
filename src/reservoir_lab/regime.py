@@ -118,6 +118,13 @@ class RadialWindow:
     reason: str = ""
     #: How many candidate intervals satisfied every condition.
     candidates: int = 0
+    #: The widest admissible run found, in log-10 cycles, whether or not it qualified.
+    #: Reported so a decline can be drawn and compared rather than only asserted: it says
+    #: how far short the record fell. **It takes no part in the decision** -- selection uses
+    #: ``qualifying`` alone, and this field is written after that decision is made.
+    widest_decades: float = 0.0
+    #: Points in that widest run, on the same terms.
+    most_points: int = 0
 
 
 def local_log_slope(
@@ -258,6 +265,8 @@ def identify_radial_window(
                 f"against {settings.min_decades} required, and the largest held {most} points "
                 f"against {settings.min_points} required"
             ),
+            widest_decades=widest,
+            most_points=most,
         )
 
     # Widest in log-10 time; a tie goes to the later interval, which sits further from the
@@ -273,4 +282,6 @@ def identify_radial_window(
         decades=decades,
         points=points,
         candidates=len(qualifying),
+        widest_decades=max(q[2] for q in qualifying),
+        most_points=max(q[3] for q in qualifying),
     )
