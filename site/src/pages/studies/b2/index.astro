@@ -535,6 +535,17 @@ const contents = [
     </p>
 
     <p>
+      Reproducibility was measured rather than assumed. Across four environments — Ubuntu
+      24.04 on three CPython versions and macOS 15 on arm64 — the comparison against the
+      committed snapshot found 5368 float fields and a worst difference of <strong>exactly
+      zero</strong>, and the pinned container reproduced it byte for byte. That is a property
+      of the arithmetic, not a stronger claim about the science: the forward model runs in
+      mpmath at {s.config.inversion.dps} digits in pure Python, so it avoids the platform
+      library differences that leave the other cases with small non-zero spreads. The declared
+      1e-07 envelope was reused unchanged and not widened.
+    </p>
+
+    <p>
       Full snapshot, including every sweep level, the exported series and the post-hoc
       namespace: <a href={summaryJson.href}>{summaryJson.name}</a> ({summaryJson.size}).
     </p>

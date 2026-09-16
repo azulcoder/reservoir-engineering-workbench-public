@@ -266,6 +266,24 @@ much earlier than the evidence actually arrives.
 Byte-identical reproduction in the pinned canonical container; semantic comparison against the
 declared portability envelope elsewhere, with every criterion verdict compared exactly.
 
+**Measured, and the result is unusual enough to state plainly.** Across the four portability
+environments — Ubuntu 24.04 on CPython 3.11, 3.12 and 3.13, and macOS 15 on arm64 — the
+comparison against the committed snapshot found **5368 float fields and a worst difference of
+exactly zero**, relative and absolute. The canonical container reproduced it byte for byte.
+B2 is bit-identical on every environment it has been run on.
+
+That is a property of the arithmetic rather than a stronger claim about the science. The
+forward model is evaluated by mpmath in pure Python at 30 digits, so every Bessel function and
+the whole inverse transform avoid the platform `libm` differences that put A4 at 2.37e-08 and
+B1 at 1.11e-10, and the float64 tail — the Bourdet chain and the least-squares fit — uses only
+IEEE-754 operations that are exact and identically ordered everywhere. **The 1e-07 envelope was
+reused unchanged and not widened**, and B2 is no evidence that it is adequate for cases that do
+use `libm`.
+
+One thing this does *not* measure: the snapshot was authored on macOS arm64, so a local
+same-platform rerun is a determinism check and not a portability one. The four environments
+above are what measure portability, and they are the numbers quoted.
+
 **One thing changed in the canonical environment for this case and is declared rather than
 assumed.** B2's forward model needs modified Bessel functions at complex argument and a
 numerical inverse Laplace transform, neither of which the standard library has, so `mpmath` is

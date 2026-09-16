@@ -1,6 +1,6 @@
 {
   "purpose": "Scientific artefacts frozen for the executive visual refactor. A presentation change must not become a scientific change.",
-  "frozen_at_commit": "1823ac53099228b17a810cf40a3917736c80d162",
+  "frozen_at_commit": "c5af12595e5228b47278c414693144104a59693b",
   "files": {
     "cases/A1_volumetric_baseline/protocol.md": "61b88460363c7ca7fc745def4ab784551d5272f3bb0c8f44ec5a48bec5550400",
     "cases/A1_volumetric_baseline/report.md": "738bbcd2fd32f4d6be74b5ad605fc89e3842de04ed8767796240efc3b193aa8c",
@@ -28,7 +28,7 @@
     "cases/B2_wellbore_storage_window/HARD_STOP_01.md": "8b097503bf3fe1ad1b26b04fea9cdf22afc3adf5ddf1f823f3d4048be27bd6f8",
     "cases/B2_wellbore_storage_window/PROTOCOL_AMENDMENT_01.md": "436c8ded425b320ff17bf9a1b5da717e7c442978f7ca2e05f29ff18638b099f7",
     "cases/B2_wellbore_storage_window/protocol.md": "1cfa67d18a94db0dc895ea454b4499a90f1d0b20ede5dba1628f8f07d9d8d048",
-    "cases/B2_wellbore_storage_window/report.md": "4528c27459f20d19eb4861dedae017aae3d55a7a58adfe124869f7b279ecb164",
+    "cases/B2_wellbore_storage_window/report.md": "76984d429d8c541e1e438c40cc7a9c12d04f9616df50e7ef9b47e53cbaa80abe",
     "cases/B2_wellbore_storage_window/results/run_record.json": "9b22de5d52fd77a0d8af1446231b011dcdd546a817a0b68de0deb9718978928e",
     "cases/B2_wellbore_storage_window/results/summary.json": "2643816e37faa475625511f3768a9912cc47eb3590803caeec46b987c0cac090",
     "cases/B2_wellbore_storage_window/run.py": "53fe3eaa27b53196da2e633c8ec186f8bd60897a868d802e37b0eab9c191e247",
@@ -47,7 +47,7 @@
     "docs/protocols/README.md": "7f7381f573c8d1f488c136804a2738dfd4f1ff7ab6470460387e46b5d6f0ccfc",
     "docs/protocols/stage_b_pta_protocol.md": "0dc922897491b5db969efeceae2ffdc63079eb37fe9607dacbb51ce2811de636",
     "docs/release/canonical_environment.json": "7e944c3d3d1678ce5d76b773f8f3ec139f98c396abb20c18972b0418418bb452",
-    "docs/release/portability_envelope.json": "bf9297faffb2debffa2d165558e609d2093d5ea5ca542c26cb214bb6e7fd17d7",
+    "docs/release/portability_envelope.json": "97e98ea2744abb57c909387f5acbe33cd5fdeeba763c2e604c7d08e9de81c1c4",
     "requirements-dev.lock": "4a12d2bce41c8fac04499b816f691738e6220121e30046eb0952aff6fefb7b93",
     "scripts/compare_case_outputs.py": "6c69bf57aa54e1db155d4e256fb476a61b73a5198d1b7721b94e7295eec122c6",
     "scripts/export_presentation_data.py": "cf5916c14bbc6c19bb5913caaa1d8ab3dc1a71586fca178515fdc59c4c31d252",
