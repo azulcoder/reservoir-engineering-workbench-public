@@ -1,0 +1,5 @@
+storage_dimensionless,storage_bbl_per_psi,crossover_hours,window_certified,widest_admissible_decades,decline_reason
+100,0.00148054702574,0.0216548438285,true,1.2,
+1000,0.0148054702574,0.253581225523,false,0.1,"no interval reaches the minimum extent: widest was 0.100 log cycles against 1.0 required, and the largest held 3 points against 15 required"
+3000,0.0444164107721,0.813370280669,false,0,no point is both flat enough and free of the storage identity
+10000,0.148054702574,2.90271803018,false,0,no point is both flat enough and free of the storage identity

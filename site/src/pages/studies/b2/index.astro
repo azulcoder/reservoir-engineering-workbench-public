@@ -1,0 +1,581 @@
+---
+/**
+ * B2 — wellbore storage, and finding the radial window.
+ *
+ * The second Stage B study, and the first in this project whose result is a refusal. The
+ * pre-registered rule declined to certify a radial-flow window on the case it was written
+ * for, and the page is built around that rather than around it.
+ *
+ * The one editorial rule this page must not break: **a case the rule declined never shows a
+ * permeability or a skin.** Not in a table, not in a caption, not greyed out. The whole
+ * point of a rule that can say no is lost the moment the number it refused to certify is
+ * printed next to the refusal. The build enforces it too — tests/test_b2_report_claims.py
+ * walks the snapshot and fails on any declining block that carries a parameter.
+ *
+ * Every number here is read from the committed canonical snapshot through the checked data
+ * path, so a figure and its prose cannot drift apart.
+ */
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Figure from "../../../components/Figure.astro";
+import DataTable from "../../../components/DataTable.astro";
+import Callout from "../../../components/Callout.astro";
+import ExecutiveBrief from "../../../components/ExecutiveBrief.astro";
+import KeyComparison from "../../../components/KeyComparison.astro";
+import KeyMetrics from "../../../components/KeyMetrics.astro";
+import { checkedExhibit } from "../../../scripts/exhibits";
+import * as fmt from "../../../scripts/format";
+import { download, readJson } from "../../../scripts/public-data";
+import { NAV, NOT_RUN } from "../../../scripts/site";
+
+const hero = await checkedExhibit("B2-F01");
+const sweepFig = await checkedExhibit("B2-F02");
+const durationFig = await checkedExhibit("B2-F03");
+const samplingFig = await checkedExhibit("B2-F04");
+const controlFig = await checkedExhibit("B2-F05");
+
+const diagnosticCsv = await download("b2_primary_diagnostic.csv");
+const sweepCsv = await download("b2_storage_sweep.csv");
+const posthocCsv = await download("b2_time_to_certification.csv");
+const summaryJson = await download("b2_summary.json");
+
+interface Analyst {
+  window_found: boolean;
+  verdict: string;
+  reason?: string;
+  widest_admissible_decades?: number;
+  most_admissible_points?: number;
+  window_decades?: number;
+  window_start_hours?: number;
+  window_end_hours?: number;
+  permeability_thickness_md_ft?: number;
+  skin?: number;
+}
+interface Scored {
+  basis: string;
+  verdict: string;
+  permeability_thickness_relative_error?: number;
+  skin_absolute_error?: number;
+}
+interface SweepLevel {
+  storage_dimensionless: number;
+  storage_bbl_per_psi: number;
+  crossover_hours: number;
+  analyst: Analyst;
+  ex_post_scoring: Scored;
+}
+interface Criterion {
+  met: boolean | null;
+  kind: string;
+  detail?: string;
+}
+interface Summary {
+  classification: string;
+  failed_diagnostic_criteria: string[];
+  not_evaluable_criteria: string[];
+  failed_verification_criteria: string[];
+  metrics_sha256: string;
+  limitations: string[];
+  saphir_comparison: string;
+  external_comparator: string;
+  config: {
+    truth: Record<string, number>;
+    first_hour: number;
+    last_hour: number;
+    points_per_decade: number;
+    smoothing_l: number;
+    noise_replicates: number;
+    window_rule: { flatness_epsilon: number; min_decades: number; min_points: number; status: string };
+    inversion: { dps: number; dehoog_degree: number; mpmath_version: string; mpmath_backend: string };
+    protocol: { commit: string; blob_digest: string; amendment_blob_digest: string };
+  };
+  criteria: Record<string, Criterion>;
+  numerical_qualification: {
+    inversion: {
+      known_inverse_worst_relative: number;
+      cross_check_worst_relative: number;
+      precision_degree_spread: number;
+      cross_check_status: string;
+    };
+    limits: {
+      c2a_storage_free_worst_relative: number;
+      c2b_worst_relative: number;
+      c3_worst_relative: number;
+      c3b_zero_skin_asymptote_residual: number;
+    };
+  };
+  b2_0_storage_free_regression: {
+    frozen_selector: { analyst: Analyst; ex_post_scoring: Scored };
+    c7_derivative: { window_worst_relative?: number };
+  };
+  b2_1_primary_noise_free: {
+    storage_dimensionless: number;
+    crossover_hours: number;
+    analyst: Analyst;
+    localisation: {
+      generator_departure_within_c5_from_hours: number;
+      generator_departure_within_c5_to_hours: number;
+      generator_departure_decades: number;
+    };
+    l_sensitivity: Array<{ smoothing_l: number; window_found: boolean }>;
+  };
+  b2_2_storage_sweep: { levels: SweepLevel[]; levels_with_a_certified_window: number[] };
+  b2_3_duration_sweep: { storage_dimensionless: number; durations: Array<{ duration_hours: number; analyst: Analyst }> };
+  b2_4_sampling: { sampling: Array<{ points_per_decade: number; analyst: Analyst }> };
+  b2_5_pressure_noise: {
+    levels: Array<{ sigma_psi: number; inconclusive: number; replicates: number; answered: number }>;
+  };
+  b2_6_deliberately_inconclusive: { duration_hours: number; crossover_hours: number; analyst: Analyst; c10_met: boolean };
+  posthoc_exploratory: {
+    label: string;
+    levels: Array<{
+      storage_dimensionless: number;
+      crossover_hours: number;
+      reported_days: string;
+      frozen_selector: { first_certifying_hours: number; monotone_after_crossing: boolean };
+    }>;
+  };
+}
+
+const s = await readJson<Summary>("b2_summary.json");
+const primary = s.b2_1_primary_noise_free;
+const control = s.b2_0_storage_free_regression.frozen_selector;
+const rule = s.config.window_rule;
+const loc = primary.localisation;
+
+const certifiedLevels = s.b2_2_storage_sweep.levels_with_a_certified_window;
+const noiseTotal = s.b2_5_pressure_noise.levels.reduce((n, l) => n + l.replicates, 0);
+const noiseAnswered = s.b2_5_pressure_noise.levels.reduce((n, l) => n + l.answered, 0);
+const declinedAtEveryL = primary.l_sensitivity.every((r) => r.window_found === false);
+const declinedAtEveryDensity = s.b2_4_sampling.sampling.every((r) => r.analyst.window_found === false);
+const declinedAtEveryDuration = s.b2_3_duration_sweep.durations.every((r) => r.analyst.window_found === false);
+
+const criterionRows = Object.entries(s.criteria).map(([name, state]) => ({
+  criterion: name.replace(/_/g, " "),
+  kind: state.kind,
+  outcome: state.met === true ? "met" : state.met === false ? "FAILED" : "not evaluable",
+  note: state.detail ?? "",
+}));
+
+const sweepRows = s.b2_2_storage_sweep.levels.map((level) => ({
+  storage: level.storage_dimensionless,
+  bbl: level.storage_bbl_per_psi,
+  crossover: level.crossover_hours,
+  certified: level.analyst.window_found ? "yes" : "no",
+  extent: level.analyst.window_found ? level.analyst.window_decades : level.analyst.widest_admissible_decades,
+  // Only a certified level may carry a recovered permeability. The others carry nothing,
+  // not a blank and not a dash with a number hidden behind a tooltip.
+  kh: level.analyst.window_found ? fmt.kh(level.analyst.permeability_thickness_md_ft as number) : null,
+}));
+
+const posthocRows = s.posthoc_exploratory.levels.map((level) => ({
+  storage: level.storage_dimensionless,
+  crossover: level.crossover_hours,
+  certifying: level.frozen_selector.first_certifying_hours,
+  reported: level.reported_days,
+}));
+
+const contents = [
+  { id: "declined", label: "1. The rule declined" },
+  { id: "storage", label: "2. Storage strength decides" },
+  { id: "robustness", label: "3. Sampling and noise" },
+  { id: "posthoc", label: "4. Post-hoc: how long" },
+  { id: "control", label: "5. The designed control" },
+  { id: "technical", label: "6. Technical evidence" },
+  { id: "limits", label: "7. What this does not establish" },
+];
+---
+
+<BaseLayout
+  title="B2 — an accurate answer can exist before the test can certify it"
+  description="A pre-registered, truth-blind rule for finding infinite-acting radial flow declined to certify a window on its own primary case. Adequate data was present; evidence that it was adequate was not."
+  canonicalPath="/studies/b2/"
+  nav={NAV}
+  contents={contents}
+  contentsLabel="On this page"
+  ogType="article"
+>
+  <h1>B2 — wellbore storage, and finding the radial window</h1>
+
+  <ExecutiveBrief>
+    <Fragment slot="question">
+      B1 was handed its interpretation window. A real interpreter is not. Can a declared,
+      mechanical rule that never sees the answer find the radial-flow interval in a drawdown
+      that begins under wellbore storage?
+    </Fragment>
+    <Fragment slot="finding">
+      On the primary case it <strong>declined</strong>. Scored afterwards against the hidden
+      truth, <strong>{loc.generator_departure_decades.toFixed(1)} decades of adequate data were
+      present and {rule.min_decades.toFixed(0)} decade was required — yet the record certified
+      none of it</strong>. The widest stretch the rule could admit was{" "}
+      {primary.analyst.widest_admissible_decades?.toFixed(3)} log cycles.
+    </Fragment>
+    <Fragment slot="implication">
+      An accurate answer can exist before a test contains enough evidence to certify it. A
+      rule honest enough to say so will say so often, and the conditions that make it say so —
+      ordinary wellbore storage, a normal test length — are not exotic.
+    </Fragment>
+    <Fragment slot="limit">
+      Synthetic throughout, one model, one set of properties. This establishes nothing about
+      how long a real well test should run, and the storage strengths swept here are not
+      established as typical of the field by any source this work inspected.
+    </Fragment>
+  </ExecutiveBrief>
+
+  <section id="declined" aria-labelledby="declined-h">
+    <h2 id="declined-h">1. The rule declined, and the instrument is not broken</h2>
+
+    <p>
+      One well produces at a constant {s.config.truth.rate_stb_per_day} STB/D from a
+      homogeneous, infinite reservoir, through a wellbore with constant storage. The forward
+      model inverts a Laplace-space solution with a finite-radius inner boundary; the rule sees
+      only elapsed time, pressure and the well metadata a real interpretation has. It never
+      sees the permeability, the skin, the storage coefficient or where radial flow begins.
+    </p>
+
+    <p>
+      Criterion C4 — window detection on the primary noise-free case — <strong>failed</strong>.
+      The rule reported:
+    </p>
+
+    <blockquote><p>{primary.analyst.reason}</p></blockquote>
+
+    <KeyComparison
+      value={`${loc.generator_departure_decades.toFixed(1)} decades`}
+      label="adequate data present, measured afterwards against the hidden truth"
+      against={`${rule.min_decades.toFixed(0)} decade`}
+      againstLabel="extent the rule requires before it will certify"
+      gap={`And yet nothing was certified: the widest admissible stretch was ${primary.analyst.widest_admissible_decades?.toFixed(3)} log cycles, holding ${primary.analyst.most_admissible_points} points against ${rule.min_points} required.`}
+      tone="exception"
+    />
+
+    <p>
+      That gap is the whole study. The left-hand number is computable only with the answer in
+      hand; the right-hand one is what an interpreter can establish without it. Keeping them
+      apart is the point.
+    </p>
+
+    <Figure
+      id={hero.id}
+      role="hero"
+      number={hero.number}
+      title={hero.title}
+      titleVisible={false}
+      svg={hero.svg}
+      units={hero.units}
+      interpretation={`During pure storage the derivative equals the pressure change identically, which is why the two curves start on top of one another. They separate through a transition, and the derivative then approaches its plateau so slowly that the rule's flatness bound is never satisfied for long enough.`}
+      caveat={hero.caveat}
+      longDescription={hero.longDescription}
+      evidenceClass={hero.evidenceClass}
+      svgDownload={hero.svgDownload}
+      dataDownload={diagnosticCsv.path}
+      dataDownloadLabel={diagnosticCsv.name}
+    />
+
+    <Callout kind="limitation" title="The refusal is not a claim that the permeability is unrecoverable">
+      <p>
+        It is the narrower statement that this record does not certify one. The
+        pre-registered evidence standard did not certify an infinite-acting radial-flow
+        interval from which to report permeability-thickness and skin, so none is reported
+        anywhere on this page for those cases. That is a different sentence from
+        "permeability-thickness cannot be estimated", and the difference is the result.
+      </p>
+    </Callout>
+
+    <p>
+      The rule works when the evidence is there. On the storage-free control it finds{" "}
+      {control.analyst.window_decades?.toFixed(3)} decades and recovers permeability-thickness
+      to {fmt.small(control.ex_post_scoring.permeability_thickness_relative_error as number)}{" "}
+      relative. A rule that never certified anything would be useless and would look identical
+      to this one on the primary case alone; the control is what separates them.
+    </p>
+
+    <p class="note-line">
+      The refusal is not a smoothing artefact either. The primary case declined at every
+      pre-registered Bourdet smoothing value{" "}
+      {declinedAtEveryL ? "— all four of them" : ""}, and at every pre-registered sampling
+      density {declinedAtEveryDensity ? "— all four" : ""}.
+    </p>
+  </section>
+
+  <section id="storage" aria-labelledby="storage-h">
+    <h2 id="storage-h">2. Storage strength decides, and the collapse is abrupt</h2>
+
+    <p>
+      Four storage levels, one 48-hour record each, same rule.{" "}
+      {certifiedLevels.length === 1
+        ? `Exactly one certified a window: C_D = ${certifiedLevels[0]}.`
+        : `${certifiedLevels.length} certified a window.`}{" "}
+      Between it and the next level up, the usable extent does not taper — it disappears.
+    </p>
+
+    <Figure
+      id={sweepFig.id}
+      role="supporting"
+      number={sweepFig.number}
+      title={sweepFig.title}
+      titleVisible={false}
+      svg={sweepFig.svg}
+      units={sweepFig.units}
+      interpretation="A bar reaching the dashed rule is a certified window. Two of the three strongest storage levels have no admissible points at all, which is a different failure from running out of record."
+      caveat={sweepFig.caveat}
+      longDescription={sweepFig.longDescription}
+      evidenceClass={sweepFig.evidenceClass}
+      svgDownload={sweepFig.svgDownload}
+      dataDownload={sweepCsv.path}
+      dataDownloadLabel={sweepCsv.name}
+    />
+
+    <DataTable
+      captionTitle="Table B2-1"
+      caption="Storage-strength sweep under the frozen selector, over a 48-hour record at 20 points per decade. Permeability-thickness appears only where the rule certified a window; the remaining rows carry no estimate because none may be reported."
+      naText="not reportable"
+      columns={[
+        { key: "storage", label: "C_D", numeric: true },
+        { key: "bbl", label: "C, bbl/psi", numeric: true },
+        { key: "crossover", label: "crossover, h", numeric: true },
+        { key: "certified", label: "window certified" },
+        { key: "extent", label: "widest admissible, cycles", numeric: true },
+        { key: "kh", label: "kh recovered, md·ft" },
+      ]}
+      rows={sweepRows}
+      wide
+    />
+
+    <p class="note-line">
+      At {s.b2_3_duration_sweep.storage_dimensionless} the duration sweep declined at every
+      pre-registered record length{declinedAtEveryDuration ? ", all five of them" : ""}. It was
+      designed to find the duration at which the criterion stops being satisfiable; it found
+      that at this storage strength the boundary lies beyond the longest record the protocol
+      specified.
+    </p>
+  </section>
+
+  <section id="robustness" aria-labelledby="robustness-h">
+    <h2 id="robustness-h">3. Neither denser sampling nor a quieter gauge changes it</h2>
+
+    <KeyMetrics
+      metrics={[
+        { value: fmt.outOf(noiseTotal - noiseAnswered, noiseTotal), label: "noisy replicates that declined" },
+        { value: String(noiseAnswered), label: "that produced a false acceptance", exception: false },
+        { value: "4", label: "sampling densities, none sufficient" },
+      ]}
+      note="The noise-free record already declines, so noise removing more evidence is the expected direction. The reportable half is the other one: across every seed at every noise level, the rule never assembled a spurious window out of noise."
+    />
+
+    <Figure
+      id={samplingFig.id}
+      role="supporting"
+      number={samplingFig.number}
+      title={samplingFig.title}
+      titleVisible={false}
+      svg={samplingFig.svg}
+      units={samplingFig.units}
+      interpretation="Sampling is not the binding constraint: a tenfold increase in density does not close the gap. No recovery error is plotted at any noise level because no seed returned an answer to compute one over."
+      caveat={samplingFig.caveat}
+      longDescription={samplingFig.longDescription}
+      evidenceClass={samplingFig.evidenceClass}
+      svgDownload={samplingFig.svgDownload}
+    />
+
+    <p class="note-line">
+      One structural detail rather than a discovery about the physics: the rule needs{" "}
+      {rule.min_points} points inside a window of at least {rule.min_decades.toFixed(0)} decade,
+      so 10 points per decade cannot certify a one-decade window at any duration — it would
+      need about 1.4 decades of flat derivative before the point count could be met.
+    </p>
+  </section>
+
+  <section id="posthoc" aria-labelledby="posthoc-h">
+    <h2 id="posthoc-h">4. Post-hoc: how long the test would have to run</h2>
+
+    <Callout kind="limitation" title="Post-hoc exploratory analysis">
+      <p>
+        {s.posthoc_exploratory.label} It was performed because the pre-registered result
+        raised the question, it took no part in the classification, and it describes this
+        synthetic model at these declared properties. <strong>It is not a field test-design
+        recommendation.</strong>
+      </p>
+    </Callout>
+
+    <p>
+      Crossover — where the storage line meets the semilog line — arrives early and is widely
+      used as a rough marker for where interpretation can begin. Running the frozen rule over
+      progressively longer records puts certification two to three orders of magnitude later.
+    </p>
+
+    <Figure
+      id={durationFig.id}
+      role="supporting"
+      number={durationFig.number}
+      title={durationFig.title}
+      titleVisible={false}
+      svg={durationFig.svg}
+      units={durationFig.units}
+      interpretation="Each line runs from the crossover to the shortest record the frozen rule certifies. The 48-hour record B2 ran falls short of every one of them except the weakest storage level."
+      caveat={durationFig.caveat}
+      longDescription={durationFig.longDescription}
+      evidenceClass={durationFig.evidenceClass}
+      svgDownload={durationFig.svgDownload}
+      dataDownload={posthocCsv.path}
+      dataDownloadLabel={posthocCsv.name}
+    />
+
+    <DataTable
+      captionTitle="Table B2-2"
+      caption="POST-HOC EXPLORATORY ANALYSIS. The shortest record at which the frozen selector first certifies a window, resolved to one sampling interval — about 12 percent in time — which is why the reported column carries two significant figures and no more."
+      columns={[
+        { key: "storage", label: "C_D", numeric: true },
+        { key: "crossover", label: "crossover, h", numeric: true },
+        { key: "certifying", label: "first certifying record, h", numeric: true },
+        { key: "reported", label: "reported as" },
+      ]}
+      rows={posthocRows}
+    />
+
+    <p class="note-line">
+      Verified three ways before being published: certification is monotone above each
+      crossing, a rerun exactly at the crossing certifies, and a rerun one sampling step below
+      it does not. A closed-form estimate agrees with a numerical bisection on the model's own
+      slope to within 8 percent, by a route that touches neither the Bourdet chain nor the
+      selector. Raising the smoothing from L = {s.config.smoothing_l} to L = 0.3 moves every
+      figure up by about a factor of 1.6, and that sensitivity is reported rather than averaged
+      away.
+    </p>
+  </section>
+
+  <section id="control" aria-labelledby="control-h">
+    <h2 id="control-h">5. The gate closing on purpose</h2>
+
+    <p>
+      One case was pre-registered to be uninterpretable: storage at{" "}
+      {s.b2_6_deliberately_inconclusive.crossover_hours.toFixed(2)} hours of crossover, in a
+      record truncated at {s.b2_6_deliberately_inconclusive.duration_hours} hours. It declined,
+      and reported no permeability and no skin, which is what the criterion demanded.
+    </p>
+
+    <Figure
+      id={controlFig.id}
+      role="supporting"
+      number={controlFig.number}
+      title={controlFig.title}
+      titleVisible={false}
+      svg={controlFig.svg}
+      units={controlFig.units}
+      interpretation="The absence of a fitted line is the result. The two curves stay together almost to the end of the record, which is the storage identity holding nearly everywhere."
+      caveat={controlFig.caveat}
+      longDescription={controlFig.longDescription}
+      evidenceClass={controlFig.evidenceClass}
+      svgDownload={controlFig.svgDownload}
+    />
+
+    <Callout kind="limitation" title="This control matters less than it was designed to">
+      <p>
+        It demonstrates the gate closing on a record built to be hopeless. But the primary
+        case, built to succeed, also had the gate close on it — so the designed negative
+        control is no longer the only example of a refusal, and it is a weaker exhibit than
+        the protocol expected it to be. That is worth stating rather than leaving for a reader
+        to notice.
+      </p>
+    </Callout>
+  </section>
+
+  <section id="technical" aria-labelledby="technical-h">
+    <h2 id="technical-h">6. Technical evidence</h2>
+
+    <p>
+      The classification is <strong>{s.classification}</strong>, reached by applying the frozen
+      protocol's own rule without reinterpretation: every verification criterion is met, so the
+      case is not invalid; not every criterion is met, so it is not established.
+    </p>
+
+    <DataTable
+      captionTitle="Table B2-3"
+      caption="Every pre-registered criterion and its outcome, as recorded in the run's own output. A criterion scored over the selected window has no domain on a case where none was selected; that is reported as not evaluable, which is not the same as passed."
+      columns={[
+        { key: "criterion", label: "criterion" },
+        { key: "kind", label: "kind" },
+        { key: "outcome", label: "outcome" },
+        { key: "note", label: "note" },
+      ]}
+      rows={criterionRows}
+      wide
+    />
+
+    <p>
+      Numerical explanations were eliminated before the result was accepted as scientific. de
+      Hoog inversion at three working precisions and three degrees returned the same pressure
+      to every digit — a spread of exactly{" "}
+      {s.numerical_qualification.inversion.precision_degree_spread}. The Gaver–Stehfest
+      cross-check agrees to{" "}
+      {fmt.small(s.numerical_qualification.inversion.cross_check_worst_relative)} relative, the
+      storage branch matches its asymptote to{" "}
+      {fmt.small(s.numerical_qualification.limits.c3_worst_relative)}, and late-time
+      consistency with B1's closed form is{" "}
+      {fmt.small(s.numerical_qualification.limits.c2b_worst_relative)}.
+    </p>
+
+    <Callout kind="limitation" title="The two inversion algorithms are not independent evidence about the physics">
+      <p>
+        {s.numerical_qualification.inversion.cross_check_status}. Both methods invert the same
+        transform, so a formulation error would survive both. What supports the formulation is
+        the derivation and its limiting behaviour, not the agreement of two numerical
+        inversions.
+      </p>
+    </Callout>
+
+    <p class="note-line">
+      Protocol commit <code>{s.config.protocol.commit.slice(0, 7)}</code>, blob{" "}
+      <code>{s.config.protocol.blob_digest.slice(0, 8)}</code>, amended before any
+      result-producing code existed. Metrics digest{" "}
+      <code>{s.metrics_sha256.slice(0, 16)}</code>. Inversion: de Hoog–Knight–Stokes at{" "}
+      {s.config.inversion.dps} digits, degree {s.config.inversion.dehoog_degree}, mpmath{" "}
+      {s.config.inversion.mpmath_version} on the {s.config.inversion.mpmath_backend} backend —
+      the backend is recorded because mpmath switches to a different arithmetic when gmpy2 is
+      installed, which would change every Bessel evaluation underneath this case.
+    </p>
+
+    <p>
+      Full snapshot, including every sweep level, the exported series and the post-hoc
+      namespace: <a href={summaryJson.href}>{summaryJson.name}</a> ({summaryJson.size}).
+    </p>
+  </section>
+
+  <section id="limits" aria-labelledby="limits-h">
+    <h2 id="limits-h">7. What this does not establish</h2>
+
+    <ul>
+      {s.limitations.map((limitation) => <li>{limitation}</li>)}
+    </ul>
+
+    <Callout kind="limitation" title="Two claims were withdrawn during a source audit before publication">
+      <p>
+        An earlier draft described the storage levels swept here as spanning the practical
+        field range. That rested on a single commercial vendor's reference page whose range
+        sentence carries no citation and names no class of well, so it does not support a
+        field-practice claim and the claim is withdrawn. The sweep levels themselves were
+        pre-registered and are unchanged.
+      </p>
+      <p>
+        The one-log-cycle minimum extent is a <strong>{rule.status.toLowerCase()}</strong>. It
+        is derived inside this project from the 5 percent permeability-thickness target, and no
+        log-cycle requirement appears in any primary source inspected in this work. It is not
+        an industry-standard mandatory minimum and is not presented as one.
+      </p>
+    </Callout>
+
+    <p>
+      Commercial comparison: <strong>{s.saphir_comparison}</strong>. External comparator:{" "}
+      <strong>{s.external_comparator}</strong>. {NOT_RUN.externalValidation}
+    </p>
+
+    <p class="note-line">{NOT_RUN.fieldData}</p>
+
+    <p>
+      The follow-up question — whether a less conservative, still truth-blind rule could
+      certify useful intervals earlier without admitting transitions as radial flow — is
+      recorded as a plan with a holdout design, and deliberately not implemented. The results
+      on this page are discovery data for it, and a rule shaped by looking at them cannot be
+      validated on them.
+    </p>
+  </section>
+</BaseLayout>

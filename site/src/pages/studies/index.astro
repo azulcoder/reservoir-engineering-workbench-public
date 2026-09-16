@@ -30,7 +30,7 @@ const contents = [
 ];
 
 const description =
-  "Five synthetic studies in two stages: A1, A3 and A4 on inventory and material balance, and B1 on pressure-transient interpretation. Each exists because the one before it left something unestablished.";
+  "Six synthetic studies in two stages: A1, A3 and A4 on inventory and material balance, and B1 and B2 on pressure-transient interpretation. Each exists because the one before it left something unestablished.";
 ---
 
 <BaseLayout
@@ -117,6 +117,26 @@ const description =
           declared design.
         </p>
       </li>
+
+      <li class="track__item track__item--flagship">
+        <p class="track__role">Take the window away and see whether the rule can find it</p>
+        <h3><a href={href("/studies/b2/")}>B2 — an accurate answer can exist before the test can certify it</a></h3>
+        <p class="track__q">
+          B1 was handed its interpretation window. Can a declared, truth-blind rule find the
+          radial-flow interval itself, in a drawdown that begins under wellbore storage?
+        </p>
+        <p class="track__a">
+          On its own primary case it declined. Measured afterwards against the hidden truth,
+          1.6 decades of adequate data were present and 1 decade was required — and the record
+          certified none of it.
+        </p>
+        <p class="track__status">
+          Classified INCONCLUSIVE by the frozen protocol, which is a valid outcome under it.
+          Every verification criterion met; window detection on the primary case failed and no
+          threshold was changed. Across 800 noisy replicates the rule produced no false
+          acceptance.
+        </p>
+      </li>
     </ol>
   </section>
 
@@ -190,6 +210,14 @@ const description =
           evidence: { label: "Case page", path: "/studies/b1/" },
         },
         {
+          check: "B2 — wellbore storage and the radial window",
+          scope: "Whether the case runs, reproduces byte for byte, and satisfies the verification criteria frozen before it ran",
+          environment: "digest-pinned Linux container, reproduced on four further environments",
+          state: "PASS",
+          note: "the scientific classification is INCONCLUSIVE, which is a valid outcome of the frozen protocol and not a failing check: every verification criterion is met, while window detection on the primary case failed and no threshold was changed. The post-hoc duration analysis is reported separately and gates nothing",
+          evidence: { label: "Case page", path: "/studies/b2/" },
+        },
+        {
           check: "Hosted continuous integration",
           scope: "The suite, canonical reproduction and cross-platform portability, run off the author's machine",
           environment: "GitHub-hosted runners: three CPython versions, one pinned container, four portability environments",
@@ -223,10 +251,10 @@ const description =
 
     <ul class="future">
       <li>
-        <strong>B2 through B6.</strong> Wellbore storage and the problem of finding the
-        radial-flow window rather than being handed it; build-up and superposition; boundaries;
-        real-gas pseudopressure and pseudotime; and a case against data this project did not
-        generate. B2 is the direct successor to B1's largest gap.
+        <strong>B3 through B6.</strong> Build-up and superposition; boundaries; real-gas
+        pseudopressure and pseudotime; and a case against data this project did not generate.
+        B2, which closed B1's largest gap by taking the interpretation window away, has been
+        run and its result is on its own page.
       </li>
       <li>
         <strong>Stage C and Stage D.</strong> Not started, and not scoped beyond a heading.

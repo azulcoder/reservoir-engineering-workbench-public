@@ -50,6 +50,31 @@ REQUIRED: dict[str, dict[str, tuple[str, ...]]] = {
         "scenario explorer": ("data-explorer-controls",),
         "four statements scoping": ("Four statements, kept apart",),
     },
+    # B2's result is a refusal, so its page has a failure mode the other pages do not: a
+    # later edit that quietly restores a permeability next to a case the rule declined, or
+    # that softens the failed criterion into something that reads like a pass. Both would
+    # leave the page building, rendering and looking finished.
+    "studies/b2/index.html": {
+        "executive question": ("find the radial-flow interval", "Can a declared, mechanical rule"),
+        "the classification": ("INCONCLUSIVE",),
+        "the failed criterion is named": ("C4", "window detection"),
+        "the refusal itself": ("declined", "certified none of it"),
+        "ex post versus ex ante": ("adequate data present", "hidden truth"),
+        "no estimate from a declined case": ("not reportable", "none may be reported"),
+        "post-hoc analysis labelled": ("POST-HOC", "Post-hoc"),
+        "project-defined criterion, not a standard": ("PROJECT-DEFINED", "project-defined"),
+        "withdrawn field-range claim": ("withdrawn", "does not support a field-practice claim"),
+        "storage sweep evidence": ("storage-strength sweep", "Storage strength decides"),
+        "false-acceptance result": ("false acceptance",),
+        "designed inconclusive control": ("gate closing on purpose", "uninterpretable"),
+        "synthetic limitation": ("Synthetic", "No field data of any kind"),
+        "saphir not run": ("NOT RUN",),
+        "hero evidence": ("figure--hero",),
+        "supporting evidence": ("figure--supporting",),
+        "technical evidence": ('id="technical"',),
+        "complete limitations access": ('id="limits"',),
+        "downloads route": ("Download the data", "download"),
+    },
     "studies/b1/index.html": {
         "known-answer instrument result": ("permeability-thickness recovered from the data",),
         "defect-visibility finding": ("nothing showed it", "materially wrong"),

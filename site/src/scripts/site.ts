@@ -29,7 +29,7 @@ export const SITE_NAME = "Gas Reservoir Performance Lab";
  * `docs/release/VERIFICATION.md`. Re-measured in this candidate tree before publication.
  */
 export const VERIFICATION = {
-  date: "2026-09-15",
+  date: "2026-09-17",
   interpreter: "CPython 3.13.2 on macOS, darwin arm64",
   profile: "public-core",
   /* The counts below are from `python3 scripts/verify.py --profile public-core
@@ -38,8 +38,8 @@ export const VERIFICATION = {
      registers one further check, reference-skip-count-drift, so the same tree reports 10
      checks under that flag and 9 without it. An earlier version of this block carried 10
      collected and 9 passed, which was one number from each invocation. */
-  testsCollected: 796,
-  testsPassed: 776,
+  testsCollected: 869,
+  testsPassed: 849,
   testsFailedOrErrored: 0,
   testsSkipped: 20,
   skipReason:
@@ -51,10 +51,10 @@ export const VERIFICATION = {
      and one fewer pass on an identical tree. A published number has to be a property of
      the tree rather than of the machine, and verify.py reports the optional-oracle count
      separately rather than letting it move these. */
-  checksCollected: 11,
-  checksPassed: 11,
+  checksCollected: 12,
+  checksPassed: 12,
   mandatoryChecksFailed: 0,
-  casesReproduced: "4 of 4, each re-run into a fresh directory and diffed byte for byte",
+  casesReproduced: "5 of 5, each re-run into a fresh directory and diffed byte for byte",
   figureDataFiles: 7,
   reconciliationChecks: 51,
   reconcileTolerance: "1e-12 relative",
