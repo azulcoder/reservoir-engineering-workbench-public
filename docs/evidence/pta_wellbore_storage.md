@@ -110,15 +110,37 @@ Take `u → ∞` in (7), which is `t_D → 0`.
 The physical reading is consistent: a line source has zero wellbore radius, so with zero skin
 there is no pressure drop at the well to charge the wellbore, and nothing is stored.
 
-**Consequence for B2.** The formulation is valid for `s > 0` and degenerate at `s = 0`. B2's
-declared truth carries `s > 0`, as B1's did. This is stated as a model validity condition,
-and B2 criterion C3 tests equation (8) against the declared truth so that the condition can
-fail rather than be assumed.
+**Consequence, as originally concluded:** valid for `s > 0`, degenerate at `s = 0`.
 
-This was derived in this pass and has not been checked against an independent implementation.
-It is listed in the B2 risk register.
+**[SUPERSEDED]** This conclusion was correct about the line-source model and wrong as a basis
+for B2. The right response was to change the inner boundary, not to declare the broken region
+out of scope. See §2.4.
 
 ---
+
+### 2.4 CORRECTED — the inner boundary is finite radius
+
+**Sections 2.2 and 2.3 above record the original line-source choice and are kept as written.**
+They were superseded before any implementation; see `cases/B2_wellbore_storage_window/PROTOCOL_AMENDMENT_01.md`.
+
+The general transform (5) is unaffected — only `u p̄_D` was wrong. Solving the diffusivity
+equation in Laplace space with a **finite-radius** constant-rate inner boundary at `r_D = 1`:
+
+    p̄_D = A K₀(r_D √u),   -∂p̄_D/∂r_D|_{r_D=1} = 1/u,   ∂/∂r_D K₀(r_D x) = -x K₁(r_D x)
+    ⟹  A x K₁(x) = 1/u  ⟹  u p̄_D = K₀(x)/(x K₁(x)) ≡ K01(x),   x = √u
+
+Verified numerically: the flux equals `1/u` to better than 1e-30 at `u = 0.01, 1, 100`.
+
+The line source is the `r_w → 0` limit, `x K₁(x) → 1`. **That factor is the well's finite
+surface**, and dropping it is the mechanism of the `s = 0` degeneracy in §2.3 — the well has no
+area to sustain an early-time pressure drop, so nothing charges the wellbore.
+
+With `K01`, `u² p̄_wD → 1/C_D` for **any** `s ≥ 0`. Verified at `C_D = 1000`, `u = 1e10`: the
+finite-radius form reaches `1/C_D` to eight figures at both `s = 0` and `s = 3.5`, while the
+line-source form collapses to `1.4e-43422` at `s = 0`.
+
+**The `s > 0` restriction is withdrawn.** It was a property of the wrong model, and B2 carries a
+mandatory zero-skin regression (C3b) in its place.
 
 ## 3. Dimensionless storage coefficient, derived
 

@@ -22,3 +22,12 @@ silently folded in.
 
 **No HARD STOP finding.** Six fixes applied in place, two deferred with the limitation stated
 in the protocol.
+
+## Post-review finding, found after this pass
+
+| # | Attack | Finding | Disposition |
+| --- | --- | --- | --- |
+| A14 | Was the forward model chosen for a physical reason or a convenient one? | **Convenient.** The line source was adopted because `C_D → 0` then reproduced B1 exactly, and the same pass derived that it has no storage at `s = 0` and declared the region out of scope rather than fixing the model. A case about wellbore behaviour was given an inner boundary with no wellbore | **FIXED before implementation.** Finite-radius inner boundary adopted, derived and verified; `s = 0` becomes a mandatory regression (C3b) instead of an excluded region. `PROTOCOL_AMENDMENT_01.md` |
+
+A13 in the table above is superseded by A14: the `s = 0` degeneracy is no longer a deferred
+limitation, because the model that produced it is no longer the model.

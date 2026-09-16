@@ -1,6 +1,11 @@
 # Case B2 protocol — wellbore storage, and finding the radial window
 
 **Pre-registration. Written and committed before any result-producing B2 code exists.**
+
+> **Amended by `PROTOCOL_AMENDMENT_01.md` before implementation began.** The inner boundary
+> is now finite-radius, not line source. The original protocol commit `d6624f7` is preserved
+> unaltered as the record of the model choice made before that review. Sections 4.2, 4.3, 9,
+> 12 and 13 below are the amended text; everything else is as originally pre-registered.
 No B2 number has been computed. Every threshold below is derived from an analytic error
 estimate or from a stated engineering requirement, and none may be changed after a result
 exists.
@@ -61,28 +66,34 @@ From Duhamel's principle and the wellbore storage balance (evidence register §2
 
 with the line-source reservoir response `p̄_D(u) = K₀(√u)/u`, giving
 
-    p̄_wD(u) = [K₀(√u) + s] / { u [ 1 + C_D u (K₀(√u) + s) ] }              (B2-1)
+    p̄_wD(u) = [K01(√u) + s] / { u [ 1 + C_D u (K01(√u) + s) ] }            (B2-1)
 
-**Initial condition** `p_wD(0) = 0`. **Inner boundary** equation (B2-1)'s storage balance,
-`1 - q_sfD = C_D dp_wD/dt_D`. **Outer boundary** infinite-acting, `p_D → 0` as `r_D → ∞`.
+    K01(x) ≡ K₀(x) / (x K₁(x))                                             (B2-2)
 
-The line source is chosen over the finite-radius solution for one reason: setting `C_D = 0`
-in (B2-1) recovers B1's committed closed form `½E₁(1/(4t_D)) + s` **exactly, at every t_D**,
-so the reduction test in §9 is an identity rather than a statement about an asymptotic
-regime.
+**Initial condition** `p_wD(0) = 0`. **Inner boundary** a **finite-radius** well at `r_D = 1`
+with the storage balance `1 - q_sfD = C_D dp_wD/dt_D`. **Outer boundary** infinite-acting,
+`p_D → 0` as `r_D → ∞`.
 
-### 4.3 Declared model validity condition
+(B2-2) is derived, not cited. The diffusivity equation in Laplace space bounded at infinity
+gives `p̄_D = A K₀(r_D√u)`; the constant-unit-rate condition `-∂p̄_D/∂r_D|_{r_D=1} = 1/u` with
+`∂/∂r_D K₀(r_D x) = -x K₁(r_D x)` forces `A = 1/(u x K₁(x))`, hence `u p̄_D = K01(x)`. The
+boundary condition was verified numerically at `u = 0.01, 1, 100` to better than 1e-30.
 
-Taking `u → ∞` in (B2-1), `C_D u K₀(√u) → 0` because `K₀` decays exponentially. With `s > 0`
-the response tends to `p_wD = t_D/C_D`, the storage-dominated branch. **With `s = 0` it does
-not**: the storage term vanishes and the storage-free response is recovered. A line source has
-zero wellbore radius, so with zero skin there is no pressure drop at the well to charge the
-wellbore.
+**The factor `x K₁(x)` is the well's finite surface.** The line source is the `r_w → 0` limit,
+where `x K₁(x) → 1` and `K01 → K₀`. Dropping that factor removes the well's ability to sustain
+an early-time pressure drop, which is exactly why the original line-source formulation had no
+storage at `s = 0`. See `PROTOCOL_AMENDMENT_01.md`.
 
-**B2 is therefore declared valid for `s > 0` only.** A zero-skin case is outside the model.
-Criterion C3 tests the storage branch against the declared truth so that this condition can
-fail rather than be assumed. This was derived in this pass and has not been checked against an
-independent implementation; it is item R1 in the risk register.
+### 4.3 Validity, and the zero-skin regression
+
+Taking `u → ∞` in (B2-1) with (B2-2): `K01(x) → 1/x`, so for any `s ≥ 0` the response tends to
+`p̄_wD → 1/(C_D u²)`, which inverts to `p_wD = t_D/C_D`. **The storage branch exists at `s = 0`
+as well as `s > 0`.** Verified numerically at `C_D = 1000`: `u² p̄_wD` reaches `1/C_D` to eight
+figures at `u = 1e10` for both `s = 0` and `s = 3.5`.
+
+The original line-source formulation failed this at `s = 0` and the failure is now a
+**mandatory regression**, criterion C3b, run at `s = 0, C_D > 0`. B2 is not declared valid for
+`s > 0` only; the restriction is removed because the model no longer needs it.
 
 ### 4.4 Dimensionless groups and conventions
 
@@ -98,12 +109,27 @@ independent implementation; it is item R1 in the risk register.
 with respect to `ln t` throughout. **Pressure** is absolute (psia); drawdown `Δp = p_i - p_wf`
 is positive. **Rate** is positive for production.
 
-### 4.5 Numerical inversion
+### 4.5 Numerical inversion, frozen before any experiment
 
-(B2-1) is inverted numerically. The algorithm, its parameter and its accuracy study are an
-implementation decision recorded in the decision log before the run; the inversion must
-satisfy C1 and C7, which are what make it admissible. All Bessel arguments are real and
-positive, so a real-argument inversion is sufficient.
+**Primary method: de Hoog–Knight–Stokes**, an accelerated Fourier-series inversion. It
+requires the transform at complex `u`, so `K₀` and `K₁` are evaluated at complex argument.
+
+**Secondary: Gaver–Stehfest** at arbitrary precision, as an **algorithmic inversion
+cross-check**. It is not an independent physics oracle: both methods invert the same
+transform and a formulation error would survive both. Stehfest's alternating coefficients
+cancel badly in ordinary double precision, so it is run at arbitrary precision and its
+degree is refined rather than assumed larger-is-better.
+
+`mpmath` provides the arbitrary-precision arithmetic, the complex Bessel functions and both
+inversion algorithms. It is a **development and research dependency only**, already pinned in
+`requirements-dev.lock` from B1 where it serves as a corroborating oracle. It is not a runtime
+dependency of `reservoir_lab`, which stays standard-library only. The reason the standard
+library is insufficient is specific: `math` provides no Bessel functions at all, and none at
+complex argument.
+
+Settings are qualified once, before any B2 experiment, and then frozen: working precision,
+de Hoog degree, Stehfest degree, Bessel evaluation policy and time-grid handling. **They are
+not tuned per case.** Qualification is criterion C1.
 
 ## 5. Generator truth
 
@@ -222,6 +248,26 @@ C7 tests it.
 `L ∈ {0.0, 0.1, 0.2, 0.3}` is a preregistered sensitivity, reported separately. **`L` is not
 re-chosen per case, and not chosen after seeing a recovery.**
 
+## 8b. Limiting behaviour the model must show
+
+Three checks replace the original exact-identity reduction, which is no longer available and
+no longer wanted: B1 deliberately used a storage-free line-source instrument, and B2
+legitimately uses a finite-radius inner boundary because B2 studies wellbore behaviour.
+
+**A — storage-free limit.** As `C_D → 0`, (B2-1) approaches the storage-free finite-radius
+solution `K01(√u)/u + s/u`. Criterion C2a.
+
+**B — late-time B1 consistency.** The storage-free finite-radius response approaches B1's
+line-source response over B1's declared window. The two genuinely differ, because one well has
+a radius and the other does not, and the difference was **measured during protocol derivation,
+before any B2 experiment**: worst `1.572e-5` relative at `t_D = 3.322e4`, falling to
+`3.24e-7` at `t_D = 1.595e6`, scaling as roughly `1/(2 t_D)`. Criterion C2b takes `1e-4`,
+about six times the measured worst case, leaving room for inversion error.
+
+**C — zero skin with storage.** At `s = 0, C_D > 0` the model must still show the storage
+branch, a transition, and a finite coherent response. Criterion C3b. This is the regression
+against the defect that motivated `PROTOCOL_AMENDMENT_01.md`.
+
 ## 9. Parameter recovery
 
 Once the window is selected, interpretation is B1's, unchanged: least-squares straight line of
@@ -266,17 +312,23 @@ those. No statement about field performance follows from B2.5.
 
 ## 12. Oracles
 
-| | Oracle | Checks | Independence |
+| | Oracle | Checks | What it is |
 | --- | --- | --- | --- |
-| O1 | `C_D → 0` reduction to B1's `½E₁(1/(4t_D)) + s` | Formulation and inversion, at every `t_D` | Exact, analytic |
-| O2 | Early-time `p_wD = t_D/C_D` | Storage branch and the `s>0` validity condition | Exact, analytic |
-| O3 | Late-time `½[ln t_D + 0.80907] + s` | Radial branch | Exact, analytic, inherited from B1 |
-| O4 | Inversion parameter study | Inversion sensitivity only | Weak, shares the formulation |
+| O1 | `C_D → 0` limit: the storage-free finite-radius solution | The storage branch switching off | Derivation consequence |
+| O2 | Early-time `p_wD = t_D/C_D`, for **any** `s ≥ 0` | Storage branch, and the zero-skin regression | Derivation consequence |
+| O3 | Late-time `½[ln t_D + 0.80907] + s`, and B1 consistency to a measured tolerance | Radial branch | Derivation consequence, inherited from B1 |
+| O4 | de Hoog against arbitrary-precision Gaver–Stehfest | **Algorithmic inversion cross-check** | Numerical, not physical |
+| O5 | External black-box implementation | The formulation itself | **Not available.** See §16 |
 
-**Stated limitation.** O1–O3 are analytic limits of the same formulation, so they cannot catch
-an error in (B2-1) itself. That equation's defence is its derivation from Duhamel's principle
-and the storage balance, not a quoted result. No independently implemented storage solution
-was available as an external oracle; see §16.
+**Stated honestly.** O1 through O4 are **not independent validation of the physical
+formulation.** They validate derivation consequences, limiting behaviour, numerical inversion
+and implementation consistency. Both O4 methods invert the same transform, so a formulation
+error would survive both.
+
+What supports the formulation itself is the derivation in §4.2 — the diffusivity equation with
+a constant-rate finite-radius inner boundary, verified numerically to 1e-30 — together with
+the authoritative well-test literature that uses this standard form. An external
+implementation would close the gap and none was available.
 
 ## 13. Acceptance criteria
 
@@ -284,9 +336,11 @@ Derived before any result exists. **None may be changed after one does.**
 
 | # | Criterion | Threshold | Derivation |
 | --- | --- | --- | --- |
-| C1 | (B2-1) at `C_D = 1e-3` against B1's closed form, over B1's window | relative `≤ 1e-5` | The analytic storage perturbation there is `≈ C_D u (K₀+s) ≈ 2.6e-7`; the remaining allowance is numerical inversion error, an order above typical double-precision performance on a smooth monotone function |
-| C2 | Parameter-level reduction: `kh` from B2 at `C_D = 1e-3`, B1's window and sampling, against B1's committed `2000.0031` md·ft | relative `≤ 1e-4` | B1's own C3 threshold. The perturbation is far below B1's own `1.564e-6` bias, so the recovered value must be indistinguishable from B1's |
-| C3 | Storage branch: `p_wD` against `t_D/C_D` where the pure-storage prediction exceeds the storage-free response by **1000x** | relative `≤ 1e-2` | The correction to pure storage is the reservoir response, so at 1000x it is about 0.1 percent and the threshold carries an order of headroom. An earlier draft used 100x, where the expected correction equals the threshold and a correct model could fail. **This is the criterion that can fail the §4.3 validity condition** |
+| C1 | **Inversion qualification.** de Hoog against transforms with known exact inverses — a constant, an exponential decay, a rational transform and a diffusion-like response — then against the B2 transform itself with precision and degree refined | relative `≤ 1e-8` on the known inverses; de Hoog against arbitrary-precision Stehfest `≤ 1e-6` on the B2 transform | The known-inverse cases have no formulation uncertainty, so the only error is the algorithm's; 1e-8 is loose for an accelerated method at working precision. The 1e-6 cross-check is two orders below C2b, so an inversion error cannot be mistaken for a physical difference |
+| C2a | `C_D → 0` approaches the storage-free finite-radius solution `[K01(√u)+s]/u` | relative `≤ 1e-6` at `C_D = 1e-6`, over the record | The storage term is `C_D u (K01+s)`; at `C_D = 1e-6` and the record's `u` range this is below 1e-7, leaving the rest to inversion error |
+| C2b | **Late-time B1 consistency.** Storage-free finite-radius against B1's line-source closed form, over B1's declared window | relative `≤ 1e-4` | **Measured during protocol derivation, before any experiment**: worst `1.572e-5` at `t_D = 3.322e4`, falling to `3.24e-7` at `1.595e6`. Threshold is about 6x the measured worst case. The two models genuinely differ because one well has a radius; this is a physical difference, not an error |
+| C3 | Storage branch: `p_wD` against `t_D/C_D` where the pure-storage prediction exceeds the storage-free response by **1000x** | relative `≤ 1e-2` | The correction to pure storage is the reservoir response, so at 1000x it is about 0.1 percent and the threshold carries an order of headroom |
+| C3b | **Zero-skin storage regression.** `s = 0`, `C_D = 1000`: storage branch present, transition present, response finite and monotone | C3's threshold on the storage branch, and a radial plateau reached within the record | **Mandatory, and the direct regression against the defect that motivated the amendment.** The original line-source formulation fails this outright; the amended model satisfies it by §4.3's limit, verified to eight figures at `u = 1e10` |
 | C4 | Window detection on B2.1 | an interval is found, and every point in it has generator semilog departure `\|p_wD - ½(ln t_D + 0.80907) - s\| / p_wD ≤ 0.05` | The departure is the generator's own, used for scoring only. The bound is the C5 target: a point the estimator could not have interpreted to 5 percent has no business in the window. Scored three ways per §14 |
 | C5 | `kh` recovery on B2.1 | relative `≤ 0.05` | The accuracy at which a permeability-thickness is engineering-useful, and the value that fixes `ε` in §7(a) through `ε = A/(W ln10)` |
 | C6 | skin recovery on B2.1 | absolute `≤ 0.5` | A slope error `ε_m` gives `Δs ≈ 1.151 ε_m (log₁₀ t_c + 0.4343)`, which at the C5 target and a 10 h centroid is `0.083`. The remaining allowance covers extrapolating the one-hour intercept from a window that begins after storage. 0.5 is also the difference between interpretations that would be acted on differently |
@@ -295,6 +349,20 @@ Derived before any result exists. **None may be changed after one does.**
 | C9 | Portability | passes `compare_case_outputs.py` at the declared envelope, and every criterion state identical | The two-tier model already in use |
 | C10 | B2.6 returns INCONCLUSIVE | no `k`, no `s` reported | Usable radial extent is 0.0147 cycles against a required 1.0. Reporting a parameter here is a failure of the case |
 | C11 | No window is selected inside the storage-to-radial transition on B2.1 | the selected interval starts after the crossover | The transition carries a local inflection where the derivative is briefly flat; §7(c)'s extent requirement must reject it |
+
+### 13.0 What changed in this amendment, and why it changed before results
+
+| Criterion | OLD | NEW | Reason | Why now |
+| --- | --- | --- | --- | --- |
+| C1 | Forward at `C_D=1e-3` against B1's closed form, `≤1e-5` | Inversion qualification against known exact inverses and a Stehfest cross-check | The old C1 conflated inversion accuracy with model identity. With the finite-radius model there is no exact identity to test, so inversion is qualified on its own terms | No B2 code existed when the model changed. Re-deriving after a result would be threshold-moving |
+| C2 | Parameter-level exact reduction to B1, `≤1e-4` | Split: C2a storage-free limit, C2b **measured** late-time B1 consistency `≤1e-4` | The exact identity was the reason the wrong model was chosen. The amended model differs from B1 by a real physical amount, measured before any experiment | Same |
+| C3 | Storage branch, valid for `s>0` only | Storage branch, valid for all `s ≥ 0` | The `s>0` restriction existed only because the old model was degenerate | Same |
+| C3b | did not exist | **New and mandatory**: `s=0, C_D>0` must show storage | Directly regresses the defect the amendment fixes. Without it the amendment is a claim rather than a test | Same |
+| O1 | `C_D→0` to B1 exactly | `C_D→0` to the storage-free finite-radius solution | Follows the model change | Same |
+| O4 | "inversion parameter study" | **"algorithmic inversion cross-check"**, explicitly not an independent physics oracle | The old name overstated what two inversions of the same transform can establish | Naming correction, no threshold moved |
+
+No threshold was loosened. C1 and C2a are tighter than what they replace; C2b is set from a
+measurement taken before any experiment; C3b is an addition.
 
 ### 13.1 Why C5 is not circular
 
