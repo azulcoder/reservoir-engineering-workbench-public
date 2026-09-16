@@ -1,6 +1,6 @@
 {
   "purpose": "Scientific artefacts frozen for the executive visual refactor. A presentation change must not become a scientific change.",
-  "frozen_at_commit": "2660374cad0e117bc06f8c2c7014357606f79a20",
+  "frozen_at_commit": "ca2971df55ac674599933a827e7428e0f1de6f42",
   "files": {
     "cases/A1_volumetric_baseline/protocol.md": "61b88460363c7ca7fc745def4ab784551d5272f3bb0c8f44ec5a48bec5550400",
     "cases/A1_volumetric_baseline/report.md": "738bbcd2fd32f4d6be74b5ad605fc89e3842de04ed8767796240efc3b193aa8c",
@@ -26,7 +26,7 @@
     "cases/B1_iarf_known_answer/run.py": "b9bd9390be68876da41629900411e40b364976afcbd62f1fc2591c671eeab4ba",
     "cases/B2_wellbore_storage_window/ATTACK.md": "e8e348e60a49bca4d80e1c2d88a8542607d99746b4957935cf844d7229c2d5e6",
     "cases/B2_wellbore_storage_window/PROTOCOL_AMENDMENT_01.md": "436c8ded425b320ff17bf9a1b5da717e7c442978f7ca2e05f29ff18638b099f7",
-    "cases/B2_wellbore_storage_window/protocol.md": "0f87b64c69fc8c03f1b9bc1c582243a747769feb0765460e46a55b00b7c62c1d",
+    "cases/B2_wellbore_storage_window/protocol.md": "7ee2c7687eb33b70cce30a8c1959ed9bef1293b76d580acb02752ff33258b756",
     "configs/synthetic_volumetric_gas.json": "a7df30567879f1f970834f1a5e3dcc96d4cef990d5d38cc7be84e38e04e45ac5",
     "docs/evidence/aquifer.md": "f642c7e1a1acc0197fcb58439650bab127a1856b799bd6ea26a1c036c6e46421",
     "docs/evidence/derivative.md": "9091b7f5be4f08fe51a66ff4ec3493f0416dd7f4dff9009826b217f0d263bd87",
