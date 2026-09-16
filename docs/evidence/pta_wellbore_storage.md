@@ -15,7 +15,7 @@ said plainly and the rule is not used.
 | --- | --- | --- | --- |
 | S1 | Agarwal, R.G.; Al-Hussainy, R.; Ramey, H.J. Jr. *An Investigation of Wellbore Storage and Skin Effect in Unsteady Liquid Flow: I. Analytical Treatment.* SPE Journal 10(3), 1970, 279–290. DOI 10.2118/2466-PA | **METADATA ONLY** — OnePetro returned HTTP 403; abstract and figures not reached | Establishes that the storage-and-skin early-time problem has a standard analytical treatment. **No equation is taken from it.** |
 | S2 | Bourdet, D.; Ayoub, J.A.; Pirard, Y.M. *Use of Pressure Derivative in Well-Test Interpretation.* SPE Formation Evaluation, 1989. SPE-12777-PA | **FULL TEXT INSPECTED** in the B1 pass; see `pta_line_source.md` | The three-point derivative algorithm (Eq. 8) and the L point-selection rule, already implemented and tested in this repository |
-| S3 | S&P Global / IHS WellTest documentation, *Dimensionless Wellbore Storage Constant* | **PARTIAL** — prose reached, the defining equation is an inaccessible image | Practical range of `C_D` in the field, quoted as roughly 500 to 10,000. Used only to choose plausible sweep levels, never as a derivation |
+| S3 | S&P Global / IHS WellTest documentation, *Dimensionless Wellbore Storage Constant* | **FULL PAGE INSPECTED** in the section 10 audit; the defining equation remains an inaccessible image | Choosing plausible synthetic sweep levels, and nothing else. ~~Practical range of `C_D` in the field, quoted as roughly 500 to 10,000.~~ **[WITHDRAWN — see §10.2]** The page's range sentence is uncited and names no class of well, so it does not support a field-practice claim |
 | S4 | ScienceDirect topic pages, *Wellbore Storage Effect* and *Infinite Acting Radial Flow* | **PARTIAL** — summary text only | Confirms `C_D e^{2s}` as the early-time correlating group, and records the common "two log cycles after the unit slope ends" rule of thumb |
 | S5 | Bourdet, D. *Well Test Analysis: The Use of Advanced Interpretation Models* | **NOT ACCESSED** | — |
 | S6 | Horne, R.N. *Modern Well Test Analysis* | **NOT ACCESSED** | — |
@@ -283,3 +283,81 @@ Neither is usable. B2 proceeds with the oracle set in section 7 and records the 
 - Nothing here is field evidence. Every equation is about a declared idealisation.
 - No B2 result exists. This register precedes the protocol, which precedes any code that
   produces a number.
+
+---
+
+## 10. Pre-publication source audit
+
+Performed after the B2 result existed and before anything was published, against the claims the
+result had started to carry. Recorded here because two of the claims did not survive it.
+
+### 10.1 What was verified, and from where
+
+| Claim | Status | Evidence |
+| --- | --- | --- |
+| During pure wellbore storage the response follows a unit slope on log-log, and the derivative equals the pressure change | **CONFIRMED, primary source inspected** | S2 (SPE-12777-PA) Eq. 4 and Eq. 5: with `p_D = t_D/C_D`, the derivative group `(t_D/C_D) p'_D` equals `t_D/C_D`, so both quantities are the same number and the paper states the curves merge on an asymptote of unit slope |
+| The dimensionless derivative stabilises at `0.5` during infinite-acting radial flow | **CONFIRMED, primary source inspected** | S2, the type-curve matching procedure: the constant-derivative part of the data is placed on the "one-half straight line" |
+| The stabilised derivative supplies the permeability-thickness interpretation | **CONFIRMED, primary source inspected** | S2, same step: fixing the pressure match on the one-half line is what yields `kh/μ` |
+| Skin displaces the transition but does not create or remove the storage regime | **CONFIRMED, primary source inspected** | S2: the skin coefficient is absent from the derivative once radial flow is reached and is read from the `C_D e^{2S}` curve *during the transition*; `C` is read from the unit-slope match independently of `S`. This is the behaviour amendment 01 restored, and the line-source form did not have |
+| Wellbore storage can mask or delay observation of a flow regime | **CONFIRMED, primary source inspected** | S2 motivates type curves as the means of identifying which portion of the data conventional straight-line analysis may be applied to at all |
+| `C_D` from 500 to 10,000 is a practical field range | **NOT ESTABLISHED** | See 10.2 |
+| One log cycle is a required minimum extent | **NOT ESTABLISHED as an external standard** | See 10.3 |
+
+S2 was re-inspected in full for this audit rather than relied on from the B1 pass. S1 and
+S5 through S9 remain unread; OnePetro still returns HTTP 403 and the four textbooks were not
+accessible in this pass.
+
+### 10.2 The field `C_D` range does not survive
+
+S3 is the only source behind it. Its page was reached directly this time and states, in one
+sentence, that in practice a range of values from 500 to 10,000 has been observed.
+
+That sentence carries **no citation, no data, no sample size, no geography, no era, and no
+class of well**. It is one commercial software vendor's uncited reference note. It is enough
+to justify what the register originally used it for — choosing plausible synthetic sweep
+levels — and it is not enough to support a statement about what field wells do.
+
+Two further problems, independent of the source's quality:
+
+- B2's own sweep is `C_D` 100 to 10,000. The quoted range is 500 to 10,000. They are not the
+  same interval, so a conclusion "across the practical range" would not even have been a
+  conclusion across what was run.
+- A `C_D` is not a property of a well alone. It is `0.8936 C / (φ c_t h r_w²)`, so the same
+  physical wellbore gives a different `C_D` in a different reservoir. A range quoted with no
+  reservoir attached cannot be transferred to this study's declared properties.
+
+**Consequence.** Every B2 artefact refers to *the tested synthetic storage range*. The claim
+that this range is typical of field practice is withdrawn and does not appear.
+
+### 10.3 The one-log-cycle requirement is this project's own
+
+Searched for, and **not found in any primary source inspected in this pass**. S2 contains no
+log-cycle requirement of any kind.
+
+What exists in circulation is a family of rules of thumb, each recorded here with its actual
+provenance and none used as a criterion:
+
+| Rule as encountered | Where it was encountered | Status |
+| --- | --- | --- |
+| at least 1 to 1.5 log cycles of constant derivative before a test is stopped | a search summary attributing it to aquifer-test material; the vendor page it points to could not be fetched (TLS certificate mismatch) and the statement was **not present** in either document that was successfully inspected | **UNVERIFIED** |
+| radial flow begins 1 to 1.5 cycles after the *end of wellbore storage* | same summary | **UNVERIFIED**, and note it is measured from the end of storage, not from the crossover |
+| two log cycles after the unit slope ends | S4, a topic-summary page | secondary, self-described rule of thumb |
+| `t_D > (60 + 3.5 s) C_D` for the start of the semilog straight line | widely quoted; **not verified from an inspected source in this pass** | **UNVERIFIED**, and recorded only because it is informative to evaluate: applied at `C_D = 1000`, it places the start at 2.2 h, where this model's derivative is still 43 percent above the plateau. A criterion developed for pressure semilog analysis is not a derivative-accuracy criterion |
+
+**Consequence.** B2's `W = 1.0` log cycle is described everywhere as a **project-defined
+certification criterion, fixed before results**. It is derived inside this project — `ε =
+A/(W ln10)` ties it to the 5 percent permeability-thickness target — and it is not presented
+as an industry standard, because no inspected source makes it one.
+
+### 10.4 The plateau-offset observation is truth-based
+
+The B2 result prompted an observation that the derivative sits about 1.8 percent above its
+ultimate plateau late in the record, which would map to a permeability-thickness error inside
+the 5 percent target.
+
+**This is a post-hoc truth-based diagnostic and cannot become a selection rule.** Computing an
+offset requires the plateau; in pressure units the plateau is `70.6 q B μ / kh`, which is the
+unknown the interpretation exists to estimate. The quantity is available to a scorer holding
+the generator's truth and to nobody else. It says the answer would have been close. It says
+nothing about whether the answer was certifiable from the record, and those are different
+statements.
