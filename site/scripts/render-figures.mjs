@@ -3385,6 +3385,547 @@ function buildB1NegativeControl(summary) {
   };
 }
 
+
+/* =====================================================================
+ * Case B2 -- wellbore storage, and finding the radial window.
+ *
+ * B2's result is a refusal: the pre-registered rule declined to certify a radial-flow
+ * window on its own primary case. These figures have to make an absence legible, which is
+ * harder than drawing a result, and they must never draw a parameter the rule refused to
+ * certify. Where a generator quantity appears it is labelled as the generator's, because
+ * no interpreter holding the record could compute it.
+ * ===================================================================== */
+
+/** The psi scale 141.2 q B mu / (k h), rebuilt from the run's own declared truth. */
+function b2Scale(summary, where) {
+  const t = req(req(summary, "config", where), "truth", where);
+  return (141.2 * t.rate_stb_per_day * t.formation_volume_factor * t.viscosity_cp) /
+    (t.permeability_md * t.thickness_ft);
+}
+
+/* ---------- B2-F01: the hero. What a refusal looks like. ---------- */
+
+function buildB2Hero(summary) {
+  const where = "B2-F01";
+  const base = req(summary, "b2_1_primary_noise_free", where);
+  const s = req(base, "series", where);
+  const analyst = req(base, "analyst", where);
+  const loc = req(base, "localisation", where);
+  const crossover = fin(req(base, "crossover_hours", where), `${where}: crossover`);
+  const plateau = 0.5 * b2Scale(summary, where);
+
+  const dp = s.time_hours.map((t, i) => ({ t, v: fin(s.drawdown_psi[i], `${where}: dp[${i}]`) }));
+  const dv = s.derivative_time_hours.map((t, i) => ({ t, v: fin(s.derivative_psi[i], `${where}: dv[${i}]`) }));
+  const adequateFrom = fin(loc.generator_departure_within_c5_from_hours, `${where}: adequate from`);
+  const adequateTo = fin(loc.generator_departure_within_c5_to_hours, `${where}: adequate to`);
+  const lo = Math.min(...dv.map((d) => d.v)) * 0.5;
+  const hi = Math.max(...dp.map((d) => d.v)) * 2.2;
+  const t0 = s.time_hours[0];
+  const t1 = s.time_hours[s.time_hours.length - 1];
+
+  const plot = panel(
+    {
+      width: W,
+      height: 450,
+      marginLeft: 92,
+      marginRight: 258,
+      marginTop: 26,
+      marginBottom: 58,
+      x: { type: "log", domain: [t0 * 0.85, t1 * 1.15], label: "elapsed time, hours →", labelAnchor: "center", labelOffset: 44 },
+      y: { type: "log", domain: [lo, hi], label: "↑ psi" },
+      marks: [
+        grid("y"),
+        Plot.rect([{}], {
+          x1: () => adequateFrom, x2: () => adequateTo, y1: () => lo, y2: () => hi,
+          fill: C.band, ariaHidden: true,
+        }),
+        Plot.text([{ t: Math.sqrt(adequateFrom * adequateTo), v: hi }], {
+          x: "t", y: "v",
+          text: () => `adequate ex post: ${loc.generator_departure_decades.toFixed(1)} decades (generator truth)`,
+          fontSize: FS.label, fill: C.ink3, textAnchor: "middle", dy: 14,
+        }),
+        Plot.ruleX([crossover], { stroke: C.border, strokeDasharray: "4 4", strokeWidth: 1.2 }),
+        Plot.text([{ t: crossover, v: lo }], {
+          x: "t", y: "v", text: () => `crossover ${crossover.toFixed(2)} h`,
+          fontSize: FS.label, fill: C.ink3, textAnchor: "start", dx: 6, dy: -8,
+        }),
+        Plot.ruleY([plateau], { stroke: C.truth, strokeDasharray: DASH.truth, strokeWidth: 1.4 }),
+        Plot.text([{ t: t1, v: plateau }], {
+          x: "t", y: "v", text: () => `generator plateau ${plateau.toFixed(2)} psi`,
+          fontSize: FS.label, fill: C.truth, textAnchor: "start", dx: 12, dy: -6,
+        }),
+        Plot.line(dp, { x: "t", y: "v", stroke: C.observed, strokeWidth: STROKE.default }),
+        Plot.dot(dp.filter((_, i) => i % 6 === 0), { x: "t", y: "v", r: 3.2, fill: C.observed }),
+        Plot.line(dv, { x: "t", y: "v", stroke: C.model, strokeWidth: STROKE.default }),
+        Plot.dot(dv.filter((_, i) => i % 6 === 0), { x: "t", y: "v", r: 3.2, symbol: "diamond", fill: C.model }),
+        Plot.text([{ t: dp[dp.length - 1].t, v: dp[dp.length - 1].v }], {
+          x: "t", y: "v", text: () => "drawdown Δp", fontSize: FS.label, fill: C.observed, textAnchor: "start", dx: 12,
+        }),
+        Plot.text([{ t: dv[dv.length - 1].t, v: dv[dv.length - 1].v }], {
+          x: "t", y: "v", text: () => "Bourdet derivative", fontSize: FS.label, fill: C.model, textAnchor: "start", dx: 12, dy: 10,
+        }),
+      ],
+    },
+    where,
+  );
+
+  /* The offset the case turns on is about one percent, and on the log psi axis above that is
+     smaller than a pixel: the derivative appears to sit on the plateau rule. So the quantity
+     the rule actually tests gets its own panel, on an axis where it is legible. This is the
+     analyst's view -- the local log-log slope of the derivative is computable from the record
+     alone -- and it is the panel that shows why the answer was no. */
+  const slope = s.slope_time_hours.map((t, i) => ({ t, m: fin(s.local_log_slope[i], `${where}: m[${i}]`) }));
+  const eps = fin(req(s, "flatness_epsilon", where), `${where}: eps`);
+  const slopeLo = Math.min(-eps * 3, ...slope.map((d) => d.m)) * 1.1;
+
+  const slopePanel = panel(
+    {
+      width: W,
+      height: 260,
+      marginLeft: 92,
+      marginRight: 258,
+      marginTop: 30,
+      marginBottom: 58,
+      x: { type: "log", domain: [t0 * 0.85, t1 * 1.15], label: "elapsed time, hours →", labelAnchor: "center", labelOffset: 44 },
+      y: { domain: [slopeLo, 0.35], label: "↑ d ln D / d ln t", labelAnchor: "center", labelOffset: 70 },
+      marks: [
+        grid("y"),
+        Plot.rect([{}], {
+          x1: () => t0 * 0.85, x2: () => t1 * 1.15, y1: () => -eps, y2: () => eps,
+          fill: C.blueTint, ariaHidden: true,
+        }),
+        Plot.text([{ t: t1, m: eps }], {
+          x: "t", y: "m", text: () => `flat enough: |m| ≤ ${eps.toFixed(4)}`,
+          fontSize: FS.label, fill: C.ink3, textAnchor: "start", dx: 12,
+        }),
+        Plot.ruleY([0], { stroke: C.border, strokeWidth: 1 }),
+        Plot.line(slope, { x: "t", y: "m", stroke: C.model, strokeWidth: STROKE.default }),
+        Plot.dot(slope.filter((_, i) => i % 6 === 0), { x: "t", y: "m", r: 3, symbol: "diamond", fill: C.model }),
+      ],
+    },
+    `${where} slope`,
+  );
+
+  const title = "B2-F01 — the rule declined: no certified radial window in a 48-hour test";
+  const subtitle = `Synthetic drawdown at C_D = ${base.storage_dimensionless} and its Bourdet derivative. The pre-registered rule found no interval meeting its minimum extent: the widest admissible run was ${analyst.widest_admissible_decades.toFixed(3)} log cycles against 1.0 required, holding ${analyst.most_admissible_points} points against 15. No window is shaded because none was selected, and no permeability or skin is shown because none may be reported.`;
+  const description = `Log-log plot of pressure change and Bourdet derivative against elapsed time for the primary B2 case, wellbore storage C_D = ${base.storage_dimensionless} over 48 hours. The drawdown rises from about ${dp[0].v.toFixed(2)} to ${dp[dp.length - 1].v.toFixed(1)} psi. At early time the two curves lie on top of one another, which is the wellbore-storage identity: during pure storage the derivative equals the pressure change exactly. They separate through a transition, and the derivative then falls slowly toward a horizontal dashed rule at ${plateau.toFixed(2)} psi, the plateau the generator's own properties imply. It does not reach it: at the end of the record it is still above the rule. A vertical dashed rule at ${crossover.toFixed(2)} hours marks where the storage and semilog lines cross. A shaded band from ${adequateFrom.toFixed(2)} to ${adequateTo.toFixed(1)} hours marks the region where the generator's semilog departure is already inside the 5 percent accuracy target, ${loc.generator_departure_decades.toFixed(1)} decades wide; that band is computed from hidden truth and no interpreter could draw it. Crucially, no window is marked as selected, because the rule certified none. The figure shows adequate data present and no evidence that it was adequate.`;
+
+  return {
+    id: "b2-f01",
+    node: frame({
+      title,
+      subtitle,
+      legend: [
+        { label: "drawdown Δp, psi", color: C.observed, dash: "none", symbol: "circle" },
+        { label: "Bourdet derivative, psi per natural-log cycle", color: C.model, dash: "none", symbol: "diamond" },
+        { label: "generator plateau 70.6 qBμ/kh (hidden truth)", color: C.truth, dash: DASH.truth, symbol: "none" },
+      ],
+      sections: [plot, slopePanel],
+      notes: [
+        description,
+        `Lower panel: the quantity the rule actually tests. The derivative's local log-log slope has to sit inside the shaded ±${eps.toFixed(4)} band across a full decade before an interval can be certified. It enters the band only at the very end of the record and never for long enough. This is why the upper panel is misleading on its own — at 48 hours the derivative is ${(((dv[dv.length - 1].v / plateau) - 1) * 100).toFixed(1)} percent above the plateau, which on a logarithmic psi axis is thinner than the line drawn for it.`,
+        `The shaded band and the dashed plateau are generator quantities, drawn here only to show the gap. Both require the permeability, which is the unknown. An interpreter holding this record can see the derivative still falling; nothing available to them turns that into a certified interval.`,
+        `Early time is not a slope diagnosis. The rule excludes those points using the identity D = Δp that holds during pure storage, not by recognising a unit slope, because several mechanisms outside this model also produce one.`,
+        "Synthetic data. No gauge, no well, no field. Source: cases/B2_wellbore_storage_window/results/summary.json.",
+      ],
+    }),
+    title,
+    description,
+    meta: {
+      figure_id: "B2-F01",
+      case_id: "B2_wellbore_storage_window",
+      selector: `cases/B2_wellbore_storage_window/results/summary.json /b2_1_primary_noise_free/series, ${dp.length} pressure points and ${dv.length} derivative points`,
+      data_files: ["cases/B2_wellbore_storage_window/results/summary.json"],
+      axes: {
+        x: { quantity: "elapsed time", unit: "hours", scale: "log", domain: [t0, t1] },
+        y: { quantity: "pressure change and its log-time derivative", unit: "psi", scale: "log", domain: [lo, hi] },
+      },
+      transformations: [
+        `the derivative is the Bourdet three-point estimator with respect to natural-log time, L = ${req(req(summary, "config", where), "smoothing_l", where)}`,
+        "the lower panel applies the same three-point rule again, to ln D against ln t; that compounds the smoothing, which is a stated property of the rule rather than a defect",
+        "no smoothing beyond that L, no resampling, no interpolation; every exported point is drawn",
+      ],
+      uncertainty: "none: noise-free synthetic data. The shaded band is not an uncertainty band, it is the region where the generator's own departure from the semilog line is inside the study's accuracy target.",
+      question: "Can a declared, truth-blind rule certify a radial-flow window in a drawdown that begins under wellbore storage?",
+      caveat: "The answer here is no, for this storage strength and this record length only. A refusal is not evidence that the permeability is unrecoverable; it is evidence that this record does not certify it.",
+    },
+  };
+}
+
+/* ---------- B2-F02: how much usable extent survives as storage grows ---------- */
+
+function buildB2StorageSweep(summary) {
+  const where = "B2-F02";
+  const sweep = req(summary, "b2_2_storage_sweep", where);
+  const control = req(req(req(summary, "b2_0_storage_free_regression", where), "frozen_selector", where), "analyst", where);
+  const required = fin(req(req(req(summary, "config", where), "window_rule", where), "min_decades", where), `${where}: required`);
+
+  const rows = [
+    { label: "1e-3 (control)", cd: 1e-3, extent: fin(control.window_decades, `${where}: control`), certified: true },
+    ...sweep.levels.map((level) => {
+      const a = req(level, "analyst", where);
+      return {
+        label: String(level.storage_dimensionless),
+        cd: level.storage_dimensionless,
+        extent: fin(a.window_found ? a.window_decades : a.widest_admissible_decades, `${where}: ${level.storage_dimensionless}`),
+        certified: a.window_found === true,
+      };
+    }),
+  ];
+  const maxExtent = Math.max(...rows.map((r) => r.extent), required) * 1.25;
+
+  const plot = panel(
+    {
+      width: W,
+      height: 330,
+      marginLeft: 150,
+      marginRight: 240,
+      marginTop: 24,
+      marginBottom: 58,
+      x: { domain: [0, maxExtent], label: "widest admissible run, log-10 cycles →", labelAnchor: "center", labelOffset: 44 },
+      y: { type: "band", domain: rows.map((r) => r.label), label: "↑ dimensionless storage C_D", labelAnchor: "center", labelOffset: 128 },
+      marks: [
+        grid("x"),
+        Plot.ruleX([required], { stroke: C.truth, strokeDasharray: DASH.truth, strokeWidth: 1.4 }),
+        Plot.text([{ x: required, y: rows[0].label }], {
+          x: "x", y: "y", text: () => `${required.toFixed(1)} cycle required`,
+          fontSize: FS.label, fill: C.truth, textAnchor: "start", dx: 6, dy: -22,
+        }),
+        Plot.barX(rows, {
+          x: "extent", y: "label",
+          fill: (d) => (d.certified ? C.observed : C.context),
+          insetTop: 8, insetBottom: 8,
+        }),
+        Plot.text(rows, {
+          x: "extent", y: "label",
+          text: (d) => (d.certified ? `${d.extent.toFixed(3)} — certified` : `${d.extent.toFixed(3)} — declined`),
+          fontSize: FS.label, fill: C.ink2, textAnchor: "start", dx: 8,
+        }),
+      ],
+    },
+    where,
+  );
+
+  const certified = rows.filter((r) => r.certified).map((r) => r.label);
+  const title = "B2-F02 — usable extent collapses as storage grows, and the rule stops certifying";
+  const subtitle = `The widest run of admissible points the rule found at each pre-registered storage level, over the same 48-hour record and sampling. A bar reaching the dashed rule is a certified window; a bar short of it is a refusal. Certified: ${certified.join(", ")}. Four storage levels, not a continuum.`;
+  const description = `Horizontal bar chart of the widest admissible run in log-10 cycles at five storage strengths. The storage-free control reaches ${rows[0].extent.toFixed(3)} cycles and C_D = 100 reaches ${rows[1].extent.toFixed(3)}, both past the dashed rule at ${required.toFixed(1)} cycle that marks the minimum extent the rule requires, and both are certified. C_D = 1000 reaches only ${rows[2].extent.toFixed(3)} cycles, and C_D = 3000 and C_D = 10000 reach ${rows[3].extent.toFixed(3)} and ${rows[4].extent.toFixed(3)}: at those two levels no point in the record is simultaneously flat enough and clear of the storage identity, so there is no admissible run at all. The collapse is abrupt rather than gradual between 100 and 1000.`;
+
+  return {
+    id: "b2-f02",
+    node: frame({
+      title,
+      subtitle,
+      legend: [
+        { label: "certified window", color: C.observed, dash: "none", symbol: "square" },
+        { label: "declined — widest admissible run", color: C.context, dash: "none", symbol: "square" },
+        { label: "minimum extent the rule requires", color: C.truth, dash: DASH.truth, symbol: "none" },
+      ],
+      sections: [plot],
+      notes: [
+        description,
+        "A declined bar is not a near miss to be rounded up. At C_D = 3000 and above the bar is zero because no point qualifies on flatness and the storage identity together, which is a different failure from running out of record.",
+        "No permeability appears in this figure. Two of these five levels produced one; the other three did not, and showing a number for some rows and not others invites the eye to fill the gap.",
+        "Synthetic data. Source: cases/B2_wellbore_storage_window/results/summary.json, /b2_2_storage_sweep.",
+      ],
+    }),
+    title,
+    description,
+    meta: {
+      figure_id: "B2-F02",
+      case_id: "B2_wellbore_storage_window",
+      selector: "cases/B2_wellbore_storage_window/results/summary.json /b2_2_storage_sweep/levels and /b2_0_storage_free_regression",
+      data_files: ["cases/B2_wellbore_storage_window/results/summary.json"],
+      axes: {
+        x: { quantity: "widest admissible run", unit: "log-10 cycles", scale: "linear", domain: [0, maxExtent] },
+        y: { quantity: "dimensionless wellbore storage", unit: "dimensionless", scale: "band", domain: rows.map((r) => r.label) },
+      },
+      transformations: ["no transformation: each bar is the rule's own reported run length at that level"],
+      uncertainty: "none: noise-free synthetic data at four pre-registered storage levels plus one control.",
+      question: "How much usable radial flow survives a 48-hour test as wellbore storage grows?",
+      caveat: "Four levels and one control, chosen before results. These are synthetic storage strengths; no source inspected in this work establishes them as typical of field practice.",
+    },
+  };
+}
+
+/* ---------- B2-F03: post-hoc, how long the test would have to be ---------- */
+
+function buildB2Duration(summary) {
+  const where = "B2-F03";
+  const posthoc = req(summary, "posthoc_exploratory", where);
+  const rows = posthoc.levels.map((level) => ({
+    label: String(level.storage_dimensionless),
+    crossover: fin(level.crossover_hours, `${where}: crossover`),
+    certifying: fin(req(req(level, "frozen_selector", where), "first_certifying_hours", where), `${where}: certifying`),
+    reported: level.reported_days,
+  }));
+  const record = 48;
+  const lo = Math.min(...rows.map((r) => r.crossover)) * 0.5;
+  const hi = Math.max(...rows.map((r) => r.certifying)) * 2.4;
+
+  const plot = panel(
+    {
+      width: W,
+      height: 330,
+      marginLeft: 150,
+      marginRight: 250,
+      marginTop: 24,
+      marginBottom: 58,
+      x: { type: "log", domain: [lo, hi], label: "elapsed time, hours →", labelAnchor: "center", labelOffset: 44 },
+      y: { type: "band", domain: rows.map((r) => r.label), label: "↑ dimensionless storage C_D", labelAnchor: "center", labelOffset: 128 },
+      marks: [
+        grid("x"),
+        Plot.ruleX([record], { stroke: C.border, strokeDasharray: "4 4", strokeWidth: 1.2 }),
+        Plot.text([{ x: record, y: rows[0].label }], {
+          x: "x", y: "y", text: () => "the 48 h record B2 actually ran",
+          fontSize: FS.label, fill: C.ink3, textAnchor: "end", dx: -6, dy: -22,
+        }),
+        Plot.link(rows, {
+          x1: "crossover", x2: "certifying", y1: "label", y2: "label",
+          stroke: C.context, strokeWidth: STROKE.context,
+        }),
+        Plot.dot(rows, { x: "crossover", y: "label", r: 4, fill: C.ink3 }),
+        Plot.dot(rows, { x: "certifying", y: "label", r: 5, symbol: "diamond", fill: C.observed }),
+        Plot.text(rows, {
+          x: "certifying", y: "label", text: (d) => d.reported,
+          fontSize: FS.label, fill: C.ink2, textAnchor: "start", dx: 10,
+        }),
+      ],
+    },
+    where,
+  );
+
+  const title = "B2-F03 — POST-HOC: crossover arrives early, certifiable evidence arrives much later";
+  const subtitle = `POST-HOC EXPLORATORY ANALYSIS, not pre-registered and no part of the classification. Each line runs from the storage/semilog crossover to the shortest record at which the frozen rule first certifies a window. Resolved to one sampling interval, about 12 percent in time, so the durations are reported to two significant figures.`;
+  const description = `Horizontal interval chart on a logarithmic time axis, one row per storage level. Each row starts at a small circle marking the crossover time and ends at a diamond marking the first record length at which the frozen selector certifies a window. At C_D = 100 the crossover is at ${rows[0].crossover.toFixed(3)} hours and certification first occurs at ${rows[0].certifying.toFixed(0)} hours, ${rows[0].reported}. At C_D = 1000 the crossover is ${rows[1].crossover.toFixed(2)} hours and certification needs ${rows[1].certifying.toFixed(0)} hours, ${rows[1].reported}. At C_D = 3000 it is ${rows[2].crossover.toFixed(2)} hours against ${rows[2].certifying.toFixed(0)} hours, ${rows[2].reported}. At C_D = 10000 it is ${rows[3].crossover.toFixed(2)} hours against ${rows[3].certifying.toFixed(0)} hours, ${rows[3].reported}. A vertical dashed rule at 48 hours marks the record length B2 actually ran, which falls short of every diamond except the first. The gap between circle and diamond spans two to three orders of magnitude in time.`;
+
+  return {
+    id: "b2-f03",
+    node: frame({
+      title,
+      subtitle,
+      legend: [
+        { label: "storage / semilog crossover", color: C.ink3, dash: "none", symbol: "circle" },
+        { label: "first record the frozen rule certifies", color: C.observed, dash: "none", symbol: "diamond" },
+        { label: "the 48 h record B2 ran", color: C.border, dash: "4 4", symbol: "none" },
+      ],
+      sections: [plot],
+      notes: [
+        description,
+        "Verified three ways before being drawn: certification is monotone above each crossing, a rerun exactly at the crossing certifies, and a rerun one sampling step below it does not. A closed-form estimate agrees with a numerical bisection on the model's own slope to within 8 percent, by a route touching neither the Bourdet chain nor the selector.",
+        "Raising the Bourdet smoothing from L = 0.1 to L = 0.3 moves every diamond right by about a factor of 1.6. At 10 points per decade the rule cannot certify a one-decade window at all, because 15 points will not fit in one.",
+        "This is a property of one synthetic model at one set of declared properties. It is not a field test-design recommendation and nothing here should be read as one.",
+      ],
+    }),
+    title,
+    description,
+    meta: {
+      figure_id: "B2-F03",
+      case_id: "B2_wellbore_storage_window",
+      selector: "cases/B2_wellbore_storage_window/results/summary.json /posthoc_exploratory/levels",
+      data_files: ["cases/B2_wellbore_storage_window/results/summary.json"],
+      axes: {
+        x: { quantity: "elapsed time", unit: "hours", scale: "log", domain: [lo, hi] },
+        y: { quantity: "dimensionless wellbore storage", unit: "dimensionless", scale: "band", domain: rows.map((r) => r.label) },
+      },
+      transformations: ["the frozen selector was run over progressively longer truncations of one long record per level; no rule, threshold or setting was changed"],
+      uncertainty: "the crossing is resolved to one sampling interval, a factor of 10^(1/20) or about 12 percent in time. Durations are reported to two significant figures for that reason.",
+      question: "How long would the test have to run before the pre-registered rule first certifies a window?",
+      caveat: "POST-HOC. This analysis was not pre-registered, took no part in the classification, and describes this synthetic model only.",
+    },
+  };
+}
+
+/* ---------- B2-F04: sampling and noise, the two axes that did not rescue it ---------- */
+
+function buildB2SamplingNoise(summary) {
+  const where = "B2-F04";
+  const sampling = req(summary, "b2_4_sampling", where).sampling.map((row) => {
+    const a = req(row, "analyst", where);
+    return {
+      label: `${row.points_per_decade} / decade`,
+      extent: fin(a.window_found ? a.window_decades : a.widest_admissible_decades, `${where}: ${row.points_per_decade}`),
+      certified: a.window_found === true,
+    };
+  });
+  const noise = req(summary, "b2_5_pressure_noise", where).levels.map((level) => ({
+    label: `σ = ${level.sigma_psi} psi`,
+    fraction: fin(level.inconclusive_fraction, `${where}: σ ${level.sigma_psi}`),
+    answered: level.answered,
+  }));
+  const required = fin(req(req(req(summary, "config", where), "window_rule", where), "min_decades", where), `${where}: required`);
+
+  const left = panel(
+    {
+      width: W / 2,
+      height: 300,
+      marginLeft: 118,
+      marginRight: 40,
+      marginTop: 40,
+      marginBottom: 58,
+      x: { domain: [0, Math.max(required * 1.3, ...sampling.map((d) => d.extent) ) * 1.05], label: "widest admissible run, cycles →", labelAnchor: "center", labelOffset: 44 },
+      y: { type: "band", domain: sampling.map((d) => d.label), label: "↑ sampling density", labelAnchor: "center", labelOffset: 100 },
+      marks: [
+        grid("x"),
+        Plot.ruleX([required], { stroke: C.truth, strokeDasharray: DASH.truth, strokeWidth: 1.4 }),
+        Plot.barX(sampling, { x: "extent", y: "label", fill: C.context, insetTop: 8, insetBottom: 8 }),
+        Plot.text(sampling, { x: "extent", y: "label", text: (d) => d.extent.toFixed(3), fontSize: FS.label, fill: C.ink2, textAnchor: "start", dx: 8 }),
+      ],
+    },
+    `${where} sampling`,
+  );
+
+  const right = panel(
+    {
+      width: W / 2,
+      height: 300,
+      marginLeft: 118,
+      marginRight: 60,
+      marginTop: 40,
+      marginBottom: 58,
+      x: { domain: [0, 1.12], label: "fraction of 200 seeds returning INCONCLUSIVE →", labelAnchor: "center", labelOffset: 44 },
+      y: { type: "band", domain: noise.map((d) => d.label), label: "↑ pressure noise", labelAnchor: "center", labelOffset: 100 },
+      marks: [
+        grid("x"),
+        Plot.barX(noise, { x: "fraction", y: "label", fill: C.model, insetTop: 8, insetBottom: 8 }),
+        Plot.text(noise, { x: "fraction", y: "label", text: (d) => `${(d.fraction * 100).toFixed(0)}%`, fontSize: FS.label, fill: C.ink2, textAnchor: "start", dx: 8 }),
+      ],
+    },
+    `${where} noise`,
+  );
+
+  const title = "B2-F04 — neither denser sampling nor quieter gauges change the answer";
+  const subtitle = `Left: the widest admissible run at four sampling densities, C_D = 1000 over 48 hours, against the dashed minimum extent. Right: the fraction of 200 seeded replicates returning INCONCLUSIVE at each pre-registered noise level. Sampling is not the binding constraint, and noise removes evidence rather than supplying it.`;
+  const description = `Two bar panels. The left panel shows the widest admissible run in log-10 cycles at 5, 10, 20 and 50 points per decade: ${sampling.map((d) => `${d.label} reaches ${d.extent.toFixed(3)}`).join(", ")}. Every bar falls short of the dashed rule at ${required.toFixed(1)} cycle, so none certifies, and a tenfold increase in sampling density does not close the gap. The right panel shows the fraction of seeds returning INCONCLUSIVE at four noise levels: every bar is at 100 percent, ${noise.map((d) => `${d.label} answered ${d.answered} of 200`).join(", ")}. Since the noise-free record already declines, this is the expected direction. The result worth recording is that no replicate produced a false acceptance either.`;
+
+  return {
+    id: "b2-f04",
+    node: frame({
+      title,
+      subtitle,
+      legend: [
+        { label: "widest admissible run at that sampling", color: C.context, dash: "none", symbol: "square" },
+        { label: "fraction of seeds declining", color: C.model, dash: "none", symbol: "square" },
+        { label: "minimum extent the rule requires", color: C.truth, dash: DASH.truth, symbol: "none" },
+      ],
+      sections: [left, right],
+      notes: [
+        description,
+        "One structural detail rather than a discovery about the physics: the rule needs 15 points inside a window of at least one decade, so 10 points per decade cannot certify a one-decade window at any duration. It would need 1.4 decades of flat derivative first.",
+        "No recovery error is plotted for any noise level, because no seed at any level returned an answer to compute one over. An empty panel would have been the honest alternative; the fraction declining is the reportable quantity and the protocol named it a primary output in advance.",
+        "The noise model is additive, independent, zero-mean and on pressure only. It is a controlled synthetic assumption, not a gauge specification and not a field error model.",
+      ],
+    }),
+    title,
+    description,
+    meta: {
+      figure_id: "B2-F04",
+      case_id: "B2_wellbore_storage_window",
+      selector: "cases/B2_wellbore_storage_window/results/summary.json /b2_4_sampling and /b2_5_pressure_noise",
+      data_files: ["cases/B2_wellbore_storage_window/results/summary.json"],
+      axes: {
+        x: { quantity: "widest admissible run, and fraction of seeds declining", unit: "log-10 cycles; fraction", scale: "linear", domain: [0, 1.12] },
+        y: { quantity: "sampling density, and noise level", unit: "points per decade; psi", scale: "band", domain: [...sampling.map((d) => d.label), ...noise.map((d) => d.label)] },
+      },
+      transformations: ["800 noisy records in total, 200 fixed seeds at each of four sigmas, all applied to the same noise-free record"],
+      uncertainty: "the noise panel is itself the uncertainty result: it reports how often the rule declines across seeds rather than a mean with a band.",
+      question: "Is the refusal a sampling artefact, or does gauge noise change it?",
+      caveat: "Neither axis rescues the case, but neither was expected to: the noise-free record already declines, so these panels bound the explanation rather than testing a new one.",
+    },
+  };
+}
+
+/* ---------- B2-F05: the deliberately inconclusive control ---------- */
+
+function buildB2Control(summary) {
+  const where = "B2-F05";
+  const base = req(summary, "b2_6_deliberately_inconclusive", where);
+  const s = req(base, "series", where);
+  const analyst = req(base, "analyst", where);
+  const crossover = fin(req(base, "crossover_hours", where), `${where}: crossover`);
+  const duration = fin(req(base, "duration_hours", where), `${where}: duration`);
+
+  const dp = s.time_hours.map((t, i) => ({ t, v: fin(s.drawdown_psi[i], `${where}: dp[${i}]`) }));
+  const dv = s.derivative_time_hours.map((t, i) => ({ t, v: fin(s.derivative_psi[i], `${where}: dv[${i}]`) }));
+  const lo = Math.min(...dv.map((d) => d.v)) * 0.5;
+  const hi = Math.max(...dp.map((d) => d.v)) * 2.0;
+  const t0 = s.time_hours[0];
+  const t1 = s.time_hours[s.time_hours.length - 1];
+
+  const plot = panel(
+    {
+      width: W,
+      height: 380,
+      marginLeft: 92,
+      marginRight: 250,
+      marginTop: 26,
+      marginBottom: 58,
+      x: { type: "log", domain: [t0 * 0.85, t1 * 1.15], label: "elapsed time, hours →", labelAnchor: "center", labelOffset: 44 },
+      y: { type: "log", domain: [lo, hi], label: "↑ psi" },
+      marks: [
+        grid("y"),
+        Plot.ruleX([crossover], { stroke: C.border, strokeDasharray: "4 4", strokeWidth: 1.2 }),
+        Plot.text([{ t: crossover, v: hi }], {
+          x: "t", y: "v", text: () => `crossover ${crossover.toFixed(2)} h — after it, ${(duration - crossover).toFixed(2)} h of record remain`,
+          fontSize: FS.label, fill: C.ink3, textAnchor: "end", dx: -8, dy: 14,
+        }),
+        Plot.line(dp, { x: "t", y: "v", stroke: C.observed, strokeWidth: STROKE.default }),
+        Plot.dot(dp.filter((_, i) => i % 4 === 0), { x: "t", y: "v", r: 3.2, fill: C.observed }),
+        Plot.line(dv, { x: "t", y: "v", stroke: C.model, strokeWidth: STROKE.default }),
+        Plot.dot(dv.filter((_, i) => i % 4 === 0), { x: "t", y: "v", r: 3.2, symbol: "diamond", fill: C.model }),
+        Plot.text([{ t: dp[dp.length - 1].t, v: dp[dp.length - 1].v }], {
+          x: "t", y: "v", text: () => "drawdown Δp", fontSize: FS.label, fill: C.observed, textAnchor: "start", dx: 12,
+        }),
+        Plot.text([{ t: dv[dv.length - 1].t, v: dv[dv.length - 1].v }], {
+          x: "t", y: "v", text: () => "Bourdet derivative", fontSize: FS.label, fill: C.model, textAnchor: "start", dx: 12, dy: 10,
+        }),
+      ],
+    },
+    where,
+  );
+
+  const title = "B2-F05 — the gate closing on purpose: a record designed to be uninterpretable";
+  const subtitle = `C_D = ${base.storage_dimensionless} truncated at ${duration} hours against a ${crossover.toFixed(2)} hour crossover. The protocol pre-registered INCONCLUSIVE as the expected and correct outcome here, and criterion C10 requires that no permeability and no skin be reported. Both hold. The absence of a fitted line is the result.`;
+  const description = `Log-log plot of pressure change and Bourdet derivative for the deliberately inconclusive control, wellbore storage C_D = ${base.storage_dimensionless} over a record truncated at ${duration} hours. The two curves lie almost on top of one another across the whole plot, which is the wellbore-storage identity holding nearly everywhere: the test barely escapes storage before it ends. A vertical dashed rule marks the crossover at ${crossover.toFixed(2)} hours, leaving ${(duration - crossover).toFixed(2)} hours of record after it. No window is shaded, no straight line is fitted, and no permeability or skin appears anywhere in the figure, because the rule declined. Its stated reason was: ${analyst.reason}.`;
+
+  return {
+    id: "b2-f05",
+    node: frame({
+      title,
+      subtitle,
+      legend: [
+        { label: "drawdown Δp, psi", color: C.observed, dash: "none", symbol: "circle" },
+        { label: "Bourdet derivative, psi per natural-log cycle", color: C.model, dash: "none", symbol: "diamond" },
+        { label: "storage / semilog crossover", color: C.border, dash: "4 4", symbol: "none" },
+      ],
+      sections: [plot],
+      notes: [
+        description,
+        `The rule declined one condition earlier than the protocol anticipated. It was expected to fail on the minimum extent; it failed on the storage identity, meaning no point in the record is even admissible. That is a stricter refusal than the one designed for, not a weaker one.`,
+        "This control matters less than it was meant to. It shows the gate closing on a record built to be hopeless — but the primary case at C_D = 1000, which was built to succeed, also had the gate close on it.",
+        "Units: pressure change and Bourdet derivative in psi, against elapsed time in hours, both on logarithmic axes. The storage coefficient C_D is dimensionless. No standard-condition basis applies -- this is a liquid-filled wellbore at reservoir conditions and nothing here is a gas volume.",
+        "Synthetic data. Source: cases/B2_wellbore_storage_window/results/summary.json, /b2_6_deliberately_inconclusive.",
+      ],
+    }),
+    title,
+    description,
+    meta: {
+      figure_id: "B2-F05",
+      case_id: "B2_wellbore_storage_window",
+      selector: `cases/B2_wellbore_storage_window/results/summary.json /b2_6_deliberately_inconclusive/series, ${dp.length} pressure points and ${dv.length} derivative points`,
+      data_files: ["cases/B2_wellbore_storage_window/results/summary.json"],
+      axes: {
+        x: { quantity: "elapsed time", unit: "hours", scale: "log", domain: [t0, t1] },
+        y: { quantity: "pressure change and its log-time derivative", unit: "psi", scale: "log", domain: [lo, hi] },
+      },
+      transformations: ["the 48-hour record at this storage level, truncated at 3 hours; no regeneration, the retained points are unchanged"],
+      uncertainty: "none: noise-free synthetic data.",
+      question: "What does the rule do when the record cannot support an interpretation?",
+      caveat: "A designed negative control. It demonstrates that the gate closes; it does not establish that the gate opens correctly, which is what the storage-free control is for.",
+    },
+  };
+}
+
 async function main() {
   const contract = JSON.parse(await readFile(join(DATA_DIR, "contract.json"), "utf8"));
 
@@ -3416,6 +3957,8 @@ async function main() {
   const a3Summary = JSON.parse(await readFile(a3Path, "utf8"));
   const b1Path = join(REPO_ROOT, "cases", "B1_iarf_known_answer", "results", "summary.json");
   const b1Summary = JSON.parse(await readFile(b1Path, "utf8"));
+  const b2Path = join(REPO_ROOT, "cases", "B2_wellbore_storage_window", "results", "summary.json");
+  const b2Summary = JSON.parse(await readFile(b2Path, "utf8"));
 
   const figures = [
     buildF01(scenarios),
@@ -3435,6 +3978,11 @@ async function main() {
     buildB1Sampling(b1Summary),
     buildB1Noise(b1Summary),
     buildB1NegativeControl(b1Summary),
+    buildB2Hero(b2Summary),
+    buildB2StorageSweep(b2Summary),
+    buildB2Duration(b2Summary),
+    buildB2SamplingNoise(b2Summary),
+    buildB2Control(b2Summary),
   ];
 
   await mkdir(OUT_DIR, { recursive: true });

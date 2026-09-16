@@ -18,7 +18,7 @@ import { test, expect } from "@playwright/test";
 import { ROUTES, url, paintedTextSizes, horizontalOverflow, settle } from "./support";
 
 const WIDTHS = [320, 375, 768, 1440];
-const FIGURE_ROUTES = ["/", "/studies/a4/", "/studies/a1/", "/studies/a3/", "/studies/b1/"];
+const FIGURE_ROUTES = ["/", "/studies/a4/", "/studies/a1/", "/studies/a3/", "/studies/b1/", "/studies/b2/"];
 const TWO_HUNDRED_PERCENT = "html { font-size: 200% !important; }";
 
 /** Every text node painted outside the drawing it belongs to, at the current state. */

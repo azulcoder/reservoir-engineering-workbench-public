@@ -3,7 +3,7 @@
   "purpose": "Declared tolerances for the cross-platform portability comparison of case outputs. This is NOT a scientific acceptance criterion and is never used for canonical reproduction, which is byte identity checked with diff. It answers one question: running the same case implementation on a different operating system, C library and CPU, did the published scientific result survive?",
   "not_a_threshold": "No reservoir-engineering acceptance criterion is expressed here, and none was altered to accommodate these numbers. Each case evaluates its own criteria independently on every environment, and those criterion states are compared EXACTLY, not within a tolerance.",
   "measured_basis": {
-    "method": "A1, A3 and A4 were run from scratch on every environment below and compared leaf by leaf against the canonical container. The tolerance was then chosen from the measured spread, not chosen first and justified afterwards.",
+    "method": "A1, A3 and A4 were run from scratch on every environment below and compared leaf by leaf against the canonical container. The tolerance was then chosen from the measured spread, not chosen first and justified afterwards. B1 and B2 were measured after the envelope existed and are recorded here as evidence that it still holds, never as a reason to widen it.",
     "environments": [
       "canonical container python:3.13.2-bookworm (Debian 12, glibc 2.36, x86_64) - the reference",
       "ubuntu-24.04 runner, CPython 3.11 - byte-identical to canonical",
@@ -14,7 +14,23 @@
     "worst_observed_relative_difference": 2.3746e-08,
     "worst_observed_case": "A4_misleading_fit_counterexample .timestep_refinement.J_60.error_span_over_refinement",
     "second_worst": "A3_uncertainty_experiments .results.E7_ranking.short_depletion_penalty_f010_over_f050 at 1.6574e-08",
-    "cause": "Ordinary rounding differences between platform libm implementations. Twenty-four transcendental functions were measured to differ by 1 to 4 units in the last place between macOS arm64 and Linux x86_64; math.fsum, math.log, math.sqrt, math.hypot and the Mersenne Twister integer stream are bit-identical, which rules out summation order, seeding and draw order. random.gauss diverges only because it is composed of cos, sin and log."
+    "cause": "Ordinary rounding differences between platform libm implementations. Twenty-four transcendental functions were measured to differ by 1 to 4 units in the last place between macOS arm64 and Linux x86_64; math.fsum, math.log, math.sqrt, math.hypot and the Mersenne Twister integer stream are bit-identical, which rules out summation order, seeding and draw order. random.gauss diverges only because it is composed of cos, sin and log.",
+    "case_B2_wellbore_storage_window": {
+      "measured": "2026-09-17, CI run 35146429726, against the committed snapshot",
+      "float_fields_compared": 5368,
+      "worst_relative_difference": 0.0,
+      "worst_absolute_difference": 0.0,
+      "environments_agreeing_exactly": [
+        "canonical container python:3.13.2-bookworm - byte-identical, checked with diff",
+        "ubuntu-24.04 CPython 3.11 - every field equal",
+        "ubuntu-24.04 CPython 3.12 - every field equal",
+        "ubuntu-24.04 CPython 3.13 - every field equal",
+        "macos-15 arm64 CPython 3.13 - every field equal"
+      ],
+      "why_it_is_exact_where_other_cases_are_not": "B2's forward model is evaluated by mpmath, which computes in pure Python at 30 decimal digits. Every modified Bessel function and the whole inverse Laplace transform are therefore free of the platform libm differences that put A4 at 2.37e-08 and B1 at 1.11e-10, and the float64 tail -- the Bourdet chain and the least-squares fit -- uses only IEEE-754 operations that are exact and identically ordered on every platform. This is a property of the arithmetic, not a stronger claim about the science.",
+      "envelope_consequence": "None. B2 needs no tolerance at all: the difference is zero rather than small. The existing 1e-07 envelope is reused unchanged and was not widened, and this case cannot be cited as evidence that the envelope is adequate for cases that do use libm.",
+      "caveat": "The snapshot was authored on macOS arm64, so the local same-platform comparison is determinism and not portability. The four environments above are what measure portability, and they are the numbers quoted."
+    }
   },
   "default_float": {
     "relative": 1e-07,

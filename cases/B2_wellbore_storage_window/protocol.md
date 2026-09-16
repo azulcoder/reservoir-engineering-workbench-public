@@ -285,7 +285,7 @@ Euler–Mascheroni constant, as B1 does.
 | --- | --- | --- |
 | **B2.0** | storage-free regression | `C_D = 1e-3`. Does (B2-1) reproduce B1? Two forms: pointwise against B1's closed form, and parameter-level over B1's exact window and sampling |
 | **B2.1** | constant storage, noise-free | `C_D = 1000` (`C = 0.0148 bbl/psi`, crossover 0.25 h). The analyst must find the window. Primary proof of concept |
-| **B2.2** | storage-strength sweep | `C_D ∈ {100, 1000, 3000, 10000}`, crossovers 0.02, 0.25, 0.81, 2.90 h. Spans below the practical field range to its top (`C = 0.0015` to `0.148 bbl/psi`). How much usable radial flow survives? |
+| **B2.2** | storage-strength sweep | `C_D ∈ {100, 1000, 3000, 10000}`, crossovers 0.02, 0.25, 0.81, 2.90 h. Spans ~~below the practical field range to its top~~ **[WITHDRAWN, see below]** (`C = 0.0015` to `0.148 bbl/psi`). How much usable radial flow survives? |
 | **B2.3** | test-duration sweep | `C_D = 3000` fixed; record truncated at 48, 24, 12, 6, 3 h. When does the criterion stop being satisfiable? |
 | **B2.4** | sampling | `{5, 10, 20, 50}` points per decade at `C_D = 1000`. Effect on derivative, window and recovery |
 | **B2.5** | pressure noise | `C_D = 1000`; `σ ∈ {0.1, 0.5, 2.0, 10.0}` psi, 200 seeds per level, seeds `20260916 + i` for `i` in `0..199`. Same sigmas as B1 so the two are comparable. **The fraction of seeds returning INCONCLUSIVE is a primary reported output, not a failure**: a rule that declines more often as noise rises is behaving correctly, and recovery error is reported over the seeds that did return an answer, with the fraction stated beside it |
@@ -295,9 +295,22 @@ Four storage levels, five durations, four sampling densities, four noise levels.
 answers a stated question**, and there is no sweep here whose only justification is that it is
 cheap.
 
+> **[WITHDRAWN AFTER RESULTS — the levels are unchanged, only the claim about them]**
+> Two rows above described these levels as spanning "the practical field range". That
+> description rested on source S3, a commercial vendor's reference page whose range sentence
+> is uncited and names no class of well. A pre-publication source audit — `docs/evidence/
+> pta_wellbore_storage.md` §10.2 — found it does not establish a field-practice claim, and the
+> claim is withdrawn wherever B2 publishes anything.
+>
+> **No sweep level moved, no threshold moved, and no criterion is affected.** `C_D ∈ {100,
+> 1000, 3000, 10000}` is exactly what was pre-registered and exactly what was run. What is
+> struck through is a justification for the choice, not the choice. It is annotated rather than
+> deleted because this protocol is evidence about what was believed when it was written, and
+> editing it silently would destroy the only record that the belief was once held.
+
 | Parameter | Levels | Why it varies | Expected effect | Decision it informs |
 | --- | --- | --- | --- | --- |
-| `C_D` | 100, 1000, 3000, 10000 | Spans below the practical field range to its top; crossover moves 0.02 → 2.90 h | Storage eats a growing share of the record | How much storage the rule tolerates before radial flow is unusable |
+| `C_D` | 100, 1000, 3000, 10000 | Spans ~~below the practical field range to its top~~ **[WITHDRAWN, see below]**; crossover moves 0.02 → 2.90 h | Storage eats a growing share of the record | How much storage the rule tolerates before radial flow is unusable |
 | duration | 48, 24, 12, 6, 3 h | Holds physics fixed and removes late data | Usable radial extent shrinks toward the §7(c) minimum | The shortest test that still supports an interpretation at this storage |
 | points/decade | 5, 10, 20, 50 | Derivative quality depends on log-spacing | Noisier `D` and `m` at low density; §7(c) point count binds first | Whether sampling or duration is the binding constraint |
 | `σ` | 0.1, 0.5, 2.0, 10.0 psi | Same levels as B1, so B2 and B1 are comparable | Regime identification degrades before parameter recovery does | Whether noise breaks the window rule or only the estimate |
@@ -459,9 +472,17 @@ has not been run and nothing in B2 may be read as a commercial-package compariso
 ## 17. Limitations, stated before the result exists
 
 - Synthetic throughout. No field data, no gauge, no real well.
-- One model: homogeneous, isotropic, infinite-acting, single phase, constant rate, line
-  source, constant storage, steady-state skin. Nothing here establishes behaviour outside it.
-- **Valid for `s > 0` only** (§4.3). A zero-skin case is outside the model.
+- One model: homogeneous, isotropic, infinite-acting, single phase, constant rate, ~~line
+  source~~ **finite-radius inner boundary**, constant storage, steady-state skin. Nothing here
+  establishes behaviour outside it.
+- ~~**Valid for `s > 0` only** (§4.3). A zero-skin case is outside the model.~~
+  **[SUPERSEDED BY `PROTOCOL_AMENDMENT_01.md`]** — the amendment replaced the line-source
+  inner boundary with the finite-radius form precisely because the line source had no storage
+  branch at zero skin. Under the amended model `s = 0` is valid and criterion C3b makes it
+  mandatory. These two bullets were overlooked when §4.2, §4.3, §8b, §12 and §13 were amended;
+  the omission was found while completing the case and the original wording is struck through
+  rather than deleted, so the audit trail stays visible. **No threshold and no criterion is
+  changed by this annotation.**
 - Constant storage. Real storage changes during a test, and that is not represented.
 - The independence is between derivation and implementation, not between this project and the
   world. The data come from a solution this project derived and implemented.

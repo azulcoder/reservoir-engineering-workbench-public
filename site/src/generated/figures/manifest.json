@@ -2,7 +2,7 @@
   "manifest_version": "1.0.0",
   "generated": {
     "renderer": "site/scripts/render-figures.mjs",
-    "renderer_sha256": "1f394303c1618c60c7192d81bc5f7e9614ab6f86466d7afd80ffb48f39c6b732",
+    "renderer_sha256": "a7c7e8fc18ccedeed175ec7a06415c72b8aa08ba5edd08a652fdde5fd2c4a918",
     "note": "the renderer digest is the SITE BUILD revision and is distinct from the numerical-source digests below, which identify the run that produced the numbers"
   },
   "site_build": {
@@ -29,7 +29,12 @@
         "B1-02",
         "B1-03",
         "B1-04",
-        "B1-05"
+        "B1-05",
+        "B2-F01",
+        "B2-F02",
+        "B2-F03",
+        "B2-F04",
+        "B2-F05"
       ],
       "blocked": [],
       "rasteriser": "sharp 0.35.4 (libvips 8.18.6, librsvg 2.62.91), imported dynamically",
@@ -1654,6 +1659,469 @@
         {
           "path": "b1-05.png",
           "bytes": 567989,
+          "media_type": "image/png",
+          "raster": "216 dpi, 3x the 72 dpi authoring scale"
+        }
+      ]
+    },
+    {
+      "figure_id": "B2-F01",
+      "case_id": "B2_wellbore_storage_window",
+      "selector": "cases/B2_wellbore_storage_window/results/summary.json /b2_1_primary_noise_free/series, 95 pressure points and 93 derivative points",
+      "data_files": [
+        "cases/B2_wellbore_storage_window/results/summary.json"
+      ],
+      "axes": {
+        "x": {
+          "quantity": "elapsed time",
+          "unit": "hours",
+          "scale": "log",
+          "domain": [
+            0.001,
+            50.11872336272725
+          ]
+        },
+        "y": {
+          "quantity": "pressure change and its log-time derivative",
+          "unit": "psi",
+          "scale": "log",
+          "domain": [
+            0.6874497135195075,
+            901.9050415714428
+          ]
+        }
+      },
+      "transformations": [
+        "the derivative is the Bourdet three-point estimator with respect to natural-log time, L = 0.1",
+        "the lower panel applies the same three-point rule again, to ln D against ln t; that compounds the smoothing, which is a stated property of the rule rather than a defect",
+        "no smoothing beyond that L, no resampling, no interpolation; every exported point is drawn"
+      ],
+      "uncertainty": "none: noise-free synthetic data. The shaded band is not an uncertainty band, it is the region where the generator's own departure from the semilog line is inside the study's accuracy target.",
+      "question": "Can a declared, truth-blind rule certify a radial-flow window in a drawdown that begins under wellbore storage?",
+      "caveat": "The answer here is no, for this storage strength and this record length only. A refusal is not evidence that the permeability is unrecoverable; it is evidence that this record does not certify it.",
+      "evidence_class": "synthetic; generator and estimator are separate modules; known inventory is evaluation-only information that no field measurement provides",
+      "units": {
+        "pressure": "psia (absolute)",
+        "p_over_z": "psia",
+        "cumulative_gas": "scf, also reported as Bscf = 1e9 scf",
+        "time": "days, also reported as years of 365.25 days",
+        "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
+      },
+      "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+      "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
+      "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
+      "numerical_source_digests": {
+        "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
+        "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
+        "baseline_summary_sha256": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
+        "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
+      },
+      "export_code_revision": {
+        "exporter_path": "scripts/export_presentation_data.py",
+        "exporter_sha256": "cf5916c14bbc6c19bb5913caaa1d8ab3dc1a71586fca178515fdc59c4c31d252",
+        "reconciliation_checks_passed": 51,
+        "reconcile_relative_tolerance": 1e-12
+      },
+      "exported_data_hashes": [
+        {
+          "path": "cases/B2_wellbore_storage_window/results/summary.json",
+          "matches_contract": null,
+          "note": "committed case summary, outside the export contract"
+        }
+      ],
+      "accessibility": {
+        "role": "img",
+        "accessible_name": "B2-F01 — the rule declined: no certified radial window in a 48-hour test",
+        "long_description_chars": 1079,
+        "non_colour_channels": "every series carries a dash pattern, a marker shape or a direct text label, and each figure's legend repeats them. Only two marks sit below 3:1 on the plot ground: the axis gridlines and the band fills, both aria-hidden, both of which passed a removal test -- every band boundary is also drawn in --c-border-strong at 3.51:1 and labelled in text, so the shading is redundant reinforcement. Every other rule, including the divider above the caveat lines, the separator between table rows and the boundary of a legend band swatch, carries information and is drawn at 3.51:1. The classification is recorded in docs/design/figure_spec.md.",
+        "minimum_label_px": 13,
+        "colour_source": "docs/design/tokens.css, parsed at build time; no colour value is retyped in the renderer"
+      },
+      "public_data_decision": "public. Every value is synthetic and already committed to this repository; there is no field, proprietary or personal data in the source, and the known inventory is evaluation-only information that exists because the history was generated.",
+      "png_status": {
+        "state": "emitted",
+        "rasteriser": "sharp (libvips + librsvg), imported dynamically"
+      },
+      "files": [
+        {
+          "path": "b2-f01.svg",
+          "bytes": 44183,
+          "media_type": "image/svg+xml"
+        },
+        {
+          "path": "b2-f01.png",
+          "bytes": 811451,
+          "media_type": "image/png",
+          "raster": "216 dpi, 3x the 72 dpi authoring scale"
+        }
+      ]
+    },
+    {
+      "figure_id": "B2-F02",
+      "case_id": "B2_wellbore_storage_window",
+      "selector": "cases/B2_wellbore_storage_window/results/summary.json /b2_2_storage_sweep/levels and /b2_0_storage_free_regression",
+      "data_files": [
+        "cases/B2_wellbore_storage_window/results/summary.json"
+      ],
+      "axes": {
+        "x": {
+          "quantity": "widest admissible run",
+          "unit": "log-10 cycles",
+          "scale": "linear",
+          "domain": [
+            0,
+            5.125
+          ]
+        },
+        "y": {
+          "quantity": "dimensionless wellbore storage",
+          "unit": "dimensionless",
+          "scale": "band",
+          "domain": [
+            "1e-3 (control)",
+            "100",
+            "1000",
+            "3000",
+            "10000"
+          ]
+        }
+      },
+      "transformations": [
+        "no transformation: each bar is the rule's own reported run length at that level"
+      ],
+      "uncertainty": "none: noise-free synthetic data at four pre-registered storage levels plus one control.",
+      "question": "How much usable radial flow survives a 48-hour test as wellbore storage grows?",
+      "caveat": "Four levels and one control, chosen before results. These are synthetic storage strengths; no source inspected in this work establishes them as typical of field practice.",
+      "evidence_class": "synthetic; generator and estimator are separate modules; known inventory is evaluation-only information that no field measurement provides",
+      "units": {
+        "pressure": "psia (absolute)",
+        "p_over_z": "psia",
+        "cumulative_gas": "scf, also reported as Bscf = 1e9 scf",
+        "time": "days, also reported as years of 365.25 days",
+        "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
+      },
+      "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+      "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
+      "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
+      "numerical_source_digests": {
+        "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
+        "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
+        "baseline_summary_sha256": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
+        "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
+      },
+      "export_code_revision": {
+        "exporter_path": "scripts/export_presentation_data.py",
+        "exporter_sha256": "cf5916c14bbc6c19bb5913caaa1d8ab3dc1a71586fca178515fdc59c4c31d252",
+        "reconciliation_checks_passed": 51,
+        "reconcile_relative_tolerance": 1e-12
+      },
+      "exported_data_hashes": [
+        {
+          "path": "cases/B2_wellbore_storage_window/results/summary.json",
+          "matches_contract": null,
+          "note": "committed case summary, outside the export contract"
+        }
+      ],
+      "accessibility": {
+        "role": "img",
+        "accessible_name": "B2-F02 — usable extent collapses as storage grows, and the rule stops certifying",
+        "long_description_chars": 583,
+        "non_colour_channels": "every series carries a dash pattern, a marker shape or a direct text label, and each figure's legend repeats them. Only two marks sit below 3:1 on the plot ground: the axis gridlines and the band fills, both aria-hidden, both of which passed a removal test -- every band boundary is also drawn in --c-border-strong at 3.51:1 and labelled in text, so the shading is redundant reinforcement. Every other rule, including the divider above the caveat lines, the separator between table rows and the boundary of a legend band swatch, carries information and is drawn at 3.51:1. The classification is recorded in docs/design/figure_spec.md.",
+        "minimum_label_px": 13,
+        "colour_source": "docs/design/tokens.css, parsed at build time; no colour value is retyped in the renderer"
+      },
+      "public_data_decision": "public. Every value is synthetic and already committed to this repository; there is no field, proprietary or personal data in the source, and the known inventory is evaluation-only information that exists because the history was generated.",
+      "png_status": {
+        "state": "emitted",
+        "rasteriser": "sharp (libvips + librsvg), imported dynamically"
+      },
+      "files": [
+        {
+          "path": "b2-f02.svg",
+          "bytes": 13173,
+          "media_type": "image/svg+xml"
+        },
+        {
+          "path": "b2-f02.png",
+          "bytes": 462273,
+          "media_type": "image/png",
+          "raster": "216 dpi, 3x the 72 dpi authoring scale"
+        }
+      ]
+    },
+    {
+      "figure_id": "B2-F03",
+      "case_id": "B2_wellbore_storage_window",
+      "selector": "cases/B2_wellbore_storage_window/results/summary.json /posthoc_exploratory/levels",
+      "data_files": [
+        "cases/B2_wellbore_storage_window/results/summary.json"
+      ],
+      "axes": {
+        "x": {
+          "quantity": "elapsed time",
+          "unit": "hours",
+          "scale": "log",
+          "domain": [
+            0.01082742191423783,
+            10720.406211623123
+          ]
+        },
+        "y": {
+          "quantity": "dimensionless wellbore storage",
+          "unit": "dimensionless",
+          "scale": "band",
+          "domain": [
+            "100",
+            "1000",
+            "3000",
+            "10000"
+          ]
+        }
+      },
+      "transformations": [
+        "the frozen selector was run over progressively longer truncations of one long record per level; no rule, threshold or setting was changed"
+      ],
+      "uncertainty": "the crossing is resolved to one sampling interval, a factor of 10^(1/20) or about 12 percent in time. Durations are reported to two significant figures for that reason.",
+      "question": "How long would the test have to run before the pre-registered rule first certifies a window?",
+      "caveat": "POST-HOC. This analysis was not pre-registered, took no part in the classification, and describes this synthetic model only.",
+      "evidence_class": "synthetic; generator and estimator are separate modules; known inventory is evaluation-only information that no field measurement provides",
+      "units": {
+        "pressure": "psia (absolute)",
+        "p_over_z": "psia",
+        "cumulative_gas": "scf, also reported as Bscf = 1e9 scf",
+        "time": "days, also reported as years of 365.25 days",
+        "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
+      },
+      "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+      "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
+      "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
+      "numerical_source_digests": {
+        "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
+        "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
+        "baseline_summary_sha256": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
+        "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
+      },
+      "export_code_revision": {
+        "exporter_path": "scripts/export_presentation_data.py",
+        "exporter_sha256": "cf5916c14bbc6c19bb5913caaa1d8ab3dc1a71586fca178515fdc59c4c31d252",
+        "reconciliation_checks_passed": 51,
+        "reconcile_relative_tolerance": 1e-12
+      },
+      "exported_data_hashes": [
+        {
+          "path": "cases/B2_wellbore_storage_window/results/summary.json",
+          "matches_contract": null,
+          "note": "committed case summary, outside the export contract"
+        }
+      ],
+      "accessibility": {
+        "role": "img",
+        "accessible_name": "B2-F03 — POST-HOC: crossover arrives early, certifiable evidence arrives much later",
+        "long_description_chars": 787,
+        "non_colour_channels": "every series carries a dash pattern, a marker shape or a direct text label, and each figure's legend repeats them. Only two marks sit below 3:1 on the plot ground: the axis gridlines and the band fills, both aria-hidden, both of which passed a removal test -- every band boundary is also drawn in --c-border-strong at 3.51:1 and labelled in text, so the shading is redundant reinforcement. Every other rule, including the divider above the caveat lines, the separator between table rows and the boundary of a legend band swatch, carries information and is drawn at 3.51:1. The classification is recorded in docs/design/figure_spec.md.",
+        "minimum_label_px": 13,
+        "colour_source": "docs/design/tokens.css, parsed at build time; no colour value is retyped in the renderer"
+      },
+      "public_data_decision": "public. Every value is synthetic and already committed to this repository; there is no field, proprietary or personal data in the source, and the known inventory is evaluation-only information that exists because the history was generated.",
+      "png_status": {
+        "state": "emitted",
+        "rasteriser": "sharp (libvips + librsvg), imported dynamically"
+      },
+      "files": [
+        {
+          "path": "b2-f03.svg",
+          "bytes": 24561,
+          "media_type": "image/svg+xml"
+        },
+        {
+          "path": "b2-f03.png",
+          "bytes": 578111,
+          "media_type": "image/png",
+          "raster": "216 dpi, 3x the 72 dpi authoring scale"
+        }
+      ]
+    },
+    {
+      "figure_id": "B2-F04",
+      "case_id": "B2_wellbore_storage_window",
+      "selector": "cases/B2_wellbore_storage_window/results/summary.json /b2_4_sampling and /b2_5_pressure_noise",
+      "data_files": [
+        "cases/B2_wellbore_storage_window/results/summary.json"
+      ],
+      "axes": {
+        "x": {
+          "quantity": "widest admissible run, and fraction of seeds declining",
+          "unit": "log-10 cycles; fraction",
+          "scale": "linear",
+          "domain": [
+            0,
+            1.12
+          ]
+        },
+        "y": {
+          "quantity": "sampling density, and noise level",
+          "unit": "points per decade; psi",
+          "scale": "band",
+          "domain": [
+            "5 / decade",
+            "10 / decade",
+            "20 / decade",
+            "50 / decade",
+            "σ = 0.1 psi",
+            "σ = 0.5 psi",
+            "σ = 2 psi",
+            "σ = 10 psi"
+          ]
+        }
+      },
+      "transformations": [
+        "800 noisy records in total, 200 fixed seeds at each of four sigmas, all applied to the same noise-free record"
+      ],
+      "uncertainty": "the noise panel is itself the uncertainty result: it reports how often the rule declines across seeds rather than a mean with a band.",
+      "question": "Is the refusal a sampling artefact, or does gauge noise change it?",
+      "caveat": "Neither axis rescues the case, but neither was expected to: the noise-free record already declines, so these panels bound the explanation rather than testing a new one.",
+      "evidence_class": "synthetic; generator and estimator are separate modules; known inventory is evaluation-only information that no field measurement provides",
+      "units": {
+        "pressure": "psia (absolute)",
+        "p_over_z": "psia",
+        "cumulative_gas": "scf, also reported as Bscf = 1e9 scf",
+        "time": "days, also reported as years of 365.25 days",
+        "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
+      },
+      "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+      "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
+      "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
+      "numerical_source_digests": {
+        "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
+        "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
+        "baseline_summary_sha256": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
+        "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
+      },
+      "export_code_revision": {
+        "exporter_path": "scripts/export_presentation_data.py",
+        "exporter_sha256": "cf5916c14bbc6c19bb5913caaa1d8ab3dc1a71586fca178515fdc59c4c31d252",
+        "reconciliation_checks_passed": 51,
+        "reconcile_relative_tolerance": 1e-12
+      },
+      "exported_data_hashes": [
+        {
+          "path": "cases/B2_wellbore_storage_window/results/summary.json",
+          "matches_contract": null,
+          "note": "committed case summary, outside the export contract"
+        }
+      ],
+      "accessibility": {
+        "role": "img",
+        "accessible_name": "B2-F04 — neither denser sampling nor quieter gauges change the answer",
+        "long_description_chars": 767,
+        "non_colour_channels": "every series carries a dash pattern, a marker shape or a direct text label, and each figure's legend repeats them. Only two marks sit below 3:1 on the plot ground: the axis gridlines and the band fills, both aria-hidden, both of which passed a removal test -- every band boundary is also drawn in --c-border-strong at 3.51:1 and labelled in text, so the shading is redundant reinforcement. Every other rule, including the divider above the caveat lines, the separator between table rows and the boundary of a legend band swatch, carries information and is drawn at 3.51:1. The classification is recorded in docs/design/figure_spec.md.",
+        "minimum_label_px": 13,
+        "colour_source": "docs/design/tokens.css, parsed at build time; no colour value is retyped in the renderer"
+      },
+      "public_data_decision": "public. Every value is synthetic and already committed to this repository; there is no field, proprietary or personal data in the source, and the known inventory is evaluation-only information that exists because the history was generated.",
+      "png_status": {
+        "state": "emitted",
+        "rasteriser": "sharp (libvips + librsvg), imported dynamically"
+      },
+      "files": [
+        {
+          "path": "b2-f04.svg",
+          "bytes": 15711,
+          "media_type": "image/svg+xml"
+        },
+        {
+          "path": "b2-f04.png",
+          "bytes": 575834,
+          "media_type": "image/png",
+          "raster": "216 dpi, 3x the 72 dpi authoring scale"
+        }
+      ]
+    },
+    {
+      "figure_id": "B2-F05",
+      "case_id": "B2_wellbore_storage_window",
+      "selector": "cases/B2_wellbore_storage_window/results/summary.json /b2_6_deliberately_inconclusive/series, 70 pressure points and 68 derivative points",
+      "data_files": [
+        "cases/B2_wellbore_storage_window/results/summary.json"
+      ],
+      "axes": {
+        "x": {
+          "quantity": "elapsed time",
+          "unit": "hours",
+          "scale": "log",
+          "domain": [
+            0.001,
+            2.818382931264455
+          ]
+        },
+        "y": {
+          "quantity": "pressure change and its log-time derivative",
+          "unit": "psi",
+          "scale": "log",
+          "domain": [
+            0.06918100018447661,
+            431.58461417860156
+          ]
+        }
+      },
+      "transformations": [
+        "the 48-hour record at this storage level, truncated at 3 hours; no regeneration, the retained points are unchanged"
+      ],
+      "uncertainty": "none: noise-free synthetic data.",
+      "question": "What does the rule do when the record cannot support an interpretation?",
+      "caveat": "A designed negative control. It demonstrates that the gate closes; it does not establish that the gate opens correctly, which is what the storage-free control is for.",
+      "evidence_class": "synthetic; generator and estimator are separate modules; known inventory is evaluation-only information that no field measurement provides",
+      "units": {
+        "pressure": "psia (absolute)",
+        "p_over_z": "psia",
+        "cumulative_gas": "scf, also reported as Bscf = 1e9 scf",
+        "time": "days, also reported as years of 365.25 days",
+        "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1"
+      },
+      "standard_conditions": "SPE / one standard atmosphere: 14.6959 psia, 60 degF, Z_sc = 1",
+      "numerical_run_id": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
+      "numerical_run_id_basis": "the audited summary digest identifies the run; contract.json declares no separate run identifier and none is invented here",
+      "numerical_source_digests": {
+        "protocol_sha256": "ff06dfd53f52c1a106022f2b5f9cf73f6d425ad626d43a8c92d226e833493506",
+        "case_source_sha256": "e9c266046bab1e2eab7e926445e13c0b4208db1937e1e11862960719d4c89a92",
+        "baseline_summary_sha256": "d42d3eee8f14db95df5c91ce721d34f2a7483a7b2cf4343ec9ae3103b493e51a",
+        "baseline_summary_path": "cases/A4_misleading_fit_counterexample/results/summary.json"
+      },
+      "export_code_revision": {
+        "exporter_path": "scripts/export_presentation_data.py",
+        "exporter_sha256": "cf5916c14bbc6c19bb5913caaa1d8ab3dc1a71586fca178515fdc59c4c31d252",
+        "reconciliation_checks_passed": 51,
+        "reconcile_relative_tolerance": 1e-12
+      },
+      "exported_data_hashes": [
+        {
+          "path": "cases/B2_wellbore_storage_window/results/summary.json",
+          "matches_contract": null,
+          "note": "committed case summary, outside the export contract"
+        }
+      ],
+      "accessibility": {
+        "role": "img",
+        "accessible_name": "B2-F05 — the gate closing on purpose: a record designed to be uninterpretable",
+        "long_description_chars": 666,
+        "non_colour_channels": "every series carries a dash pattern, a marker shape or a direct text label, and each figure's legend repeats them. Only two marks sit below 3:1 on the plot ground: the axis gridlines and the band fills, both aria-hidden, both of which passed a removal test -- every band boundary is also drawn in --c-border-strong at 3.51:1 and labelled in text, so the shading is redundant reinforcement. Every other rule, including the divider above the caveat lines, the separator between table rows and the boundary of a legend band swatch, carries information and is drawn at 3.51:1. The classification is recorded in docs/design/figure_spec.md.",
+        "minimum_label_px": 13,
+        "colour_source": "docs/design/tokens.css, parsed at build time; no colour value is retyped in the renderer"
+      },
+      "public_data_decision": "public. Every value is synthetic and already committed to this repository; there is no field, proprietary or personal data in the source, and the known inventory is evaluation-only information that exists because the history was generated.",
+      "png_status": {
+        "state": "emitted",
+        "rasteriser": "sharp (libvips + librsvg), imported dynamically"
+      },
+      "files": [
+        {
+          "path": "b2-f05.svg",
+          "bytes": 27855,
+          "media_type": "image/svg+xml"
+        },
+        {
+          "path": "b2-f05.png",
+          "bytes": 560225,
           "media_type": "image/png",
           "raster": "216 dpi, 3x the 72 dpi authoring scale"
         }

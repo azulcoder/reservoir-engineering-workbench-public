@@ -34,6 +34,11 @@ const FIGURES = [
   "b1-03",
   "b1-04",
   "b1-05",
+  "b2-f01",
+  "b2-f02",
+  "b2-f03",
+  "b2-f04",
+  "b2-f05",
 ];
 
 /** Text content of an SVG, in document order, whitespace collapsed. */

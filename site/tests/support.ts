@@ -31,6 +31,7 @@ export const ROUTES = [
   "/studies/a3/",
   "/studies/a2/",
   "/studies/b1/",
+  "/studies/b2/",
   "/methods/",
   "/about/",
 ] as const;

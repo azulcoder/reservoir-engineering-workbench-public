@@ -765,6 +765,92 @@ async function main() {
     "full",
   );
 
+  /* --- B2 ----------------------------------------------------------
+   * B2's result is a refusal, so its downloads are built to carry the refusal rather than
+   * a parameter. The sweep file has no permeability column at all: two of its rows would
+   * have a value and three would not, and a mostly-empty column in a spreadsheet is an
+   * invitation to fill it in. */
+  const b2 = await readJson(join(REPO, "cases", "B2_wellbore_storage_window", "results", "summary.json"));
+  const b2Primary = b2.b2_1_primary_noise_free;
+  if (!b2Primary) throw new Error("B2 summary has no b2_1_primary_noise_free block");
+  const b2Series = b2Primary.series;
+  if (!b2Series || b2Series.derivative_available !== true) {
+    throw new Error("B2 primary case has no exported derivative series");
+  }
+
+  const b2DerivRows = b2Series.derivative_time_hours.map((hours, i) => ({
+    time_hours: hours,
+    derivative_psi: b2Series.derivative_psi[i],
+    generator_derivative_psi: b2Series.generator_derivative_psi[i],
+    storage_ratio: b2Series.storage_ratio[i],
+  }));
+  await emit(
+    "b2_primary_diagnostic.csv",
+    csv(
+      [num("time_hours"), num("derivative_psi"), num("generator_derivative_psi"), num("storage_ratio")],
+      b2DerivRows,
+    ),
+    "B2 primary case at C_D = 1000: the Bourdet derivative an interpreter computes, the generator's own analytic derivative for comparison, and the storage ratio D/dp the rule's exclusion tests. The rule certified no window on this record.",
+    "full",
+  );
+
+  const b2SweepRows = b2.b2_2_storage_sweep.levels.map((level) => ({
+    storage_dimensionless: level.storage_dimensionless,
+    storage_bbl_per_psi: level.storage_bbl_per_psi,
+    crossover_hours: level.crossover_hours,
+    window_certified: level.analyst.window_found,
+    widest_admissible_decades: level.analyst.window_found
+      ? level.analyst.window_decades
+      : level.analyst.widest_admissible_decades,
+    decline_reason: level.analyst.window_found ? "" : level.analyst.reason,
+  }));
+  await emit(
+    "b2_storage_sweep.csv",
+    csv(
+      [
+        num("storage_dimensionless"),
+        num("storage_bbl_per_psi"),
+        num("crossover_hours"),
+        num("window_certified"),
+        num("widest_admissible_decades"),
+        num("decline_reason"),
+      ],
+      b2SweepRows,
+    ),
+    "B2 storage-strength sweep under the frozen selector over a 48-hour record. No permeability column: the rule certified a window at one of these four levels, and a column that is blank for the rest would invite a reader to fill it.",
+    "full",
+  );
+
+  const b2PosthocRows = b2.posthoc_exploratory.levels.map((level) => ({
+    storage_dimensionless: level.storage_dimensionless,
+    crossover_hours: level.crossover_hours,
+    first_certifying_hours: level.frozen_selector.first_certifying_hours,
+    reported: level.reported_days,
+    monotone_after_crossing: level.frozen_selector.monotone_after_crossing,
+  }));
+  await emit(
+    "b2_time_to_certification.csv",
+    csv(
+      [
+        num("storage_dimensionless"),
+        num("crossover_hours"),
+        num("first_certifying_hours"),
+        num("reported"),
+        num("monotone_after_crossing"),
+      ],
+      b2PosthocRows,
+    ),
+    "POST-HOC EXPLORATORY ANALYSIS, not pre-registered and no part of the B2 classification: the shortest record at which the frozen selector first certifies a window at each storage level. A property of this synthetic model, not a field test-design recommendation.",
+    "full",
+  );
+
+  await emitJson(
+    "b2_summary.json",
+    b2,
+    "B2 case summary: the committed canonical snapshot, including every criterion flag, the classification, the post-hoc analysis in its own namespace, and the exported series. Re-serialised by this emitter rather than copied byte for byte, so a whole-numbered float such as 0.0 is written 0; the numbers themselves are unchanged.",
+    "full",
+  );
+
   /* --- downloadable copies of the exhibits themselves ---------------
    * The SVG a reader downloads must be the file the page inlined, byte for byte, or the
    * download is a different artefact wearing the same name. These are copies, not

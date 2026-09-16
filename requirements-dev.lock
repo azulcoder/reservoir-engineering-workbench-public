@@ -9,15 +9,27 @@
 #     .venv/bin/python -m pip freeze --exclude-editable > requirements-dev.lock
 #
 # Resolved on 2026-09-13 with CPython 3.13.2 on macOS (darwin, arm64), pip 26.2.1.
-# mpmath was added on 2026-09-15 for case B1. It is a test oracle only: an
+# mpmath was added on 2026-09-15 for case B1, where it is a test oracle only: an
 # independently written arbitrary-precision implementation of the exponential
 # integral, used to check this project's own. BSD licensed, compatible with MIT.
-# It is a development pin and is deliberately not a runtime dependency, so the
-# library keeps the property of installing with nothing behind it.
 #
-# It pins the development toolchain only. The library itself has no runtime
-# dependencies and is not pinned by anything here: see the empty `dependencies` list in
-# pyproject.toml, which a test enforces by walking the import graph under src/.
+# Case B2 widened that role on 2026-09-17. Its forward model needs modified Bessel
+# functions at complex argument and a numerical inverse Laplace transform, neither of
+# which the standard library has, so mpmath is now also required to *run* that case and
+# is installed in the canonical and portability CI jobs. **The library under src/ is
+# unaffected and still installs with nothing behind it**, which a test enforces by
+# walking its import graph; the dependency lives in the case layer, where
+# pyproject.toml's optional-dependencies already placed such things.
+#
+# One property is load-bearing and easy to lose: mpmath computes in pure Python and
+# switches to a gmpy backend when gmpy2 is installed, which would change the arithmetic
+# under every Bessel evaluation and could break byte-identical reproduction. B2's run
+# record therefore stores the backend alongside the version rather than assuming it.
+#
+# It pins the development toolchain, plus the one case-layer dependency described above.
+# The library itself still has no runtime dependencies and is not pinned by anything
+# here: see the empty `dependencies` list in pyproject.toml, which a test enforces by
+# walking the import graph under src/.
 #
 # Reproduce the environment with:
 #     python3 -m venv .venv
