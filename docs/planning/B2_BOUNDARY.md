@@ -1,10 +1,19 @@
 # B2 — planning boundary
 
-**This is a planning document. It contains no result, no threshold that is not already
-derived, and no pre-registration. B2 is not started.**
+**Superseded by the pre-registration.** The research pass and the protocol are done:
 
-The next task after this one is research and pre-registration, in that order, and the
-protocol commit comes before any result-producing code — the same order B1 used.
+- evidence register — `docs/evidence/pta_wellbore_storage.md`
+- adversarial review — `cases/B2_wellbore_storage_window/ATTACK.md`
+- **protocol — `cases/B2_wellbore_storage_window/protocol.md`, commit `d6624f7`**
+
+This document is kept as the record of what was planned before the research closed the open
+questions. Where it and the protocol disagree, **the protocol governs**. Three of its open
+decisions were settled differently from the way it framed them: the forward model is the line
+source rather than the finite-radius solution, so the B1 reduction is an identity; no external
+comparator was selected; and the literature onset rule it contemplated could not be verified
+and is used nowhere.
+
+B2 implementation has not started. No B2 code and no B2 number exists.
 
 ## Central engineering question
 
