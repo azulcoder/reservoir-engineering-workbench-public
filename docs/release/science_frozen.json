@@ -1,6 +1,6 @@
 {
   "purpose": "Scientific artefacts frozen for the executive visual refactor. A presentation change must not become a scientific change.",
-  "frozen_at_commit": "cc75ff6124e90d89531b3a7a553b0cea7176d4f4",
+  "frozen_at_commit": "1823ac53099228b17a810cf40a3917736c80d162",
   "files": {
     "cases/A1_volumetric_baseline/protocol.md": "61b88460363c7ca7fc745def4ab784551d5272f3bb0c8f44ec5a48bec5550400",
     "cases/A1_volumetric_baseline/report.md": "738bbcd2fd32f4d6be74b5ad605fc89e3842de04ed8767796240efc3b193aa8c",
@@ -96,7 +96,7 @@
     "site/public/data/f07_z_mismatch.json": "15167ebe06f3fa487a7041b17f414bdd990c3d9abe74f5a5b7f5ad79a620701d",
     "site/public/data/f08_refinement.csv": "46f0ea66a9d5662e0b82748cafccd5b12ee729577258809b1ea78f3ac04edfca",
     "site/public/data/f08_refinement.json": "71cf77474150f0f1b45fdd625e2cad7145b523dd562d32884c1edcde53ce4aab",
-    "site/public/data/index.json": "5a23fa7df22ef81036aa51558f8b507e3e84f4eec52fc9b66adc040718390599",
+    "site/public/data/index.json": "9b94503c1d0c45b1441e0271b3a23fd5c7d7e061acde78269ae3c8209c474263",
     "src/reservoir_lab/__init__.py": "17b95c1cc630212f2f49fb45ec3e5a7155ef320c88d8a3d142878b9c2a59396e",
     "src/reservoir_lab/aquifer.py": "385fc2e8b24dc381aa34640ebfedbcb7c798c17305b32278c6565632c734a614",
     "src/reservoir_lab/depletion.py": "eb1a67824690ae37ec4c64debfe83cde4105a4ec8099a9da8d76bc8d75770529",
