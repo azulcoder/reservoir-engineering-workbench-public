@@ -295,6 +295,23 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
+      - name: Install the case-layer numerical dependency
+        # The deployment build runs the canonical sequence, whose verify step executes every
+        # case -- including B2, whose forward model needs modified Bessel functions at
+        # complex argument and a numerical inverse Laplace transform. This step was missing
+        # when B2 landed: ci.yml's canonical and portability jobs got it and this one did
+        # not, so the first deployment attempt failed at 02-verify with
+        # ModuleNotFoundError: No module named 'mpmath'. Three jobs execute cases; all three
+        # need it.
+        #
+        # The backend is printed because it is load-bearing. mpmath computes in pure Python
+        # and switches to gmpy2 when that is installed, which would change the arithmetic
+        # under every Bessel evaluation.
+        run: |
+          set -uo pipefail
+          python3 -m pip install --no-cache-dir --disable-pip-version-check mpmath==1.3.0
+          python3 -c "import mpmath, mpmath.libmp as l; print('mpmath', mpmath.__version__, 'backend', l.BACKEND)"
+
       - name: Install the locked site toolchain
         # npm ci, never npm install. build_release.py treats a missing site/node_modules
         # as BLOCKED rather than as a step it can skip, so this has to succeed before the
