@@ -156,12 +156,22 @@ const criterionRows = Object.entries(s.criteria).map(([name, state]) => ({
   note: state.detail ?? "",
 }));
 
+/* The component formats nothing on purpose -- deciding significant figures would be
+   deciding how precisely the case reports itself. So the page does it, and the precision
+   is chosen per quantity: storage and crossover to three figures because they are inputs
+   to a sweep, and the window extent to three decimals because the rule's threshold is
+   1.000 and a reader has to see how far short a row fell. Raw float64 reached the first
+   deployment and printed 1.1999999999999997 cycles, which is false precision on a
+   quantity resolved to one sampling interval. */
 const sweepRows = s.b2_2_storage_sweep.levels.map((level) => ({
   storage: level.storage_dimensionless,
-  bbl: level.storage_bbl_per_psi,
-  crossover: level.crossover_hours,
+  bbl: level.storage_bbl_per_psi.toPrecision(4),
+  crossover: level.crossover_hours.toPrecision(3),
   certified: level.analyst.window_found ? "yes" : "no",
-  extent: level.analyst.window_found ? level.analyst.window_decades : level.analyst.widest_admissible_decades,
+  extent: (level.analyst.window_found
+    ? (level.analyst.window_decades as number)
+    : (level.analyst.widest_admissible_decades as number)
+  ).toFixed(3),
   // Only a certified level may carry a recovered permeability. The others carry nothing,
   // not a blank and not a dash with a number hidden behind a tooltip.
   kh: level.analyst.window_found ? fmt.kh(level.analyst.permeability_thickness_md_ft as number) : null,
@@ -169,8 +179,8 @@ const sweepRows = s.b2_2_storage_sweep.levels.map((level) => ({
 
 const posthocRows = s.posthoc_exploratory.levels.map((level) => ({
   storage: level.storage_dimensionless,
-  crossover: level.crossover_hours,
-  certifying: level.frozen_selector.first_certifying_hours,
+  crossover: level.crossover_hours.toPrecision(3),
+  certifying: level.frozen_selector.first_certifying_hours.toPrecision(3),
   reported: level.reported_days,
 }));
 
@@ -330,12 +340,12 @@ const contents = [
       caption="Storage-strength sweep under the frozen selector, over a 48-hour record at 20 points per decade. Permeability-thickness appears only where the rule certified a window; the remaining rows carry no estimate because none may be reported."
       naText="not reportable"
       columns={[
-        { key: "storage", label: "C_D", numeric: true },
-        { key: "bbl", label: "C, bbl/psi", numeric: true },
-        { key: "crossover", label: "crossover, h", numeric: true },
+        { key: "storage", label: "storage", unit: "C_D, dimensionless", numeric: true },
+        { key: "bbl", label: "storage coefficient", unit: "bbl/psi", numeric: true },
+        { key: "crossover", label: "crossover", unit: "hours", numeric: true },
         { key: "certified", label: "window certified" },
-        { key: "extent", label: "widest admissible, cycles", numeric: true },
-        { key: "kh", label: "kh recovered, md·ft" },
+        { key: "extent", label: "widest admissible run", unit: "log-10 cycles", numeric: true },
+        { key: "kh", label: "kh recovered", unit: "md·ft" },
       ]}
       rows={sweepRows}
       wide
@@ -424,9 +434,9 @@ const contents = [
       captionTitle="Table B2-2"
       caption="POST-HOC EXPLORATORY ANALYSIS. The shortest record at which the frozen selector first certifies a window, resolved to one sampling interval — about 12 percent in time — which is why the reported column carries two significant figures and no more."
       columns={[
-        { key: "storage", label: "C_D", numeric: true },
-        { key: "crossover", label: "crossover, h", numeric: true },
-        { key: "certifying", label: "first certifying record, h", numeric: true },
+        { key: "storage", label: "storage", unit: "C_D, dimensionless", numeric: true },
+        { key: "crossover", label: "crossover", unit: "hours", numeric: true },
+        { key: "certifying", label: "first certifying record", unit: "hours", numeric: true },
         { key: "reported", label: "reported as" },
       ]}
       rows={posthocRows}
