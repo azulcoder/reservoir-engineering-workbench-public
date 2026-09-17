@@ -166,7 +166,7 @@ const criterionRows = Object.entries(s.criteria).map(([name, state]) => ({
 const sweepRows = s.b2_2_storage_sweep.levels.map((level) => ({
   storage: level.storage_dimensionless,
   bbl: level.storage_bbl_per_psi.toPrecision(4),
-  crossover: level.crossover_hours.toPrecision(3),
+  crossover: fmt.hours(level.crossover_hours),
   certified: level.analyst.window_found ? "yes" : "no",
   extent: (level.analyst.window_found
     ? (level.analyst.window_decades as number)
@@ -179,8 +179,8 @@ const sweepRows = s.b2_2_storage_sweep.levels.map((level) => ({
 
 const posthocRows = s.posthoc_exploratory.levels.map((level) => ({
   storage: level.storage_dimensionless,
-  crossover: level.crossover_hours.toPrecision(3),
-  certifying: level.frozen_selector.first_certifying_hours.toPrecision(3),
+  crossover: fmt.hours(level.crossover_hours),
+  certifying: fmt.hours(level.frozen_selector.first_certifying_hours),
   reported: level.reported_days,
 }));
 

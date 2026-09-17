@@ -84,6 +84,19 @@ function superscript(power: number): string {
     .join("");
 }
 
+/** An elapsed duration in hours, to three significant figures and never in scientific
+ *  notation.
+ *
+ *  `toPrecision(3)` switches to exponential above 999, so a column of test durations read
+ *  31.6, 398, 1.26e+3, 4.47e+3 on the live site -- three significant figures throughout and
+ *  two different notations inside one column. Hours are a quantity a reader compares by
+ *  scanning, so the notation has to stay still. Above 999 the third significant figure is
+ *  already past what the measurement carries, and this rounds to a whole hour there. */
+export function hours(value: number): string {
+  if (!Number.isFinite(value)) throw new Error(`hours(): not a finite number: ${value}`);
+  return value >= 999.5 ? Math.round(value).toString() : value.toPrecision(3);
+}
+
 /** A count out of a total, e.g. "5 of 10". Both are integers; no formatting decision. */
 export function outOf(count: number, total: number): string {
   return `${count} of ${total}`;
