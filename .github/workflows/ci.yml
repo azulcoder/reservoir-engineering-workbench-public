@@ -421,7 +421,7 @@ jobs:
           echo "canonical cases reproduced: ${reproduced} of ${expected}"
           exit "${status}"
 
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: canonical-outputs
@@ -544,7 +544,7 @@ jobs:
             --out "${RUNNER_TEMP}/export" \
             --site-data "${RUNNER_TEMP}/figures"
 
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: canonical-figure-export
@@ -856,7 +856,7 @@ jobs:
       # case snapshots are canonical to the pinned container. When they drift, the bytes
       # this runner produced are what the tree should hold, so upload them rather than
       # leaving the next person to guess at them.
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: failure()
         with:
           name: canonical-generated-${{ matrix.leg.dist }}
@@ -1009,7 +1009,7 @@ jobs:
 
       - name: Keep the evidence
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: evidence-${{ matrix.leg.dist }}
           path: ${{ runner.temp }}/evidence/
